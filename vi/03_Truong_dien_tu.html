@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trường điện từ — Định luật Coulomb, nguyên lý chồng chất và truyền sóng FDTD (Demo tương tác)</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], tags: 'ams' },
+  chtml: { scale: 1.1 },
+  startup: { typeset: true }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --panel:#ffffff; --card:#f8fafc; --line:#e2e8f0; --ink:#0f172a; --ink2:#334155; --mute:#64748b;
+  --sky:#0284c7; --sky-bg:#e0f2fe; --rose:#e11d48; --rose-bg:#ffe4e6; --amber:#d97706; --amber-bg:#fef3c7;
+  --emerald:#059669; --emerald-bg:#d1fae5; --indigo:#4f46e5; --indigo-bg:#e0e7ff; --violet:#7c3aed;
+  --accent:#7c3aed;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55;font-size:15px}
+a{color:var(--sky)}
+header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .in{max-width:1220px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.01em}
+.brand .dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--indigo),var(--rose))}
+.brand span{background:linear-gradient(90deg,var(--sky),var(--indigo),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav.links{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+nav.links a{font-size:13px;text-decoration:none;color:var(--ink2);padding:5px 10px;border-radius:8px;border:1px solid transparent}
+nav.links a:hover{border-color:var(--line);background:var(--card)}
+nav.links a.e{background:var(--emerald-bg);color:#047857}
+nav.links a.m{background:var(--sky-bg);color:#0369a1}
+nav.links a.c{background:var(--rose-bg);color:#be123c}
+main{max-width:1220px;margin:0 auto;padding:22px 20px 60px}
+section.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:26px;margin:22px 0;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.hero{position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.12),transparent 70%)}
+h1{font-size:34px;line-height:1.15;margin:8px 0 10px;letter-spacing:-.02em}
+h2{font-size:26px;margin:6px 0 6px;letter-spacing:-.01em}
+h3{font-size:16px;margin:0 0 8px}
+p.lead{color:var(--ink2);max-width:880px;margin:0}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:8px;background:var(--sky-bg);color:#0369a1}
+.tag.e{background:var(--emerald-bg);color:#047857}.tag.m{background:var(--sky-bg);color:#0369a1}.tag.c{background:var(--rose-bg);color:#be123c}.tag.q{background:var(--indigo-bg);color:#4338ca}.tag.v{background:var(--amber-bg);color:#b45309}
+.layers{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.layers span{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink2)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.sim{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;margin-top:16px}
+@media (max-width:900px){.g2,.g3,.g4,.sim{grid-template-columns:1fr}h1{font-size:28px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.card.white{background:#fff}
+.eq{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;overflow-x:auto;margin:8px 0}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.canvas-wrap{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+canvas{display:block;width:100%;touch-action:none}
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.controls.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:640px){.controls,.controls.c3{grid-template-columns:1fr}}
+.ctl label{display:flex;gap:4px;align-items:baseline;font-size:13px;color:var(--ink2)}
+.ctl label b{margin-left:auto;font-family:"JetBrains Mono",Consolas,monospace;font-weight:600;color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{width:100%;padding:6px 8px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font:inherit;font-size:13px}
+.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:9px;border:1px solid #cbd5e1;background:#fff;color:var(--ink2);cursor:pointer}
+.btn:hover{border-color:#94a3b8;color:var(--ink)}
+.btn.on{background:var(--sky-bg);border-color:#7dd3fc;color:#0369a1}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+table.read{width:100%;border-collapse:collapse;font-size:13px}
+table.read td{padding:5px 2px;border-bottom:1px dashed var(--line)}
+table.read td:last-child{text-align:right;font-family:"JetBrains Mono",Consolas,monospace;color:var(--ink)}
+.mono{font-family:"JetBrains Mono",Consolas,monospace}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:12px;font-weight:700;font-size:14px;text-align:center}
+.verdict.pass{background:var(--emerald-bg);color:#047857;border:1px solid #6ee7b7}
+.verdict.fail{background:var(--rose-bg);color:#be123c;border:1px solid #fda4af}
+.note{font-size:12.5px;color:var(--mute)}
+details.matlab{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:#0f172a;color:#e2e8f0}
+details.matlab summary{cursor:pointer;padding:9px 12px;font-size:13px;font-weight:600;color:#fbbf24}
+details.matlab pre{margin:0;padding:0 14px 14px;font-size:12.5px;overflow-x:auto;font-family:"JetBrains Mono",Consolas,monospace}
+.quiz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+@media (max-width:900px){.quiz{grid-template-columns:1fr}}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.qcard .qn{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--sky);text-transform:uppercase}
+.qcard button.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
+.qcard button.opt:hover{border-color:#94a3b8}
+.qcard button.opt[disabled]{cursor:default;opacity:.6}
+.qcard button.opt.right{opacity:1;border-color:#34d399;background:var(--emerald-bg)}
+.qcard button.opt.wrong{opacity:1;border-color:#fb7185;background:var(--rose-bg)}
+.qcard .fb{margin-top:10px;font-size:13.5px;padding:8px 10px;border-radius:10px;display:none}
+.qcard .fb.ok{display:block;background:var(--emerald-bg);color:#047857}
+.qcard .fb.no{display:block;background:var(--rose-bg);color:#be123c}
+.qcard .numrow{display:flex;gap:8px;margin-top:10px}
+.qcard input[type=number]{flex:1;padding:7px 9px;border-radius:9px;border:1px solid #cbd5e1;font:inherit}
+.score{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:#e2e8f0;color:#334155}
+.sechead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px}
+svg text{font-family:Inter,"Segoe UI",system-ui,sans-serif}
+footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);font-size:12.5px}
+</style>
+<script src="../config.js"></script>
+<style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="brand"><div class="dot"></div><span>Trường điện từ</span></div>
+  <nav class="links">
+    <a href="#overview">Tổng quan</a>
+    <a class="e" href="#easy">Cơ bản</a>
+    <a class="m" href="#medium">Trung bình</a>
+    <a class="c" href="#complex">Nâng cao</a>
+    <a href="#quiz">Trắc nghiệm</a>
+  </nav>
+</div></header>
+<main>
+<section class="panel hero" id="overview">
+  <span class="tag">Học phần 3 · Trường điện từ</span>
+  <h1>Điện tích điểm, nguyên lý chồng chất và sóng tại mặt phân cách</h1>
+  <p class="lead">Trang này bao gồm các bài toán chuẩn EMF-E, EMF-M và EMF-C. Bắt đầu từ trường của một điện tích điểm, sau đó xây dựng trường của nhiều điện tích bằng nguyên lý chồng chất, kèm đường sức và mặt đẳng thế. Cuối cùng là mô phỏng sai phân hữu hạn miền thời gian (FDTD) một chiều cho một xung tới đập vào lớp điện môi. Hệ số phản xạ và hệ số truyền đo được từ mô phỏng được kiểm chứng với công thức Fresnel.</p>
+  <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (bản đồ trường, hoạt ảnh)</span><span>④ Mô phỏng (Yee/FDTD)</span><span>⑤ Đánh giá (tự chấm)</span></div>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><div class="kicker">Mục tiêu 1</div>Áp dụng định luật Coulomb dạng vectơ và tính $\mathbf{E}$ của một điện tích điểm.</div>
+    <div class="card"><div class="kicker">Mục tiêu 2</div>Cộng trường của nhiều điện tích và liên hệ đường sức với mặt đẳng thế qua $\mathbf{E}=-\nabla V$.</div>
+    <div class="card"><div class="kicker">Mục tiêu 3</div>Dự đoán $\Gamma$ và $\tau$ tại biên điện môi và kiểm chứng bằng mô phỏng FDTD.</div>
+  </div>
+</section>
+
+<section class="panel" id="easy">
+  <div class="sechead"><div><span class="tag e">Mức E · EMF-E</span><h2>Định luật Coulomb và trường của điện tích điểm</h2><p class="lead">Điện tích $q$ tạo ra trường điện hướng xuyên tâm ra xa nó (hoặc hướng vào nó nếu $q<0$). Cường độ trường giảm theo $1/R^2$. Một điện tích thử $q'$ đặt trong trường này chịu lực $\mathbf{F}=q'\mathbf{E}$.</p></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="grid g2">
+      <div class="card"><h3>Định luật Coulomb</h3><div class="eq">$$\mathbf{F}_{21}=\hat{\mathbf{R}}_{12}\,\frac{q_1q_2}{4\pi\varepsilon R_{12}^2}$$</div><p class="note">Lực do $q_1$ tác dụng lên $q_2$. $\hat{\mathbf{R}}_{12}$ hướng từ $q_1$ đến $q_2$.</p></div>
+      <div class="card"><h3>Cường độ trường điện</h3><div class="eq">$$\mathbf{E}=\hat{\mathbf{R}}\,\frac{q}{4\pi\varepsilon R^2}\quad(\mathrm{V/m})$$</div><p class="note">Trường được định nghĩa là lực tác dụng lên một đơn vị điện tích thử, $\mathbf{E}=\mathbf{F}/q'$.</p></div>
+      <div class="card"><h3>Dạng vectơ</h3><div class="eq">$$\mathbf{E}(\mathbf{R})=\frac{q\,(\mathbf{R}-\mathbf{R}_1)}{4\pi\varepsilon|\mathbf{R}-\mathbf{R}_1|^3}$$</div><p class="note">Dùng dạng này khi điện tích không nằm ở gốc tọa độ.</p></div>
+      <div class="card"><h3>Ví dụ minh họa</h3><p>Xét $q=2$ nC trong không khí. Tại $R=0.3$ m, cường độ trường là $|\mathbf{E}|=\dfrac{9\times10^{9}\cdot2\times10^{-9}}{0.09}=200$ V/m. Điện tích thử $q'=-1$ nC đặt tại đó chịu lực $0.2\ \mu$N, hướng về phía $q$.</p></div>
+    </div>
+    <div class="card white"><h3>Trường của điện tích điểm dương và âm</h3>
+      <svg viewBox="0 0 360 230" width="100%" aria-label="Đường sức xuyên tâm của các điện tích điểm">
+        <defs><marker id="ea" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z" fill="#0284c7"/></marker>
+              <marker id="eb" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z" fill="#e11d48"/></marker></defs>
+        <g id="radial"></g>
+        <circle cx="95" cy="110" r="16" fill="#0284c7"/><text x="95" y="116" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">+</text>
+        <circle cx="265" cy="110" r="16" fill="#e11d48"/><text x="265" y="116" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">−</text>
+        <text x="95" y="220" text-anchor="middle" font-size="12" fill="#334155">q &gt; 0: E hướng ra ngoài</text>
+        <text x="265" y="220" text-anchor="middle" font-size="12" fill="#334155">q &lt; 0: E hướng vào trong</text>
+      </svg>
+      <p class="note">Mật độ đường sức tỉ lệ với $|\mathbf{E}|$. Số đường sức đi qua một mặt cầu là như nhau ở mọi bán kính, trong khi diện tích mặt cầu tăng theo $R^2$; đó là nguồn gốc của định luật nghịch đảo bình phương.</p></div>
+  </div>
+</section>
+
+<section class="panel" id="medium">
+  <div class="sechead"><div><span class="tag m">Mức M · EMF-M</span><h2>Đường sức và mặt đẳng thế của các điện tích điểm</h2><p class="lead">Kéo các điện tích hoặc điểm đo $P$. Nền hiển thị điện thế $V$ (hồng: dương, xanh: âm), các đường cong trắng là đường sức xuất phát từ các điện tích dương. Trường tổng tại $P$ là tổng vectơ của trường do từng điện tích gây ra.</p></div></div>
+  <div class="sim">
+    <div>
+      <div class="canvas-wrap"><canvas id="fm" data-h="430" style="cursor:pointer"></canvas></div>
+      <div class="controls">
+        <div class="ctl"><label>Cấu hình</label><select id="cfg"><option value="dipole" selected>Lưỡng cực (+q, −q)</option><option value="like">Hai điện tích cùng dấu (+q, +q)</option><option value="three">Ba điện tích (+2q, −q, −q)</option><option value="unequal">Cặp không bằng nhau (+3q, −q)</option></select></div>
+        <div class="ctl"><label>Hệ số điện tích $q$ (nC) <b id="qs-v"></b></label><input type="range" id="qs" min="0.5" max="5" step="0.5" value="1"></div>
+        <div class="ctl"><label>Số đường sức trên một đơn vị điện tích <b id="nl-v"></b></label><input type="range" id="nl" min="6" max="24" step="2" value="14"></div>
+        <div class="ctl"><label>Hiển thị</label><div class="chips"><button class="btn on" id="tgV">Điện thế</button><button class="btn on" id="tgL">Đường sức</button><button class="btn" id="tgA">Lưới mũi tên</button></div></div>
+      </div>
+    </div>
+    <div class="card white">
+      <h3>Chồng chất tại $P$</h3>
+      <div class="eq">$$\mathbf{E}(P)=\sum_{i=1}^{N}\frac{q_i(\mathbf{R}_P-\mathbf{R}_i)}{4\pi\varepsilon_0|\mathbf{R}_P-\mathbf{R}_i|^3}$$</div>
+      <table class="read" id="sp-tab"></table>
+      <table class="read" style="margin-top:6px">
+        <tr><td>$\mathbf{E}(P)$ (chồng chất)</td><td id="sp-E"></td></tr>
+        <tr><td>$-\nabla V$ (số, sai phân trung tâm)</td><td id="sp-G"></td></tr>
+        <tr><td>$V(P)$</td><td id="sp-V"></td></tr>
+      </table>
+      <div id="sp-verdict" class="verdict"></div>
+      <p class="note">Hai cách tính độc lập — tổng giải tích của $\mathbf{E}$ và gradient số của $V$ — phải cho cùng kết quả. Đây là phép kiểm tra nhất quán $\mathbf{E}=-\nabla V$. Đường sức luôn cắt mặt đẳng thế theo góc vuông.</p>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="complex">
+  <div class="sechead"><div><span class="tag c">Mức C · EMF-C</span><h2>FDTD 1D: xung tới mặt phân cách điện môi</h2>
+    <p class="lead">Một xung Gauss truyền trong không khí ($z&lt;z_i$) và gặp lớp điện môi không tổn hao có hằng số điện môi tương đối $\varepsilon_r$ ($z&gt;z_i$). Các phương trình rota Maxwell được rời rạc hóa trên lưới Yee so le với số Courant bằng 1; các xung tới, phản xạ và truyền qua được ghi lại tại hai điểm đo. Các hệ số đo được từ các bản ghi này được so sánh với công thức Fresnel.</p></div>
+    <span class="tag v">Kiểm chứng: giải tích ($\varepsilon=2\%$) + MATLAB</span></div>
+  <div class="sim">
+    <div>
+      <div class="canvas-wrap"><canvas id="fd" data-h="280"></canvas></div>
+      <div class="canvas-wrap" style="margin-top:10px"><canvas id="pr" data-h="200"></canvas></div>
+      <div class="controls c3">
+        <div class="ctl"><label>$\varepsilon_r$ của môi trường 2 <b id="er-v"></b></label><input type="range" id="er" min="1.5" max="12" step="0.25" value="4"></div>
+        <div class="ctl"><label>Độ rộng xung $w$ (bước) <b id="pw-v"></b></label><input type="range" id="pw" min="6" max="40" step="1" value="25"></div>
+        <div class="ctl"><label>Phát lại</label><div class="chips"><button class="btn on" id="fdPlay">Tạm dừng</button><button class="btn" id="fdReset">Chạy lại</button></div></div>
+      </div>
+    </div>
+    <div class="card white">
+      <h3>Tham chiếu Fresnel (tới vuông góc)</h3>
+      <div class="eq">$$\Gamma=\frac{\eta_2-\eta_1}{\eta_2+\eta_1}=\frac{1-n_2}{1+n_2},\qquad \tau=1+\Gamma=\frac{2}{1+n_2}$$</div>
+      <div class="eq">$$H_y^{q+\frac12}[m]=H_y^{q-\frac12}[m]+\frac{E_z^q[m+1]-E_z^q[m]}{\eta_0}$$$$E_z^{q+1}[m]=E_z^{q}[m]+\frac{\eta_0}{\varepsilon_r[m]}\,\Delta H_y^{q+\frac12}[m]$$<p class=\"note\">$\Delta H_y[m]=H_y[m]-H_y[m-1]$; số Courant $c\Delta t/\Delta z=1$.</p></div>
+      <table class="read">
+        <tr><td>$n_2=\sqrt{\varepsilon_r}$</td><td id="f-n"></td></tr>
+        <tr><td>$\Gamma$ giải tích · FDTD</td><td id="f-G"></td></tr>
+        <tr><td>$\tau$ giải tích · FDTD</td><td id="f-t"></td></tr>
+        <tr><td>$E_{\mathrm{rel}}$ ($\Gamma$, $\tau$)</td><td id="f-e"></td></tr>
+        <tr><td>Số ô trên một độ rộng xung trong môi trường 2</td><td id="f-ppw"></td></tr>
+        <tr><td>Kiểm tra năng lượng $\Gamma^2+n_2\tau^2$</td><td id="f-en"></td></tr>
+      </table>
+      <div id="f-verdict" class="verdict"></div>
+      <p class="note">Xung hẹp trong điện môi đậm đặc chỉ được biểu diễn bởi vài ô lưới, nên tán sắc số làm méo xung và giá trị $\tau$ đo được bị lệch. Hãy giảm $w$ khi $\varepsilon_r=12$ để thấy phép kiểm chứng thất bại. Đây là lý do quy trình cho phép $\varepsilon=2\%$ đối với FDTD.</p>
+      <details class="matlab"><summary>Script MATLAB tham chiếu (cùng sơ đồ Yee)</summary><pre>N = 1400; zi = 700; src = 150; pA = 420; pB = 950;
+er2 = 4; w = 25; t0 = 4*w; T = 2400; imp0 = 377;
+ez = zeros(1,N); hy = zeros(1,N); eps = ones(1,N);
+eps(zi+2:end) = er2; eps(zi+1) = (1+er2)/2;
+A = zeros(1,T); B = zeros(1,T);
+for q = 1:T
+  hy(1:N-1) = hy(1:N-1) + diff(ez)/imp0;
+  e1 = ez(2);
+  ez(2:N) = ez(2:N) + diff(hy).*imp0./eps(2:N);
+  ez(1) = e1;                          % Biên hấp thụ Mur (chính xác khi S = 1)
+  ez(src) = ez(src) + exp(-((q-1-t0)/w)^2);
+  A(q) = ez(pA); B(q) = ez(pB);
+end
+n2 = sqrt(er2); Gamma_th = (1-n2)/(1+n2); tau_th = 2/(1+n2);</pre></details>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="quiz">
+  <div class="sechead"><div><span class="tag q">Đánh giá</span><h2>Bài kiểm tra tự đánh giá</h2></div><span class="score" id="score"></span></div>
+  <div class="quiz" id="quizBox"></div>
+</section>
+
+</main>
+<footer class="p2nav"><a href="../index.html?lang=vi">← Trang chủ</a> · <a href="../survey.html?role=student&amp;lang=vi">Làm phiếu khảo sát sinh viên</a> · <a href="../survey.html?role=lecturer&amp;lang=vi">Phiếu giảng viên</a></footer>
+<script>
+/* ===================== shared helpers ===================== */
+const $ = id => document.getElementById(id);
+const fmt = (v, d=3) => (Math.abs(v) >= 1e4 || (Math.abs(v) < 1e-3 && v !== 0)) ? v.toExponential(2) : v.toFixed(d);
+const typeset = els => { if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise(els).catch(()=>{}); };
+const COLORS = {sky:'#0284c7', rose:'#e11d48', amber:'#d97706', emerald:'#059669', indigo:'#4f46e5', violet:'#7c3aed', slate:'#475569', grid:'#e2e8f0', axis:'#94a3b8'};
+
+/* Canvas plot with HiDPI support and data-to-pixel mapping */
+class Plot {
+  constructor(canvas, opt) {
+    this.c = canvas; this.ctx = canvas.getContext('2d'); this.opt = Object.assign({pad:[16,14,30,46], xlabel:'', ylabel:''}, opt);
+    this.resize(); new ResizeObserver(() => { this.resize(); if (this.onresize) this.onresize(); }).observe(canvas);
+  }
+  resize() {
+    const r = this.c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    const h = this.c.dataset.h ? +this.c.dataset.h : 300;
+    this.c.style.height = h + 'px';
+    this.W = Math.max(200, r.width); this.H = h;
+    this.c.width = this.W * dpr; this.c.height = this.H * dpr; this.ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  set(range) { Object.assign(this.opt, range); }
+  X(x) { const [t,r,b,l] = this.opt.pad; return l + (x - this.opt.xmin) / (this.opt.xmax - this.opt.xmin) * (this.W - l - r); }
+  Y(y) { const [t,r,b,l] = this.opt.pad; return t + (this.opt.ymax - y) / (this.opt.ymax - this.opt.ymin) * (this.H - t - b); }
+  clear() { this.ctx.clearRect(0,0,this.W,this.H); }
+  nice(span, n) { const raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p; }
+  axes() {
+    const g = this.ctx, o = this.opt, [t,r,b,l] = o.pad;
+    g.save(); g.font = '11px Inter, system-ui, sans-serif'; g.fillStyle = '#64748b'; g.strokeStyle = COLORS.grid; g.lineWidth = 1;
+    const dx = o.xstep || this.nice(o.xmax - o.xmin, 8), dy = o.ystep || this.nice(o.ymax - o.ymin, 5);
+    g.textAlign = 'center'; g.textBaseline = 'top';
+    for (let x = Math.ceil(o.xmin/dx)*dx; x <= o.xmax + 1e-9; x += dx) { const px = this.X(x); g.beginPath(); g.moveTo(px,t); g.lineTo(px,this.H-b); g.stroke(); g.fillText(o.xfmt ? o.xfmt(x) : +x.toPrecision(4), px, this.H - b + 5); }
+    g.textAlign = 'right'; g.textBaseline = 'middle';
+    for (let y = Math.ceil(o.ymin/dy)*dy; y <= o.ymax + 1e-9; y += dy) { const py = this.Y(y); g.beginPath(); g.moveTo(l,py); g.lineTo(this.W-r,py); g.stroke(); g.fillText(o.yfmt ? o.yfmt(y) : +y.toPrecision(4), l - 6, py); }
+    g.strokeStyle = COLORS.axis; g.lineWidth = 1.2;
+    if (o.ymin < 0 && o.ymax > 0) { g.beginPath(); g.moveTo(l,this.Y(0)); g.lineTo(this.W-r,this.Y(0)); g.stroke(); }
+    if (o.xmin < 0 && o.xmax > 0) { g.beginPath(); g.moveTo(this.X(0),t); g.lineTo(this.X(0),this.H-b); g.stroke(); }
+    g.strokeRect(l, t, this.W - l - r, this.H - t - b);
+    g.fillStyle = '#334155'; g.font = '12px Inter, system-ui, sans-serif';
+    if (o.xlabel) { g.textAlign = 'right'; g.textBaseline = 'bottom'; g.fillText(o.xlabel, this.W - r - 4, this.H - b - 4); }
+    if (o.ylabel) { g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText(o.ylabel, l + 6, t + 4); }
+    g.restore();
+  }
+  line(xs, ys, color, width=2, dash=null) { this.clipLine(xs, ys, color, width, dash); }
+  clipLine(xs, ys, color, width=2, dash=null) {
+    const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.beginPath(); g.rect(l,t,this.W-l-r,this.H-t-b); g.clip();
+    g.beginPath(); g.strokeStyle = color; g.lineWidth = width; if (dash) g.setLineDash(dash);
+    let pen = false;
+    for (let i = 0; i < xs.length; i++) { const y = ys[i]; if (!isFinite(y)) { pen = false; continue; } const px = this.X(xs[i]), py = this.Y(y); if (!pen) { g.moveTo(px,py); pen = true; } else g.lineTo(px,py); }
+    g.stroke(); g.restore();
+  }
+  fillArea(xs, ys, color) {
+    const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.beginPath(); g.rect(l,t,this.W-l-r,this.H-t-b); g.clip();
+    g.beginPath(); g.moveTo(this.X(xs[0]), this.Y(0));
+    for (let i = 0; i < xs.length; i++) g.lineTo(this.X(xs[i]), this.Y(ys[i]));
+    g.lineTo(this.X(xs[xs.length-1]), this.Y(0)); g.closePath(); g.fillStyle = color; g.fill(); g.restore();
+  }
+  stems(xs, ys, color, r=3) {
+    const g = this.ctx; g.save(); g.strokeStyle = color; g.fillStyle = color; g.lineWidth = 1.5;
+    for (let i = 0; i < xs.length; i++) { const px = this.X(xs[i]), py = this.Y(ys[i]), p0 = this.Y(Math.max(this.opt.ymin, Math.min(this.opt.ymax, 0))); g.beginPath(); g.moveTo(px,p0); g.lineTo(px,py); g.stroke(); g.beginPath(); g.arc(px,py,r,0,2*Math.PI); g.fill(); }
+    g.restore();
+  }
+  dot(x, y, color, r=4.5) { const g = this.ctx; g.save(); g.fillStyle = color; g.beginPath(); g.arc(this.X(x), this.Y(y), r, 0, 2*Math.PI); g.fill(); g.restore(); }
+  vline(x, color, dash=[4,4]) { const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.strokeStyle = color; g.setLineDash(dash); g.beginPath(); g.moveTo(this.X(x),t); g.lineTo(this.X(x),this.H-b); g.stroke(); g.restore(); }
+  hline(y, color, dash=[4,4]) { const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.strokeStyle = color; g.setLineDash(dash); g.beginPath(); g.moveTo(l,this.Y(y)); g.lineTo(this.W-r,this.Y(y)); g.stroke(); g.restore(); }
+  text(s, x, y, color='#334155', align='left', font='12px Inter, system-ui, sans-serif') { const g = this.ctx; g.save(); g.fillStyle = color; g.font = font; g.textAlign = align; g.textBaseline = 'middle'; g.fillText(s, this.X(x), this.Y(y)); g.restore(); }
+  legend(items) { const g = this.ctx, [t,r] = this.opt.pad; g.save(); g.font = '12px Inter, system-ui, sans-serif'; let y = t + 12; for (const [label,color,dash] of items) { const x = this.W - r - 150; g.strokeStyle = color; g.lineWidth = 2.5; g.setLineDash(dash || []); g.beginPath(); g.moveTo(x, y); g.lineTo(x + 22, y); g.stroke(); g.setLineDash([]); g.fillStyle = '#334155'; g.textBaseline = 'middle'; g.fillText(label, x + 28, y); y += 17; } g.restore(); }
+}
+
+/* Slider binding: returns current numeric values and redraws on input */
+function bind(ids, cb, fmts = {}) {
+  const read = () => { const v = {}; ids.forEach(id => { const el = $(id); v[id] = el.tagName === 'SELECT' ? el.value : +el.value; const out = $(id + '-v'); if (out) out.textContent = fmts[id] ? fmts[id](v[id]) : el.value; }); return v; };
+  ids.forEach(id => $(id).addEventListener('input', () => cb(read())));
+  return () => cb(read());
+}
+
+/* Validation metrics */
+function relErr(x, ref) { return Math.abs(x - ref) / Math.max(Math.abs(ref), 1e-12) * 100; }
+function nrmse(a, b) { let s = 0, mn = Infinity, mx = -Infinity; for (let i = 0; i < a.length; i++) { s += (a[i] - b[i]) ** 2; mn = Math.min(mn, b[i]); mx = Math.max(mx, b[i]); } return Math.sqrt(s / a.length) / Math.max(mx - mn, 1e-12) * 100; }
+function verdict(el, ok, msg) { el.className = 'verdict ' + (ok ? 'pass' : 'fail'); el.textContent = (ok ? '✓ PASS — ' : '✗ FAIL — ') + msg; }
+
+/* Classical RK4 for y' = f(t, y) with vector state */
+function rk4(f, y0, t0, t1, h) {
+  const ts = [t0], ys = [y0.slice()]; let t = t0, y = y0.slice(); const n = Math.round((t1 - t0) / h);
+  const add = (a, b, k) => a.map((v, i) => v + k * b[i]);
+  for (let i = 0; i < n; i++) {
+    const k1 = f(t, y), k2 = f(t + h/2, add(y, k1, h/2)), k3 = f(t + h/2, add(y, k2, h/2)), k4 = f(t + h, add(y, k3, h));
+    y = y.map((v, j) => v + h / 6 * (k1[j] + 2*k2[j] + 2*k3[j] + k4[j])); t = t0 + (i + 1) * h; ts.push(t); ys.push(y.slice());
+  }
+  return {ts, ys};
+}
+
+/* Radix-2 FFT (in place, re/im arrays, length power of two) */
+function fft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let bit = n >> 1; for (; j & bit; bit >>= 1) j ^= bit; j ^= bit; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) { let cr = 1, ci = 0; for (let k = 0; k < len / 2; k++) { const a = i + k, b = a + len / 2, xr = re[b] * cr - im[b] * ci, xi = re[b] * ci + im[b] * cr; re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi; const nr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = nr; } }
+  }
+}
+
+/* Quiz engine: multiple-choice {q, opts, ans, fb} and numeric {q, num, tol, unit, fb} items */
+function quiz(containerId, scoreId, items) {
+  let score = 0; const done = {};
+  const box = $(containerId);
+  box.innerHTML = items.map((it, i) => `
+    <div class="qcard" id="q${i}">
+      <div class="qn">Câu ${i + 1}${it.num !== undefined ? ' · tính số' : ''}</div>
+      <div style="margin-top:6px">${it.q}</div>
+      ${it.num !== undefined
+        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Kiểm tra</button></div>`
+        : it.opts.map((o, j) => `<button class="opt" data-j="${j}" onclick="__qa(${i},${j})">${String.fromCharCode(65 + j)}. ${o}</button>`).join('')}
+      <div class="fb" id="q${i}-fb"></div>
+    </div>`).join('');
+  const upd = () => { $(scoreId).textContent = `Điểm: ${score} / ${items.length}`; };
+  window.__qa = (i, j) => {
+    if (done[i]) return; const it = items[i]; let ok;
+    if (it.num !== undefined) { const v = parseFloat($(`q${i}-in`).value); if (!isFinite(v)) return; ok = Math.abs(v - it.num) <= it.tol; }
+    else { ok = j === it.ans; document.querySelectorAll(`#q${i} button.opt`).forEach(b => { b.disabled = true; const k = +b.dataset.j; if (k === it.ans) b.classList.add('right'); else if (k === j) b.classList.add('wrong'); }); }
+    done[i] = true; if (ok) score++;
+    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Đúng. ' : '✗ Chưa đúng. ') + it.fb; typeset([fb]); upd();
+  };
+  upd(); typeset([box]);
+}
+/* ---------- EMF-E: radial lines in the static SVG ---------- */
+(function () {
+  const g = document.getElementById('radial'); let s = '';
+  for (let k = 0; k < 12; k++) { const a = k*Math.PI/6, c = Math.cos(a), d = Math.sin(a);
+    s += `<line x1="${95 + 22*c}" y1="${110 + 22*d}" x2="${95 + 72*c}" y2="${110 + 72*d}" stroke="#0284c7" stroke-width="2" marker-end="url(#ea)"/>`;
+    s += `<line x1="${265 + 72*c}" y1="${110 + 72*d}" x2="${265 + 22*c}" y2="${110 + 22*d}" stroke="#e11d48" stroke-width="2" marker-end="url(#eb)"/>`; }
+  g.innerHTML = s;
+})();
+
+/* ---------- EMF-M: superposition, field lines, equipotentials ---------- */
+(function () {
+  const K = 8.9875517923e9, cv = $('fm'), ctx = cv.getContext('2d'); let W = 0, H = 0, V = null, drag = null;
+  const show = {V: true, L: true, A: false};
+  const CFG = { dipole: [[-1, 0, 1], [1, 0, -1]], like: [[-1, 0, 1], [1, 0, 1]], three: [[0, 0.7, 2], [-1.1, -0.6, -1], [1.1, -0.6, -1]], unequal: [[-0.8, 0, 3], [0.9, 0, -1]] };
+  let Q = [], P = [0.2, 1.2];
+  const span = 3.2; // half width in metres (scaled units)
+  function size() { const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1; W = r.width; H = +cv.dataset.h; cv.style.height = H + 'px'; cv.width = W*d; cv.height = H*d; ctx.setTransform(d,0,0,d,0,0); }
+  const sc = () => W/(2*span), X = x => W/2 + x*sc(), Y = y => H/2 - y*sc(), ix = px => (px - W/2)/sc(), iy = py => (H/2 - py)/sc();
+  function field(x, y) { let ex = 0, ey = 0, v = 0; for (const [qx, qy, qq] of Q) { const dx = x - qx, dy = y - qy, r2 = dx*dx + dy*dy + 1e-9, r = Math.sqrt(r2), q = qq*V.qs*1e-9; ex += K*q*dx/(r2*r); ey += K*q*dy/(r2*r); v += K*q/r; } return [ex, ey, v]; }
+  function draw() {
+    if (!V || !W) return; ctx.clearRect(0, 0, W, H);
+    if (show.V) { const st = 2, img = ctx.createImageData(Math.ceil(W/st), Math.ceil(H/st)), vm = K*V.qs*1e-9/0.6;
+      for (let j = 0; j < img.height; j++) for (let i = 0; i < img.width; i++) { const v = field(ix(i*st), iy(j*st))[2], a = Math.tanh(Math.abs(v)/vm), q = 4*(j*img.width + i), c = v >= 0 ? [244, 63, 94] : [14, 165, 233];
+        const band = Math.abs(((Math.asinh(v/vm*3)*3) % 1 + 1) % 1 - 0.5) < 0.03 ? 0.30 : 0; img.data[q] = c[0]; img.data[q+1] = c[1]; img.data[q+2] = c[2]; img.data[q+3] = 255*(0.10 + 0.45*a + band); }
+      const off = document.createElement('canvas'); off.width = img.width; off.height = img.height; off.getContext('2d').putImageData(img, 0, 0); ctx.save(); ctx.imageSmoothingEnabled = true; ctx.drawImage(off, 0, 0, img.width*st, img.height*st); ctx.restore(); }
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; for (let g = -3; g <= 3; g++) { ctx.beginPath(); ctx.moveTo(X(g), 0); ctx.lineTo(X(g), H); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, Y(g)); ctx.lineTo(W, Y(g)); ctx.stroke(); }
+    if (show.A) { ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.2; for (let gx = -3; gx <= 3.01; gx += 0.4) for (let gy = -2.2; gy <= 2.21; gy += 0.4) { const [ex, ey] = field(gx, gy), m = Math.hypot(ex, ey); if (!m) continue; const l = 11, ux = ex/m, uy = ey/m, x0 = X(gx), y0 = Y(gy);
+      ctx.beginPath(); ctx.moveTo(x0 - ux*l/2, y0 + uy*l/2); ctx.lineTo(x0 + ux*l/2, y0 - uy*l/2); ctx.stroke(); } }
+    if (show.L) { ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = 1.6;
+      const xlim = span + 0.5, ylim = H/2/sc() + 0.5;
+      for (const [qx, qy, qq] of Q) { const sgn = Math.sign(qq), n = Math.round(Math.abs(qq)*V.nl);
+        if (!(sgn > 0 || !Q.some(c => c[2] > 0))) continue;
+        for (let k = 0; k < n; k++) { const a = 2*Math.PI*(k + 0.5)/n; let x = qx + 0.06*Math.cos(a), y = qy + 0.06*Math.sin(a); ctx.beginPath(); ctx.moveTo(X(x), Y(y));
+          for (let s = 0; s < 1400; s++) { let [ex, ey] = field(x, y), m = Math.hypot(ex, ey); const h = 0.012*sgn; const mx = x + h*ex/m/2, my = y + h*ey/m/2; [ex, ey] = field(mx, my); m = Math.hypot(ex, ey); x += h*ex/m; y += h*ey/m;
+            ctx.lineTo(X(x), Y(y)); if (Math.abs(x) > xlim || Math.abs(y) > ylim || Q.some(c => c !== null && Math.hypot(x - c[0], y - c[1]) < 0.05)) break; }
+          ctx.stroke(); } } }
+    for (const [qx, qy, qq] of Q) { ctx.beginPath(); ctx.arc(X(qx), Y(qy), 13, 0, 2*Math.PI); ctx.fillStyle = qq > 0 ? '#0284c7' : '#e11d48'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText((qq > 0 ? '+' : '−') + (Math.abs(qq) === 1 ? '' : Math.abs(qq)), X(qx), Y(qy)); }
+    const [ex, ey, v] = field(...P), m = Math.hypot(ex, ey), L = 60, ux = ex/m, uy = ey/m, px = X(P[0]), py = Y(P[1]);
+    ctx.strokeStyle = '#059669'; ctx.fillStyle = '#059669'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + ux*L, py - uy*L); ctx.stroke();
+    const an = Math.atan2(-uy, ux); ctx.beginPath(); ctx.moveTo(px + ux*L, py - uy*L); ctx.lineTo(px + ux*L - 11*Math.cos(an - .4), py - uy*L - 11*Math.sin(an - .4)); ctx.lineTo(px + ux*L - 11*Math.cos(an + .4), py - uy*L - 11*Math.sin(an + .4)); ctx.fill();
+    ctx.beginPath(); ctx.arc(px, py, 7, 0, 2*Math.PI); ctx.fill(); ctx.fillStyle = '#064e3b'; ctx.font = 'bold 13px Inter, sans-serif'; ctx.textAlign = 'left'; ctx.fillText('P', px + 10, py - 10);
+    ctx.fillStyle = '#334155'; ctx.font = '11px Inter, sans-serif'; ctx.fillText('lưới: 1 m · kéo điện tích hoặc P', 8, H - 10);
+    // readouts
+    $('sp-tab').innerHTML = '<tr><td><b>điện tích</b></td><td><b>đóng góp E_i (V/m)</b></td></tr>' + Q.map(([qx, qy, qq], i) => { const dx = P[0] - qx, dy = P[1] - qy, r = Math.hypot(dx, dy), q = qq*V.qs*1e-9, e = K*q/(r*r*r); return `<tr><td>q${i + 1} = ${fmt(qq*V.qs, 1)} nC tại (${fmt(qx, 2)}, ${fmt(qy, 2)})</td><td>(${fmt(e*dx, 2)}, ${fmt(e*dy, 2)})</td></tr>`; }).join('');
+    const h = 1e-4, gx = -(field(P[0] + h, P[1])[2] - field(P[0] - h, P[1])[2])/(2*h), gy = -(field(P[0], P[1] + h)[2] - field(P[0], P[1] - h)[2])/(2*h);
+    $('sp-E').textContent = `(${fmt(ex, 3)}, ${fmt(ey, 3)}) |E| = ${fmt(m, 3)}`; $('sp-G').textContent = `(${fmt(gx, 3)}, ${fmt(gy, 3)})`; $('sp-V').textContent = fmt(v, 3) + ' V';
+    const e = Math.hypot(gx - ex, gy - ey)/m*100; verdict($('sp-verdict'), e <= 1, `|E − (−∇V)| / |E| = ${e.toExponential(2)} % (ε = 1 %)`);
+  }
+  function setCfg(c) { Q = CFG[c].map(a => a.slice()); }
+  const upd = bind(['cfg','qs','nl'], v => { if (!V || v.cfg !== V.cfg) setCfg(v.cfg); V = v; draw(); });
+  [['tgV','V'],['tgL','L'],['tgA','A']].forEach(([id, k]) => $(id).onclick = () => { show[k] = !show[k]; $(id).classList.toggle('on', show[k]); draw(); });
+  cv.addEventListener('pointerdown', e => { const r = cv.getBoundingClientRect(), x = ix(e.clientX - r.left), y = iy(e.clientY - r.top);
+    if (Math.hypot(x - P[0], y - P[1]) < 0.2) drag = P; else drag = Q.find(c => Math.hypot(x - c[0], y - c[1]) < 0.2) || null; if (drag) cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove', e => { if (!drag) return; const r = cv.getBoundingClientRect(); drag[0] = Math.max(-span + 0.1, Math.min(span - 0.1, ix(e.clientX - r.left))); drag[1] = Math.max(-H/2/sc() + 0.1, Math.min(H/2/sc() - 0.1, iy(e.clientY - r.top)));
+    if (drag !== P && Math.hypot(P[0] - drag[0], P[1] - drag[1]) < 0.12) { P[0] += 0.15; } draw(); });
+  cv.addEventListener('pointerup', () => drag = null);
+  new ResizeObserver(() => { size(); draw(); }).observe(cv); size(); upd();
+})();
+
+/* ---------- EMF-C: 1D FDTD on a Yee grid ---------- */
+(function () {
+  const N = 1400, zi = 700, src = 150, pA = 420, pB = 950, T = 2400, imp0 = 377, every = 3;
+  const pf = new Plot($('fd'), {xmin:0, xmax:N, ymin:-1.15, ymax:1.15, xlabel:'z (ô lưới)', ylabel:'E_z(z, t)', pad:[14,14,28,42]});
+  const pp = new Plot($('pr'), {xmin:0, xmax:T, ymin:-1.15, ymax:1.15, xlabel:'bước thời gian q', ylabel:'tín hiệu tại điểm đo', pad:[14,14,28,42]});
+  let sim = null, frame = 0, play = true;
+  function run(er2, w) {
+    const ez = new Float64Array(N), hy = new Float64Array(N), eps = new Float64Array(N).fill(1); for (let m = zi + 1; m < N; m++) eps[m] = er2; eps[zi] = (1 + er2)/2;
+    const n2 = Math.sqrt(er2), cR = (1/n2 - 1)/(1/n2 + 1), t0 = 4*w, A = new Float64Array(T), B = new Float64Array(T), frames = [];
+    for (let q = 0; q < T; q++) {
+      for (let m = 0; m < N - 1; m++) hy[m] += (ez[m + 1] - ez[m])/imp0;
+      const e1 = ez[1], eNm2 = ez[N - 2], eNm1 = ez[N - 1];
+      for (let m = 1; m < N; m++) ez[m] += (hy[m] - hy[m - 1])*imp0/eps[m];
+      ez[0] = e1;                                             // Mur ABC, exact in vacuum with S = 1
+      ez[N - 1] = eNm2 + cR*(ez[N - 2] - eNm1);              // first-order Mur ABC in medium 2
+      ez[src] += Math.exp(-Math.pow((q - t0)/w, 2));
+      A[q] = ez[pA]; B[q] = ez[pB];
+      if (q % every === 0) frames.push(Float32Array.from(ez));
+    }
+    // separate incident and reflected pulses at probe A; transmitted at probe B
+    const split = t0 + (zi - src), ext = (arr, a, b) => { let k = a; for (let i = a; i < b; i++) if (Math.abs(arr[i]) > Math.abs(arr[k])) k = i; return [k, arr[k]]; };
+    const [ki, Ei] = ext(A, 0, split), [kr, Er] = ext(A, split, T), tB = t0 + (zi - src) + Math.round((pB - zi)*n2), [kt, Et] = ext(B, 0, Math.min(T, tB + 6*w));
+    return {frames, A, B, Ei, Er, Et, ki, kr, kt, n2, G:Er/Ei, tau:Et/Ei, Ga:(1 - n2)/(1 + n2), ta:2/(1 + n2), w, er2};
+  }
+  function readouts() {
+    const s = sim, eG = relErr(s.G, s.Ga), eT = relErr(s.tau, s.ta);
+    $('f-n').textContent = fmt(s.n2, 4); $('f-G').textContent = `${fmt(s.Ga, 4)} · ${fmt(s.G, 4)}`; $('f-t').textContent = `${fmt(s.ta, 4)} · ${fmt(s.tau, 4)}`;
+    $('f-e').textContent = `${fmt(eG, 3)} %, ${fmt(eT, 3)} %`; $('f-ppw').textContent = fmt(2*s.w/s.n2, 1); $('f-en').textContent = fmt(s.G*s.G + s.n2*s.tau*s.tau, 4) + ' (lý tưởng 1)';
+    const ok = eG <= 2 && eT <= 2; verdict($('f-verdict'), ok, `E_rel(Γ) = ${fmt(eG,2)} %, E_rel(τ) = ${fmt(eT,2)} % (ε = 2 %)` + (ok ? '' : ' — hãy tăng độ rộng xung'));
+    const qs = [...Array(T).keys()]; pp.clear(); pp.axes(); pp.line(qs, Array.from(s.A), COLORS.indigo, 1.8); pp.line(qs, Array.from(s.B), COLORS.amber, 1.8);
+    pp.dot(s.ki, s.Ei, COLORS.indigo); pp.dot(s.kr, s.Er, COLORS.rose); pp.dot(s.kt, s.Et, COLORS.amber);
+    pp.legend([['A: sóng tới, sóng phản xạ', COLORS.indigo], ['B: sóng truyền qua', COLORS.amber]]);
+  }
+  function drawFrame() {
+    if (!sim) return; const f = sim.frames[frame], zs = [...Array(N).keys()];
+    pf.clear(); const g = pf.ctx; g.save(); g.fillStyle = 'rgba(124,58,237,.08)'; g.fillRect(pf.X(zi), pf.opt.pad[0], pf.X(N) - pf.X(zi), pf.H - pf.opt.pad[0] - pf.opt.pad[2]); g.restore();
+    pf.axes(); pf.vline(zi, COLORS.violet, [5,3]); pf.vline(pA, COLORS.indigo, [2,3]); pf.vline(pB, COLORS.amber, [2,3]);
+    pf.text('không khí (n = 1)', 120, 0.9, COLORS.slate); pf.text(`điện môi εr = ${sim.er2}`, zi + 20, 0.9, COLORS.violet); pf.text('A', pA + 8, -0.95, COLORS.indigo); pf.text('B', pB + 8, -0.95, COLORS.amber);
+    pf.line(zs, Array.from(f), COLORS.sky, 2); pf.text(`q = ${frame*3}`, N - 140, 0.9, COLORS.slate);
+  }
+  const upd = bind(['er','pw'], v => { sim = run(v.er, v.pw); frame = 0; readouts(); drawFrame(); });
+  $('fdPlay').onclick = () => { play = !play; $('fdPlay').textContent = play ? 'Tạm dừng' : 'Phát'; $('fdPlay').classList.toggle('on', play); };
+  $('fdReset').onclick = () => { frame = 0; drawFrame(); };
+  let last = 0; (function tick(t) { if (play && sim && t - last > 30) { frame = (frame + 2) % sim.frames.length; drawFrame(); last = t; } requestAnimationFrame(tick); })(0);
+  pf.onresize = drawFrame; pp.onresize = readouts; upd();
+})();
+
+quiz('quizBox', 'score', [
+  {q:'Nếu khoảng cách tới một điện tích điểm tăng gấp đôi thì $|\\mathbf{E}|$', opts:['giảm một nửa','giảm còn một phần tư','không đổi'], ans:1, fb:'$|\\mathbf{E}|\\propto1/R^2$.'},
+  {q:'$q=2$ nC trong không khí. Tính $|\\mathbf{E}|$ tại $R=0.3$ m, theo V/m? (±2 V/m)', num:200, tol:2, unit:'V/m', fb:'$9\\times10^9\\cdot2\\times10^{-9}/0.09=200$ V/m.'},
+  {q:'Trên đường trung trực của lưỡng cực ($+q$, $-q$), trường điện hướng', opts:['dọc theo đường trung trực, ra xa lưỡng cực','song song với trục lưỡng cực, từ $+q$ về phía $-q$','không hướng nào, vì $\\mathbf{E}=0$'], ans:1, fb:'Các thành phần dọc đường trung trực triệt tiêu nhau, còn các thành phần dọc trục cộng lại.'},
+  {q:'Đường sức và đường đẳng thế cắt nhau theo góc', opts:['vuông','45°','bất kỳ'], ans:0, fb:'$\\mathbf{E}=-\\nabla V$ vuông góc với các mặt có $V$ không đổi.'},
+  {q:'Sóng trong không khí tới vuông góc lên thủy tinh có $\\varepsilon_r=2.25$. Hệ số $\\Gamma$ bằng bao nhiêu?', num:-0.2, tol:0.005, fb:'$n_2=1.5$, nên $\\Gamma=(1-1.5)/(1+1.5)=-0.2$.'},
+  {q:'Vì sao phép kiểm chứng FDTD thất bại với xung rất hẹp trong điện môi đậm đặc?', opts:['Công thức Fresnel sai với xung ngắn','Quá ít ô lưới trên một độ rộng xung gây tán sắc số','Nguồn quá mạnh'], ans:1, fb:'Sóng chậm lại $n_2$ lần trong môi trường 2, nên xung ngắn chỉ được biểu diễn bởi vài ô lưới.'}
+]);
+
+</script>
+<!-- ============ Anonymous research logger — Vietnamese UI (injected; see README) ============ -->
+<style>
+#rlog-banner{position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:12px 14px;font-size:13.5px;box-shadow:0 8px 30px rgba(15,23,42,.35);display:none;max-width:860px;margin:0 auto}
+#rlog-banner i{color:#94a3b8}
+#rlog-banner button{font:inherit;font-size:13px;margin:8px 8px 0 0;padding:6px 12px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#fff;cursor:pointer}
+#rlog-banner button.yes{background:#4f46e5;border-color:#4f46e5}
+#rlog-box{max-width:1220px;margin:0 auto 30px;padding:12px 20px;font-size:13px;color:#334155}
+#rlog-box .code{font-family:Consolas,monospace;font-size:16px;font-weight:700;letter-spacing:.08em;color:#4338ca;background:#eef2ff;padding:2px 8px;border-radius:6px}
+#rlog-box button,#rlog-box a{font:inherit;font-size:12.5px;margin-left:6px}
+</style>
+<div id="rlog-banner" role="dialog" aria-live="polite">
+  <b>Nghiên cứu đánh giá học liệu</b><br>
+  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá và cải tiến học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Việc đồng ý hay từ chối không ảnh hưởng đến việc sử dụng trang hay điểm học phần.<br>
+  <button class="yes" id="rlog-yes">Đồng ý</button><button id="rlog-no">Không đồng ý</button>
+</div>
+<div id="rlog-box"></div>
+<script>
+(function () {
+  /* ===================== CONFIGURATION ===================== */
+  const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
+  const STUDY = 'paper2-html-demos', DEMO = '03_EMF', VERSION = 'log-v1-vi', LANG = 'vi';
+  /* ========================================================= */
+  const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';
+  const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const rnd = n => Array.from(crypto.getRandomValues(new Uint8Array(n))).map(b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('');
+  const params = new URLSearchParams(location.search);
+  let code = ls.get(K_CODE); if (!code) { code = rnd(6); ls.set(K_CODE, code); }
+  const box = document.getElementById('rlog-box');
+
+  function renderBox(consent) {
+    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Làm phiếu khảo sát</a>` : '';
+    box.innerHTML = `Mã ẩn danh của bạn: <span class="code">${code}</span> — hãy nhập mã này vào phiếu khảo sát (không bắt buộc).${surveyLink}
+      <br>Nhật ký sử dụng: <b>${consent === 'yes' ? 'đang ghi' : 'đang tắt'}</b>
+      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt ghi nhật ký' : 'Bật ghi nhật ký'}</button>
+      <button id="rlog-dl">Tải nhật ký (JSON)</button>`;
+    document.getElementById('rlog-toggle').onclick = () => { ls.set(K_CONSENT, consent === 'yes' ? 'no' : 'yes'); location.reload(); };
+    document.getElementById('rlog-dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = `logs_${code}.json`; a.click(); };
+  }
+  const consent = ls.get(K_CONSENT);
+  if (!consent) { const b = document.getElementById('rlog-banner'); b.style.display = 'block';
+    document.getElementById('rlog-yes').onclick = () => { ls.set(K_CONSENT, 'yes'); location.reload(); };
+    document.getElementById('rlog-no').onclick = () => { ls.set(K_CONSENT, 'no'); b.style.display = 'none'; renderBox('no'); }; }
+  renderBox(consent);
+  if (consent !== 'yes') return;
+
+  /* ------------------------- logging ------------------------- */
+  const t0 = performance.now(), now = () => Math.round(performance.now() - t0);
+  const S = { study: STUDY, demo: DEMO, version: VERSION, lang: LANG, anon_code: code, session_id: rnd(8), seq: 0,
+    started_at: new Date().toISOString().slice(0, 16), device: matchMedia('(pointer:coarse)').matches ? 'touch' : 'desktop',
+    viewport_w: Math.round(innerWidth / 100) * 100, active_s: 0, n_ctrl_total: 0, n_clicks: 0,
+    sections: {}, ctrl_by_id: {}, quiz_answered: 0, quiz_correct: 0, quiz_items: {}, fail_seen: 0, fail_ids: [], events: [] };
+  const ev = (type, detail) => { if (S.events.length < 400) S.events.push([now(), type, detail]); };
+  // active time (tab visible) and per-section visible time
+  let lastTick = performance.now(); const visible = new Set();
+  document.querySelectorAll('section.panel[id]').forEach(s => S.sections[s.id] = { s: 0, n_ctrl: 0 });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { visible.add(e.target.id); ev('view', e.target.id); } else visible.delete(e.target.id); }), { threshold: 0.35 });
+  document.querySelectorAll('section.panel[id]').forEach(s => io.observe(s));
+  setInterval(() => { const t = performance.now(), dt = (t - lastTick) / 1000; lastTick = t; if (document.visibilityState !== 'visible' || dt > 5) return;
+    S.active_s += dt; visible.forEach(id => S.sections[id].s += dt); }, 1000);
+  // parameter changes (debounced per control)
+  const deb = {};
+  document.addEventListener('input', e => { const el = e.target; if (!el.id || !el.matches('input[type=range],select,input[type=number]')) return;
+    clearTimeout(deb[el.id]); deb[el.id] = setTimeout(() => { S.n_ctrl_total++; S.ctrl_by_id[el.id] = (S.ctrl_by_id[el.id] || 0) + 1;
+      const sec = el.closest('section.panel'); if (sec && S.sections[sec.id]) S.sections[sec.id].n_ctrl++; ev('ctrl', el.id + '=' + el.value); }, 400); }, true);
+  document.addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.closest('#rlog-box,#rlog-banner,.qcard')) { S.n_clicks++; ev('click', b.id || b.textContent.trim().slice(0, 20)); } }, true);
+  // quiz: wrap the global answer handler created by quiz()
+  const origQA = window.__qa;
+  if (typeof origQA === 'function') window.__qa = function (i, j) {
+    if (S.quiz_items[i] !== undefined) return origQA(i, j);
+    const r = origQA(i, j); const fb = document.getElementById('q' + i + '-fb');
+    if (fb && fb.className.match(/\b(ok|no)\b/)) { const ok = fb.classList.contains('ok'); S.quiz_items[i] = ok ? 1 : 0; S.quiz_answered++; if (ok) S.quiz_correct++; ev('quiz', i + ':' + (ok ? 1 : 0)); }
+    return r; };
+  // verification verdicts: wrap the global verdict() helper
+  const origV = window.verdict;
+  if (typeof origV === 'function') window.verdict = function (el, ok, msg) { const was = el.className; origV(el, ok, msg);
+    if (!ok && !/fail/.test(was)) { S.fail_seen++; if (!S.fail_ids.includes(el.id)) S.fail_ids.push(el.id); ev('fail', el.id); } };
+  // persist + send
+  function snapshot() { const o = JSON.parse(JSON.stringify(S)); Object.keys(o.sections).forEach(k => o.sections[k].s = Math.round(o.sections[k].s)); o.active_s = Math.round(o.active_s); return o; }
+  function persist() { S.seq++; const snap = snapshot(); let all = []; try { all = JSON.parse(ls.get(K_LOGS) || '[]'); } catch (e) {}
+    const k = all.findIndex(x => x.session_id === S.session_id); if (k >= 0) all[k] = snap; else all.push(snap); ls.set(K_LOGS, JSON.stringify(all.slice(-200)));
+    if (LOG_ENDPOINT && navigator.sendBeacon) { const d = Object.assign({}, snap, { events: JSON.stringify(snap.events) }); navigator.sendBeacon(LOG_ENDPOINT, JSON.stringify({ type: 'log_summary', data: d })); } }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') persist(); });
+  addEventListener('pagehide', persist);
+  setInterval(persist, 60000);
+  ev('start', DEMO);
+  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [quản trị] tải toàn bộ nhật ký trên máy này'; box.appendChild(a); }
+  window.__rlog = { snapshot, persist };   // for testing
+})();
+</script>
+<!-- ============ end of logger ============ -->
+
+</body>
+</html>

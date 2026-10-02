@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Học liệu HTML tương tác — 6 học phần kỹ thuật</title>
+<title>Học liệu HTML tương tác · Interactive HTML learning objects</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="config.js"></script>
@@ -32,9 +32,16 @@ a.big small{display:block;font-size:17px;opacity:.92;margin-top:6px}
 .note{background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:14px 18px;font-size:17px;color:#713f12;margin-top:22px}
 .code{font-family:Consolas,monospace;font-weight:700;letter-spacing:.08em;color:var(--accent);background:#eef2ff;padding:2px 8px;border-radius:6px}
 footer{max-width:1180px;margin:0 auto;padding:0 24px 40px;color:var(--mute);font-size:15px}
+.top{display:flex;justify-content:flex-end;max-width:1180px;margin:0 auto;padding:18px 24px 0}
+.lang{display:inline-flex;border:1.5px solid #cbd5e1;border-radius:999px;overflow:hidden}
+.lang button{font:inherit;font-size:15px;font-weight:600;border:0;background:#fff;padding:6px 14px;cursor:pointer;color:var(--ink2)}
+.lang button.on{background:var(--accent);color:#fff}
+html.L-en .vi, html.L-vi .en{display:none}
 </style>
 </head>
 <body>
+<div class="top"><span class="lang" id="langSw"><button data-l="vi">Tiếng Việt</button><button data-l="en">English</button></span></div>
+<div class="vi">
 <main>
   <h1>Giới thiệu học liệu HTML tương tác dành cho 6 học phần kỹ thuật</h1>
   <p class="lead">
@@ -53,29 +60,75 @@ Người học có thể chủ động thay đổi các tham số đầu vào, q
   </p>
   <h2>Sáu trang học tập</h2>
   <div class="grid">
-    <a class="card" href="01_Toan_ky_thuat.html"><div class="k">Học phần 1 · MAT</div><h3>Toán kỹ thuật</h3><p>Tích vô hướng, tích có hướng · đại số vectơ 3D · giải PTVP bằng RK4 so với nghiệm giải tích</p></a>
-    <a class="card" href="02_Ly_thuyet_mach.html"><div class="k">Học phần 2 · CIR</div><h3>Lý thuyết mạch</h3><p>Trở kháng · giản đồ phasor và cộng hưởng RLC · quá độ RLC với đầu vào bậc thang</p></a>
-    <a class="card" href="03_Truong_dien_tu.html"><div class="k">Học phần 3 · EMF</div><h3>Trường điện từ</h3><p>Định luật Coulomb · đường sức và mặt đẳng thế · FDTD 1D tại mặt phân cách điện môi</p></a>
-    <a class="card" href="04_Tin_hieu_va_he_thong.html"><div class="k">Học phần 4 · SIG</div><h3>Tín hiệu và hệ thống</h3><p>Các phép biến đổi theo thời gian · tích chập bằng đồ thị · lấy mẫu và chồng phổ</p></a>
-    <a class="card" href="05_Dieu_khien_tu_dong.html"><div class="k">Học phần 5 · CTL</div><h3>Điều khiển tự động</h3><p>Điểm cực và tính ổn định · chỉ tiêu hệ bậc hai · điều khiển PID động cơ DC</p></a>
-    <a class="card" href="06_Xu_ly_so_tin_hieu.html"><div class="k">Học phần 6 · DSP</div><h3>Xử lý số tín hiệu</h3><p>Độ phân giải DFT · cửa sổ và rò rỉ phổ · thiết kế bộ lọc FIR bằng sinc có cửa sổ</p></a>
+    <a class="card" href="vi/01_Toan_ky_thuat.html"><div class="k">Học phần 1 · MAT</div><h3>Toán kỹ thuật</h3><p>Tích vô hướng, tích có hướng · đại số vectơ 3D · giải PTVP bằng RK4 so với nghiệm giải tích</p></a>
+    <a class="card" href="vi/02_Ly_thuyet_mach.html"><div class="k">Học phần 2 · CIR</div><h3>Lý thuyết mạch</h3><p>Trở kháng · giản đồ phasor và cộng hưởng RLC · quá độ RLC với đầu vào bậc thang</p></a>
+    <a class="card" href="vi/03_Truong_dien_tu.html"><div class="k">Học phần 3 · EMF</div><h3>Trường điện từ</h3><p>Định luật Coulomb · đường sức và mặt đẳng thế · FDTD 1D tại mặt phân cách điện môi</p></a>
+    <a class="card" href="vi/04_Tin_hieu_va_he_thong.html"><div class="k">Học phần 4 · SIG</div><h3>Tín hiệu và hệ thống</h3><p>Các phép biến đổi theo thời gian · tích chập bằng đồ thị · lấy mẫu và chồng phổ</p></a>
+    <a class="card" href="vi/05_Dieu_khien_tu_dong.html"><div class="k">Học phần 5 · CTL</div><h3>Điều khiển tự động</h3><p>Điểm cực và tính ổn định · chỉ tiêu hệ bậc hai · điều khiển PID động cơ DC</p></a>
+    <a class="card" href="vi/06_Xu_ly_so_tin_hieu.html"><div class="k">Học phần 6 · DSP</div><h3>Xử lý số tín hiệu</h3><p>Độ phân giải DFT · cửa sổ và rò rỉ phổ · thiết kế bộ lọc FIR bằng sinc có cửa sổ</p></a>
   </div>
 
   <h2>Phiếu khảo sát</h2>
   <div class="survey">
-    <a class="big" id="sv" href="survey.html?role=student"><span>Phiếu sinh viên</span><small>Khoảng 10 phút · 26 câu thang đo 1–5 và 2 câu hỏi mở</small></a>
-    <a class="big l" id="lv" href="survey.html?role=lecturer"><span>Phiếu giảng viên</span><small>Khoảng 20–30 phút · có sơ đồ quy trình, bảng rubric và phần chấm 4 định dạng × 12 tiêu chí</small></a>
+    <a class="big" id="sv" href="survey.html?role=student&lang=vi"><span>Phiếu sinh viên</span><small>Khoảng 10 phút · 26 câu thang đo 1–5 và 2 câu hỏi mở</small></a>
+    <a class="big l" id="lv" href="survey.html?role=lecturer&lang=vi"><span>Phiếu giảng viên</span><small>Khoảng 20–30 phút · có sơ đồ quy trình, bảng rubric và phần chấm 4 định dạng × 12 tiêu chí</small></a>
   </div>
   <div class="note" id="note">Phiếu khảo sát ẩn danh: không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Tham gia là tự nguyện và không ảnh hưởng đến điểm học phần.</div>
 </main>
 <footer>Khảo sát phục vụ nghiên cứu về học liệu HTML tích hợp có hỗ trợ của AI tạo sinh.</footer>
+</div>
+<div class="en">
+<main>
+  <h1>Interactive HTML learning materials for six engineering courses</h1>
+  <p class="lead">
+    These interactive HTML learning materials support teaching and learning in an online environment. Each course is designed as a self-contained web page that integrates theory, equations, illustrations, interactive simulations and self-scored multiple-choice questions.
+Learners can change input parameters, observe how the simulation results respond and compare them with the analytical solution to gain a deeper understanding of engineering principles. No software installation is required; the materials open directly in a browser on a computer or a phone.
+  </p>
+
+  <div class="steps">
+    <div class="step"><b>Step 1</b>Choose a course: open the learning page of the course you are studying or teaching.</div>
+    <div class="step"><b>Step 2</b>Explore the materials: spend about 20–30 minutes reading the theory, studying the equations, changing the simulation parameters, observing the results and answering the quiz questions.</div>
+    <div class="step"><b>Step 3</b>Complete the questionnaire: after exploring, please give your opinion based on your actual experience. It takes about 10 minutes for students and 20–30 minutes for lecturers.</div>
+  </div>
+
+  <p class="lead">
+    Purpose of the survey: to collect the views of students and lecturers on the usability, content quality, effectiveness of the interactive simulations and support for teaching and learning provided by the materials. Your feedback will be used to evaluate and improve the materials.
+  </p>
+  <h2>Six learning pages</h2>
+  <div class="grid">
+    <a class="card" href="en/01_Engineering_Mathematics.html"><div class="k">Course 1 · MAT</div><h3>Engineering Mathematics</h3><p>Dot and cross products · 3D vector algebra · RK4 ODE solver vs closed-form solution</p></a>
+    <a class="card" href="en/02_Circuit_Analysis.html"><div class="k">Course 2 · CIR</div><h3>Circuit Analysis</h3><p>Impedance · RLC phasor diagram and resonance · RLC step transient</p></a>
+    <a class="card" href="en/03_Electromagnetics.html"><div class="k">Course 3 · EMF</div><h3>Electromagnetics</h3><p>Coulomb's law · field lines and equipotentials · 1D FDTD at a dielectric interface</p></a>
+    <a class="card" href="en/04_Signals_and_Systems.html"><div class="k">Course 4 · SIG</div><h3>Signals and Systems</h3><p>Time operations · graphical convolution · sampling and aliasing</p></a>
+    <a class="card" href="en/05_Control_Systems.html"><div class="k">Course 5 · CTL</div><h3>Control Systems</h3><p>Poles and stability · second-order specifications · PID control of a DC motor</p></a>
+    <a class="card" href="en/06_Digital_Signal_Processing.html"><div class="k">Course 6 · DSP</div><h3>Digital Signal Processing</h3><p>DFT resolution · windowing and leakage · windowed-sinc FIR design</p></a>
+  </div>
+
+  <h2>Questionnaires</h2>
+  <div class="survey">
+    <a class="big" id="sv_en" href="survey.html?role=student&lang=en"><span>Student questionnaire</span><small>About 10 minutes · 26 scale items (1–5) and 2 open questions</small></a>
+    <a class="big l" id="lv_en" href="survey.html?role=lecturer&lang=en"><span>Lecturer questionnaire</span><small>About 20–30 minutes · includes the workflow diagram, the rubric table and the rating of 4 formats × 12 criteria</small></a>
+  </div>
+  <div class="note" id="note_en">The questionnaires are anonymous: no names, student IDs, e-mail or IP addresses are collected. Participation is voluntary and does not affect grades.</div>
+</main>
+<footer>Survey for a study on GenAI-assisted integrated HTML learning materials.</footer>
+</div>
 <script>
-// Pass the anonymous code (set by the demo pages, same site) to the survey so usage logs can be linked to answers.
 (function () {
+  const q = new URLSearchParams(location.search); let L = q.get('lang');
+  try { L = L || localStorage.getItem('p2_lang'); } catch (e) {}
+  L = L === 'en' ? 'en' : 'vi';
+  const set = l => { document.documentElement.className = 'L-' + l; document.documentElement.lang = l;
+    document.querySelectorAll('#langSw button').forEach(b => b.classList.toggle('on', b.dataset.l === l));
+    try { localStorage.setItem('p2_lang', l); } catch (e) {} };
+  document.querySelectorAll('#langSw button').forEach(b => b.onclick = () => set(b.dataset.l));
+  set(L);
+  // Pass the anonymous code (set by the demo pages, same site) to the survey so usage logs can be linked to answers.
   let code = null; try { code = localStorage.getItem('p2_anon_code'); } catch (e) {}
   if (!code) return;
-  ['sv', 'lv'].forEach(id => { const a = document.getElementById(id); a.href += '&code=' + encodeURIComponent(code); });
+  ['sv', 'lv', 'sv_en', 'lv_en'].forEach(id => { const a = document.getElementById(id); if (a) a.href += '&code=' + encodeURIComponent(code); });
   document.getElementById('note').insertAdjacentHTML('beforeend', ` Mã ẩn danh của bạn trên trình duyệt này: <span class="code">${code}</span> (được điền sẵn vào phiếu).`);
+  document.getElementById('note_en').insertAdjacentHTML('beforeend', ` Your anonymous code in this browser: <span class="code">${code}</span> (pre-filled in the questionnaire).`);
 })();
 </script>
 </body>

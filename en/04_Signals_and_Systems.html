@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tín hiệu và hệ thống — Các phép toán theo thời gian, tích chập và lấy mẫu (Minh họa tương tác)</title>
+<title>Signals and Systems — Time Operations, Convolution and Sampling (Interactive Demo)</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], tags: 'ams' },
@@ -97,79 +97,79 @@ details.matlab pre{margin:0;padding:0 14px 14px;font-size:12.5px;overflow-x:auto
 svg text{font-family:Inter,"Segoe UI",system-ui,sans-serif}
 footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);font-size:12.5px}
 </style>
-<script src="config.js"></script>
+<script src="../config.js"></script>
 <style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand"><div class="dot"></div><span>Tín hiệu và hệ thống</span></div>
+  <div class="brand"><div class="dot"></div><span>Signals and Systems</span></div>
   <nav class="links">
-    <a href="#overview">Tổng quan</a>
-    <a class="e" href="#easy">Cơ bản</a>
-    <a class="m" href="#medium">Trung bình</a>
-    <a class="c" href="#complex">Nâng cao</a>
-    <a href="#quiz">Trắc nghiệm</a>
+    <a href="#overview">Overview</a>
+    <a class="e" href="#easy">Easy</a>
+    <a class="m" href="#medium">Medium</a>
+    <a class="c" href="#complex">Complex</a>
+    <a href="#quiz">Quiz</a>
   </nav>
 </div></header>
 <main>
 <section class="panel hero" id="overview">
-  <span class="tag">Học phần 4 · Tín hiệu và hệ thống</span>
-  <h1>Các phép toán theo thời gian, tích chập và lấy mẫu</h1>
-  <p class="lead">Ba bài toán chuẩn SIG-E, SIG-M và SIG-C được trình bày trên cùng một trang. Trước hết là các phép toán cơ bản theo thời gian, tiếp theo là xây dựng tích chập bằng đồ thị theo cách lật và trượt, cuối cùng là khảo sát định lý lấy mẫu, trong đó tần số chồng phổ được đo từ DFT và kiểm chứng với lý thuyết.</p>
-  <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (đồ thị động)</span><span>④ Mô phỏng (DFT, nội suy sinc)</span><span>⑤ Đánh giá (tự chấm)</span></div>
+  <span class="tag">Course 4 · Signals and Systems</span>
+  <h1>Time Operations, Convolution and Sampling</h1>
+  <p class="lead">Benchmark tasks SIG-E, SIG-M and SIG-C share one page. Elementary time operations are shown first, then convolution is built up graphically by flip-and-slide, and finally the sampling theorem is explored, with the alias frequency measured from a DFT and checked against theory.</p>
+  <div class="layers"><span>① Presentation</span><span>② Mathematics (MathJax)</span><span>③ Visualization (animated plots)</span><span>④ Simulation (DFT, sinc interpolation)</span><span>⑤ Assessment (auto-scored)</span></div>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="kicker">Mục tiêu 1</div>Áp dụng phép dịch, co giãn và đảo thời gian cho một tín hiệu và dự đoán kết quả.</div>
-    <div class="card"><div class="kicker">Mục tiêu 2</div>Tính $y(t)=\int x(\tau)h(t-\tau)\,d\tau$ bằng phương pháp đồ thị.</div>
-    <div class="card"><div class="kicker">Mục tiêu 3</div>Dự đoán tần số biểu kiến của một tín hiệu sin bị lấy mẫu dưới tần số Nyquist.</div>
+    <div class="card"><div class="kicker">Objective 1</div>Apply shifting, scaling and reversal to a signal and predict the result.</div>
+    <div class="card"><div class="kicker">Objective 2</div>Evaluate $y(t)=\int x(\tau)h(t-\tau)\,d\tau$ graphically.</div>
+    <div class="card"><div class="kicker">Objective 3</div>Predict the apparent frequency of an undersampled sinusoid.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · SIG-E</span><h2>Tín hiệu cơ bản và các phép toán theo thời gian</h2><p class="lead">Với $y(t)=x(at-b)$, thứ tự thực hiện là quan trọng: dịch theo $b$ trước, sau đó co giãn theo $a$. Nói cách khác, $y(t)=x\!\left(a\left(t-\tfrac{b}{a}\right)\right)$ là $x$ bị nén $a$ lần và dịch đi $b/a$.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Level E · SIG-E</span><h2>Elementary Signals and Time Operations</h2><p class="lead">For $y(t)=x(at-b)$, the order matters. First shift by $b$, then scale by $a$. In other words, $y(t)=x\!\left(a\left(t-\tfrac{b}{a}\right)\right)$ is $x$ compressed by $a$ and shifted by $b/a$.</p></div></div>
   <div class="grid g4" style="margin-top:16px">
     <div class="card white"><h3>$x(t)$</h3><div class="canvas-wrap"><canvas id="e1" data-h="150"></canvas></div></div>
-    <div class="card white"><h3>Dịch: $x(t-2)$</h3><div class="canvas-wrap"><canvas id="e2" data-h="150"></canvas></div></div>
-    <div class="card white"><h3>Co giãn: $x(2t)$</h3><div class="canvas-wrap"><canvas id="e3" data-h="150"></canvas></div></div>
-    <div class="card white"><h3>Đảo thời gian: $x(-t)$</h3><div class="canvas-wrap"><canvas id="e4" data-h="150"></canvas></div></div>
+    <div class="card white"><h3>Shift: $x(t-2)$</h3><div class="canvas-wrap"><canvas id="e2" data-h="150"></canvas></div></div>
+    <div class="card white"><h3>Scale: $x(2t)$</h3><div class="canvas-wrap"><canvas id="e3" data-h="150"></canvas></div></div>
+    <div class="card white"><h3>Reversal: $x(-t)$</h3><div class="canvas-wrap"><canvas id="e4" data-h="150"></canvas></div></div>
   </div>
   <div class="grid g3" style="margin-top:14px">
-    <div class="card"><h3>Hàm bước đơn vị và hàm dốc</h3><div class="eq">$$u(t)=\begin{cases}1,&t\ge0\\0,&t<0\end{cases},\qquad r(t)=t\,u(t)$$</div></div>
-    <div class="card"><h3>Tín hiệu ví dụ</h3><div class="eq">$$x(t)=r(t)-r(t-1)-u(t-2)$$</div><p class="note">Hàm dốc bão hòa tại giá trị 1 và tắt tại $t=2$.</p></div>
-    <div class="card"><h3>Thành phần chẵn/lẻ</h3><div class="eq">$$x_e(t)=\tfrac12[x(t)+x(-t)]$$$$x_o(t)=\tfrac12[x(t)-x(-t)]$$</div></div>
+    <div class="card"><h3>Unit step and ramp</h3><div class="eq">$$u(t)=\begin{cases}1,&t\ge0\\0,&t<0\end{cases},\qquad r(t)=t\,u(t)$$</div></div>
+    <div class="card"><h3>The example signal</h3><div class="eq">$$x(t)=r(t)-r(t-1)-u(t-2)$$</div><p class="note">A ramp that saturates at 1 and switches off at $t=2$.</p></div>
+    <div class="card"><h3>Even/odd parts</h3><div class="eq">$$x_e(t)=\tfrac12[x(t)+x(-t)]$$$$x_o(t)=\tfrac12[x(t)-x(-t)]$$</div></div>
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · SIG-M</span><h2>Tích chập bằng đồ thị: lật và trượt</h2><p class="lead">Đáp ứng xung được lật, $h(-\tau)$, rồi trượt đến vị trí $t$. Đầu ra $y(t)$ bằng diện tích dưới tích $x(\tau)h(t-\tau)$, được tô đậm trên đồ thị phía trên.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Level M · SIG-M</span><h2>Graphical Convolution: Flip and Slide</h2><p class="lead">The impulse response is reversed, $h(-\tau)$, and slid to position $t$. The output $y(t)$ equals the area under the product $x(\tau)h(t-\tau)$, shaded in the upper plot.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="cv1" data-h="230"></canvas></div>
       <div class="canvas-wrap" style="margin-top:10px"><canvas id="cv2" data-h="200"></canvas></div>
       <div class="controls">
-        <div class="ctl"><label>Độ dịch $t$ <b id="tc-v"></b></label><input type="range" id="tc" min="-1.5" max="5" step="0.01" value="0.8"></div>
-        <div class="ctl"><label>Cặp tín hiệu</label><select id="pair"><option value="rr">chữ nhật ∗ chữ nhật (→ tam giác)</option><option value="re" selected>chữ nhật ∗ hàm mũ (lọc thông thấp RC)</option><option value="ee">hàm mũ ∗ hàm mũ</option></select></div>
-        <div class="ctl"><label>Hệ số suy giảm $a$ (1/s) <b id="ac-v"></b></label><input type="range" id="ac" min="0.5" max="5" step="0.1" value="2"></div>
-        <div class="ctl"><label>&nbsp;</label><div class="chips"><button class="btn" id="play">▶ Chạy hoạt ảnh</button></div></div>
+        <div class="ctl"><label>Shift $t$ <b id="tc-v"></b></label><input type="range" id="tc" min="-1.5" max="5" step="0.01" value="0.8"></div>
+        <div class="ctl"><label>Signal pair</label><select id="pair"><option value="rr">rect ∗ rect (→ triangle)</option><option value="re" selected>rect ∗ exponential (RC low-pass)</option><option value="ee">exponential ∗ exponential</option></select></div>
+        <div class="ctl"><label>Decay $a$ (1/s) <b id="ac-v"></b></label><input type="range" id="ac" min="0.5" max="5" step="0.1" value="2"></div>
+        <div class="ctl"><label>&nbsp;</label><div class="chips"><button class="btn" id="play">▶ Animate</button></div></div>
       </div>
     </div>
     <div class="card white">
-      <h3>Tích phân chập</h3>
+      <h3>Convolution integral</h3>
       <div class="eq">$$y(t)=\int_{-\infty}^{\infty}x(\tau)\,h(t-\tau)\,d\tau$$</div>
       <div class="eq" id="cv-eq"></div>
       <table class="read">
-        <tr><td>Diện tích tính số tại $t$</td><td id="cv-num"></td></tr>
-        <tr><td>$y(t)$ giải tích</td><td id="cv-ana"></td></tr>
-        <tr><td>Sai lệch tuyệt đối</td><td id="cv-err"></td></tr>
+        <tr><td>Numerical area at $t$</td><td id="cv-num"></td></tr>
+        <tr><td>Analytical $y(t)$</td><td id="cv-ana"></td></tr>
+        <tr><td>Absolute difference</td><td id="cv-err"></td></tr>
       </table>
-      <p class="note">Màu hồng: $x(\tau)$ · xanh da trời: $h(t-\tau)$ · vùng tô: tích. Đồ thị dưới: đầu ra đã vạch đến thời điểm hiện tại (nét liền) và toàn bộ đầu ra giải tích (nét nhạt).</p>
+      <p class="note">Rose: $x(\tau)$ · sky: $h(t-\tau)$ · shaded: product. Lower plot: the output traced so far (solid) and the full analytical output (light).</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
-  <div class="sechead"><div><span class="tag c">Mức C · SIG-C</span><h2>Lấy mẫu, chồng phổ và khôi phục tín hiệu</h2>
-    <p class="lead">Tín hiệu sin $x(t)=\cos(2\pi f_0t)$ được lấy mẫu với tần số $f_s$. Nếu $f_s<2f_0$, các mẫu không thể phân biệt với một tín hiệu sin có tần số thấp hơn, gọi là tín hiệu chồng phổ (alias). Tần số chồng phổ được đo từ DFT của các mẫu và so sánh với giá trị dự đoán $f_a=|f_0-k f_s|$, trong đó $k=\operatorname{round}(f_0/f_s)$.</p></div>
-    <span class="tag v">Kiểm chứng: giải tích + MATLAB fft</span></div>
+  <div class="sechead"><div><span class="tag c">Level C · SIG-C</span><h2>Sampling, Aliasing and Reconstruction</h2>
+    <p class="lead">A sinusoid $x(t)=\cos(2\pi f_0t)$ is sampled at $f_s$. If $f_s<2f_0$, the samples are indistinguishable from a lower-frequency sinusoid, the alias. The alias frequency is measured from the DFT of the samples and compared with the prediction $f_a=|f_0-k f_s|$, where $k=\operatorname{round}(f_0/f_s)$.</p></div>
+    <span class="tag v">Validation: analytical + MATLAB fft</span></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="sm1" data-h="260"></canvas></div>
@@ -177,22 +177,22 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
       <div class="controls c3">
         <div class="ctl"><label>$f_0$ (Hz) <b id="f0-v"></b></label><input type="range" id="f0" min="1" max="30" step="0.5" value="7"></div>
         <div class="ctl"><label>$f_s$ (Hz) <b id="fs-v"></b></label><input type="range" id="fs" min="4" max="60" step="1" value="10"></div>
-        <div class="ctl"><label>Độ dài bản ghi (s) <b id="Tr-v"></b></label><input type="range" id="Tr" min="1" max="8" step="1" value="4"></div>
+        <div class="ctl"><label>Record length (s) <b id="Tr-v"></b></label><input type="range" id="Tr" min="1" max="8" step="1" value="4"></div>
       </div>
     </div>
     <div class="card white">
-      <h3>Dự đoán và đo đạc</h3>
+      <h3>Prediction vs measurement</h3>
       <table class="read">
-        <tr><td>Tần số Nyquist $2f_0$</td><td id="s-ny"></td></tr>
-        <tr><td>Điều kiện</td><td id="s-cond"></td></tr>
-        <tr><td>$f_a$ dự đoán</td><td id="s-pred"></td></tr>
-        <tr><td>Đỉnh DFT (cửa sổ Hann, nội suy)</td><td id="s-meas"></td></tr>
-        <tr><td>Số mẫu $N$ · độ rộng bin $f_s/N$</td><td id="s-n"></td></tr>
-        <tr><td>Sai số</td><td id="s-err"></td></tr>
+        <tr><td>Nyquist rate $2f_0$</td><td id="s-ny"></td></tr>
+        <tr><td>Condition</td><td id="s-cond"></td></tr>
+        <tr><td>Predicted $f_a$</td><td id="s-pred"></td></tr>
+        <tr><td>DFT peak (Hann, interpolated)</td><td id="s-meas"></td></tr>
+        <tr><td>Samples $N$ · bin width $f_s/N$</td><td id="s-n"></td></tr>
+        <tr><td>Error</td><td id="s-err"></td></tr>
       </table>
       <div id="s-verdict" class="verdict"></div>
-      <p class="note">Đồ thị trên: tín hiệu thực (nét nhạt), các mẫu (chấm) và tín hiệu khôi phục bằng nội suy sinc (màu hồng). Phép khôi phục chỉ cho lại $x(t)$ khi $f_s>2f_0$; nếu không, kết quả là tín hiệu chồng phổ.</p>
-      <details class="matlab"><summary>Mã MATLAB tham chiếu</summary><pre>f0 = 7; fs = 10; T = 4;
+      <p class="note">Upper plot: true signal (light), samples (dots) and sinc reconstruction (rose). Reconstruction recovers $x(t)$ only when $f_s>2f_0$; otherwise it returns the alias.</p>
+      <details class="matlab"><summary>MATLAB reference script</summary><pre>f0 = 7; fs = 10; T = 4;
 n = 0:round(T*fs)-1;  x = cos(2*pi*f0*n/fs);
 w = hann(numel(x))';  Nfft = 2^16;
 X = abs(fft(x.*w, Nfft));  f = (0:Nfft-1)*fs/Nfft;
@@ -203,12 +203,12 @@ fa_pred = abs(f0 - round(f0/fs)*fs)</pre></details>
 </section>
 
 <section class="panel" id="quiz">
-  <div class="sechead"><div><span class="tag q">Đánh giá</span><h2>Câu hỏi tự đánh giá</h2></div><span class="score" id="score"></span></div>
+  <div class="sechead"><div><span class="tag q">Assessment</span><h2>Self-Assessment Quiz</h2></div><span class="score" id="score"></span></div>
   <div class="quiz" id="quizBox"></div>
 </section>
 
 </main>
-<footer class="p2nav"><a href="index.html">← Trang chủ</a> · <a href="survey.html?role=student">Làm phiếu khảo sát sinh viên</a> · <a href="survey.html?role=lecturer">Phiếu giảng viên</a></footer>
+<footer class="p2nav"><a href="../index.html?lang=en">← Home</a> · <a href="../survey.html?role=student&amp;lang=en">Student questionnaire</a> · <a href="../survey.html?role=lecturer&amp;lang=en">Lecturer questionnaire</a></footer>
 <script>
 /* ===================== shared helpers ===================== */
 const $ = id => document.getElementById(id);
@@ -316,20 +316,20 @@ function quiz(containerId, scoreId, items) {
   const box = $(containerId);
   box.innerHTML = items.map((it, i) => `
     <div class="qcard" id="q${i}">
-      <div class="qn">Câu ${i + 1}${it.num !== undefined ? ' · tính số' : ''}</div>
+      <div class="qn">Question ${i + 1}${it.num !== undefined ? ' · numerical' : ''}</div>
       <div style="margin-top:6px">${it.q}</div>
       ${it.num !== undefined
-        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Kiểm tra</button></div>`
+        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Check</button></div>`
         : it.opts.map((o, j) => `<button class="opt" data-j="${j}" onclick="__qa(${i},${j})">${String.fromCharCode(65 + j)}. ${o}</button>`).join('')}
       <div class="fb" id="q${i}-fb"></div>
     </div>`).join('');
-  const upd = () => { $(scoreId).textContent = `Điểm: ${score} / ${items.length}`; };
+  const upd = () => { $(scoreId).textContent = `Score: ${score} / ${items.length}`; };
   window.__qa = (i, j) => {
     if (done[i]) return; const it = items[i]; let ok;
     if (it.num !== undefined) { const v = parseFloat($(`q${i}-in`).value); if (!isFinite(v)) return; ok = Math.abs(v - it.num) <= it.tol; }
     else { ok = j === it.ans; document.querySelectorAll(`#q${i} button.opt`).forEach(b => { b.disabled = true; const k = +b.dataset.j; if (k === it.ans) b.classList.add('right'); else if (k === j) b.classList.add('wrong'); }); }
     done[i] = true; if (ok) score++;
-    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Đúng. ' : '✗ Chưa đúng. ') + it.fb; typeset([fb]); upd();
+    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Correct. ' : '✗ Not quite. ') + it.fb; typeset([fb]); upd();
   };
   upd(); typeset([box]);
 }
@@ -348,7 +348,7 @@ function quiz(containerId, scoreId, items) {
   const rect = t => (t >= 0 && t <= 1) ? 1 : 0;
   function sig(pair, a) {
     const ex = t => t >= 0 ? Math.exp(-a*t) : 0;
-    if (pair === 'rr') return {x: rect, h: rect, y: t => t < 0 ? 0 : t < 1 ? t : t < 2 ? 2 - t : 0, eq:'$$y(t)=\\begin{cases}t,&0\\le t<1\\\\2-t,&1\\le t<2\\\\0,&\\text{trường hợp khác}\\end{cases}$$', ymax:1.15};
+    if (pair === 'rr') return {x: rect, h: rect, y: t => t < 0 ? 0 : t < 1 ? t : t < 2 ? 2 - t : 0, eq:'$$y(t)=\\begin{cases}t,&0\\le t<1\\\\2-t,&1\\le t<2\\\\0,&\\text{otherwise}\\end{cases}$$', ymax:1.15};
     if (pair === 're') return {x: rect, h: ex, y: t => t < 0 ? 0 : t < 1 ? (1 - Math.exp(-a*t))/a : (Math.exp(-a*(t - 1)) - Math.exp(-a*t))/a, eq:'$$y(t)=\\begin{cases}\\frac{1-e^{-at}}{a},&0\\le t<1\\\\\\frac{e^{-a(t-1)}-e^{-at}}{a},&t\\ge1\\end{cases}$$', ymax:Math.max(1.15, (1 - Math.exp(-a))/a*1.15)};
     return {x: t => t >= 0 ? Math.exp(-t) : 0, h: ex, y: t => t < 0 ? 0 : Math.abs(a - 1) < 1e-9 ? t*Math.exp(-t) : (Math.exp(-t) - Math.exp(-a*t))/(a - 1), eq:'$$y(t)=\\frac{e^{-t}-e^{-at}}{a-1}\\,u(t)\\quad(x=e^{-t}u(t))$$', ymax:1.15};
   }
@@ -360,21 +360,21 @@ function quiz(containerId, scoreId, items) {
     const xs = taus.map(s.x), hs = taus.map(tt => s.h(t - tt)), pr = taus.map((tt,i) => xs[i]*hs[i]);
     p1.clear(); p1.axes(); p1.fillArea(taus, pr, 'rgba(79,70,229,.22)'); p1.line(taus, xs, COLORS.rose, 2.5); p1.line(taus, hs, COLORS.sky, 2.5); p1.vline(t, COLORS.slate);
     p1.text('t = ' + t.toFixed(2), t + 0.08, 1.15, COLORS.slate); p1.legend([['x(τ)', COLORS.rose], ['h(t−τ)', COLORS.sky]]);
-    // diện tích theo quy tắc hình thang trên lưới mịn
+    // trapezoidal area over fine grid
     let area = 0; const M = 8000, a0 = -2.5, b0 = 5.5, d = (b0 - a0)/M; for (let i = 0; i <= M; i++) { const tt = a0 + i*d, w = (i === 0 || i === M) ? 0.5 : 1; area += w*s.x(tt)*s.h(t - tt); } area *= d;
     const ts = []; for (let i = 0; i <= 650; i++) ts.push(-1.5 + i*6.5/650);
     p2.set({ymax: s.ymax}); p2.clear(); p2.axes(); p2.line(ts, ts.map(s.y), '#cbd5e1', 5); const tr = ts.filter(v => v <= t); p2.line(tr, tr.map(s.y), COLORS.indigo, 2.5); p2.dot(t, area, COLORS.indigo, 5);
     $('cv-num').textContent = fmt(area, 5); $('cv-ana').textContent = fmt(s.y(t), 5); $('cv-err').textContent = Math.abs(area - s.y(t)).toExponential(2);
   }
   const upd = bind(['tc','pair','ac'], v => { V = v; draw(); }, {tc: v => (+v).toFixed(2)});
-  $('play').onclick = () => { if (anim) { clearInterval(anim); anim = null; $('play').textContent = '▶ Chạy hoạt ảnh'; return; } $('play').textContent = '❚❚ Tạm dừng';
+  $('play').onclick = () => { if (anim) { clearInterval(anim); anim = null; $('play').textContent = '▶ Animate'; return; } $('play').textContent = '❚❚ Pause';
     anim = setInterval(() => { const el = $('tc'); let v = +el.value + 0.03; if (v > 5) v = -1.5; el.value = v; el.dispatchEvent(new Event('input')); }, 30); };
   p1.onresize = draw; p2.onresize = draw; upd();
 })();
 
 /* ---------- SIG-C: sampling and aliasing ---------- */
 (function () {
-  const p1 = new Plot($('sm1'), {xlabel:'t (s)', ylabel:'x(t), mẫu, tín hiệu khôi phục', ymin:-1.5, ymax:1.6}), p2 = new Plot($('sm2'), {xlabel:'f (Hz)', ylabel:'|X(f)| (chuẩn hóa)', ymin:0, ymax:1.15});
+  const p1 = new Plot($('sm1'), {xlabel:'t (s)', ylabel:'x(t), samples, reconstruction', ymin:-1.5, ymax:1.6}), p2 = new Plot($('sm2'), {xlabel:'f (Hz)', ylabel:'|X(f)| (normalized)', ymin:0, ymax:1.15});
   let V = null;
   function draw() {
     if (!V) return; const f0 = V.f0, fs = V.fs, T = V.Tr, N = Math.round(T*fs);
@@ -384,8 +384,8 @@ function quiz(containerId, scoreId, items) {
     const rec = tt.map(t => { let s = 0; for (let k = 0; k < N; k++) s += xn[k]*sinc(fs*t - k); return s; });
     p1.set({xmin:0, xmax:view}); p1.clear(); p1.axes(); p1.line(tt, tt.map(t => Math.cos(2*Math.PI*f0*t)), '#cbd5e1', 3); p1.line(tt, rec, COLORS.rose, 2);
     p1.stems(tn.filter(t => t <= view), xn.filter((_,k) => tn[k] <= view), COLORS.indigo, 3.5);
-    p1.legend([['x(t)', '#cbd5e1'], ['khôi phục sinc', COLORS.rose]]);
-    // DFT với cửa sổ Hann, chèn thêm số 0
+    p1.legend([['x(t)', '#cbd5e1'], ['sinc reconstruction', COLORS.rose]]);
+    // DFT with Hann window, zero padded
     const Nf = 1 << 15, re = new Float64Array(Nf), im = new Float64Array(Nf);
     for (let k = 0; k < N; k++) re[k] = xn[k]*(0.5 - 0.5*Math.cos(2*Math.PI*k/(N - 1)));
     fft(re, im); const half = Nf/2, mag = new Float64Array(half + 1); let mx = 0, km = 0;
@@ -394,29 +394,29 @@ function quiz(containerId, scoreId, items) {
     const fMeas = kk*fs/Nf, fPred = Math.abs(f0 - Math.round(f0/fs)*fs);
     const fx = [], fy = []; const step = Math.max(1, Math.floor(half/1500)); for (let k = 0; k <= half; k += step) { fx.push(k*fs/Nf); fy.push(mag[k]/mx); }
     p2.set({xmin:0, xmax:fs/2}); p2.clear(); p2.axes(); p2.line(fx, fy, COLORS.sky, 2); p2.vline(fPred, COLORS.emerald); p2.dot(fMeas, 1, COLORS.rose, 5);
-    p2.text('f_a dự đoán', Math.min(fPred + fs*0.01, fs*0.38), 1.07, COLORS.emerald);
+    p2.text('predicted f_a', Math.min(fPred + fs*0.01, fs*0.38), 1.07, COLORS.emerald);
     const alias = fs < 2*f0;
-    $('s-ny').textContent = fmt(2*f0, 1) + ' Hz'; $('s-cond').textContent = alias ? 'f_s < 2f₀ → có chồng phổ' : 'f_s > 2f₀ → không chồng phổ';
+    $('s-ny').textContent = fmt(2*f0, 1) + ' Hz'; $('s-cond').textContent = alias ? 'f_s < 2f₀ → aliasing' : 'f_s > 2f₀ → no aliasing';
     $('s-pred').textContent = fmt(fPred, 4) + ' Hz'; $('s-meas').textContent = fmt(fMeas, 4) + ' Hz'; $('s-n').textContent = `${N} · ${fmt(fs/N, 3)} Hz`;
     let ok, msg; const edge = fPred < 0.02*fs || fPred > 0.48*fs;
-    if (edge) { const ae = Math.abs(fMeas - fPred); ok = ae <= fs/N; msg = `|Δf| = ${fmt(ae,4)} Hz ≤ một bin (${fmt(fs/N,3)} Hz); f_a nằm tại DC hoặc tần số Nyquist nên sai số tương đối không có ý nghĩa`; $('s-err').textContent = fmt(ae,4) + ' Hz'; }
-    else { const e = relErr(fMeas, fPred); ok = e <= 1; msg = `E_rel = ${fmt(e,4)} % ${ok ? '≤' : '>'} ε = 1 %` + (ok ? '' : ' — hãy tăng độ dài bản ghi'); $('s-err').textContent = fmt(e,4) + ' %'; }
+    if (edge) { const ae = Math.abs(fMeas - fPred); ok = ae <= fs/N; msg = `|Δf| = ${fmt(ae,4)} Hz ≤ one bin (${fmt(fs/N,3)} Hz); f_a is at DC or Nyquist, so relative error is not meaningful`; $('s-err').textContent = fmt(ae,4) + ' Hz'; }
+    else { const e = relErr(fMeas, fPred); ok = e <= 1; msg = `E_rel = ${fmt(e,4)} % ${ok ? '≤' : '>'} ε = 1 %` + (ok ? '' : ' — lengthen the record'); $('s-err').textContent = fmt(e,4) + ' %'; }
     verdict($('s-verdict'), ok, msg);
   }
   const upd = bind(['f0','fs','Tr'], v => { V = v; draw(); }); p1.onresize = draw; p2.onresize = draw; upd();
 })();
 
 quiz('quizBox', 'score', [
-  {q:'$y(t)=x(2t-4)$ nhận được từ $x(t)$ bằng cách', opts:['nén 2 lần, sau đó dịch phải 2','dịch phải 4, sau đó nén 2 lần','cả hai cách trên đều cho cùng kết quả'], ans:2, fb:'$x(2t-4)=x(2(t-2))$. Dịch 4 rồi co giãn hệ số 2 tương đương với co giãn hệ số 2 rồi dịch 2.'},
-  {q:'Tích chập của hai xung chữ nhật đơn vị có độ rộng 1 cho ra', opts:['một xung chữ nhật độ rộng 2','một xung tam giác độ rộng 2, chiều cao 1','một hàm mũ'], ans:1, fb:'Diện tích phần chồng lấn tăng tuyến tính, sau đó giảm tuyến tính.'},
-  {q:'Một tín hiệu cosin 7 Hz được lấy mẫu với tần số 10 Hz. Sau khi khôi phục, tín hiệu có tần số bao nhiêu (Hz)?', num:3, tol:0.05, unit:'Hz', fb:'$|7-1\\cdot10|=3$ Hz.'},
-  {q:'Tần số lấy mẫu tối thiểu để tránh chồng phổ cho tín hiệu sin 12 Hz là lớn hơn một chút so với', num:24, tol:0.01, unit:'Hz', fb:'Tần số Nyquist $2f_0=24$ Hz.'},
-  {q:'Tích chập với $h(t)=\\delta(t-t_0)$', opts:['làm trễ tín hiệu vào một khoảng $t_0$','lấy đạo hàm tín hiệu vào','giữ nguyên tín hiệu vào với mọi $t_0$'], ans:0, fb:'Tính chất sàng lọc: $x(t)*\\delta(t-t_0)=x(t-t_0)$.'},
-  {q:'Trong DFT, độ dài bản ghi $T$ càng lớn thì độ phân giải tần số', opts:['càng thô','càng mịn (độ rộng bin $1/T$)','không đổi'], ans:1, fb:'Độ rộng bin là $f_s/N=1/T$.'}
+  {q:'$y(t)=x(2t-4)$ is obtained from $x(t)$ by', opts:['compressing by 2, then shifting right by 2','shifting right by 4, then compressing by 2','both of the above give the same result'], ans:2, fb:'$x(2t-4)=x(2(t-2))$. Shift-then-scale by 4 and 2 equals scale-then-shift by 2 and 2.'},
+  {q:'Convolving two unit rectangles of width 1 gives', opts:['a rectangle of width 2','a triangle of width 2 and height 1','an exponential'], ans:1, fb:'The overlap area grows linearly, then decreases linearly.'},
+  {q:'A 7 Hz cosine is sampled at 10 Hz. What frequency (Hz) appears after reconstruction?', num:3, tol:0.05, unit:'Hz', fb:'$|7-1\\cdot10|=3$ Hz.'},
+  {q:'The minimum sampling rate that avoids aliasing for a 12 Hz sinusoid is just above', num:24, tol:0.01, unit:'Hz', fb:'Nyquist rate $2f_0=24$ Hz.'},
+  {q:'Convolution with $h(t)=\\delta(t-t_0)$', opts:['delays the input by $t_0$','differentiates the input','leaves the input unchanged for all $t_0$'], ans:0, fb:'Sifting: $x(t)*\\delta(t-t_0)=x(t-t_0)$.'},
+  {q:'In the DFT, a longer record length $T$ makes the frequency resolution', opts:['coarser','finer (bin width $1/T$)','unchanged'], ans:1, fb:'Bin width is $f_s/N=1/T$.'}
 ]);
 
 </script>
-<!-- ============ Anonymous research logger — Vietnamese UI (injected; see README) ============ -->
+<!-- ============ Anonymous research logger (injected; see 2_demos_logging/README) ============ -->
 <style>
 #rlog-banner{position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:12px 14px;font-size:13.5px;box-shadow:0 8px 30px rgba(15,23,42,.35);display:none;max-width:860px;margin:0 auto}
 #rlog-banner i{color:#94a3b8}
@@ -427,17 +427,18 @@ quiz('quizBox', 'score', [
 #rlog-box button,#rlog-box a{font:inherit;font-size:12.5px;margin-left:6px}
 </style>
 <div id="rlog-banner" role="dialog" aria-live="polite">
-  <b>Nghiên cứu đánh giá học liệu</b><br>
-  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá và cải tiến học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Việc đồng ý hay từ chối không ảnh hưởng đến việc sử dụng trang hay điểm học phần.<br>
-  <button class="yes" id="rlog-yes">Đồng ý</button><button id="rlog-no">Không đồng ý</button>
+  <b>Nghiên cứu học liệu / Learning-materials research</b><br>
+  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Bạn có thể từ chối mà không ảnh hưởng gì.<br>
+  <i>This page can record an <b>anonymous usage log</b> (time per section, number of parameter changes, quiz results) to evaluate the materials. No names, student IDs, e-mails or IP addresses are collected. You may decline without any consequence.</i><br>
+  <button class="yes" id="rlog-yes">Đồng ý / Agree</button><button id="rlog-no">Không đồng ý / Decline</button>
 </div>
 <div id="rlog-box"></div>
 <script>
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = 'survey.html?role=student';   // mã ẩn danh được tự gắn thêm
-  const STUDY = 'paper2-html-demos', DEMO = '04_SIG', VERSION = 'log-v1-vi', LANG = 'vi';
+  const SURVEY_URL   = '../survey.html?role=student&lang=en';
+  const STUDY = 'paper2-html-demos', LANG = 'en', DEMO = '04_SIG', VERSION = 'log-v1';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';
   const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
@@ -447,11 +448,11 @@ quiz('quizBox', 'score', [
   const box = document.getElementById('rlog-box');
 
   function renderBox(consent) {
-    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Làm phiếu khảo sát</a>` : '';
-    box.innerHTML = `Mã ẩn danh của bạn: <span class="code">${code}</span> — hãy nhập mã này vào phiếu khảo sát (không bắt buộc).${surveyLink}
-      <br>Nhật ký sử dụng: <b>${consent === 'yes' ? 'đang ghi' : 'đang tắt'}</b>
-      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt ghi nhật ký' : 'Bật ghi nhật ký'}</button>
-      <button id="rlog-dl">Tải nhật ký (JSON)</button>`;
+    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Phiếu khảo sát / Survey</a>` : '';
+    box.innerHTML = `Mã ẩn danh của bạn / Your anonymous code: <span class="code">${code}</span> — nhập mã này vào phiếu khảo sát (không bắt buộc) / enter it in the survey (optional).${surveyLink}
+      <br>Nhật ký / Log: <b>${consent === 'yes' ? 'đang ghi / recording' : 'tắt / off'}</b>
+      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt / Turn off' : 'Bật / Turn on'}</button>
+      <button id="rlog-dl">Tải nhật ký / Download log (JSON)</button>`;
     document.getElementById('rlog-toggle').onclick = () => { ls.set(K_CONSENT, consent === 'yes' ? 'no' : 'yes'); location.reload(); };
     document.getElementById('rlog-dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = `logs_${code}.json`; a.click(); };
   }
@@ -502,7 +503,7 @@ quiz('quizBox', 'score', [
   addEventListener('pagehide', persist);
   setInterval(persist, 60000);
   ev('start', DEMO);
-  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [quản trị] tải toàn bộ nhật ký trên máy này'; box.appendChild(a); }
+  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [admin] download all logs on this device'; box.appendChild(a); }
   window.__rlog = { snapshot, persist };   // for testing
 })();
 </script>
