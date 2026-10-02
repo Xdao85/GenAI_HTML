@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Điều khiển tự động — Cực, đáp ứng bước và điều khiển PID (Demo tương tác)</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], tags: 'ams' },
+  chtml: { scale: 1.1 },
+  startup: { typeset: true }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --panel:#ffffff; --card:#f8fafc; --line:#e2e8f0; --ink:#0f172a; --ink2:#334155; --mute:#64748b;
+  --sky:#0284c7; --sky-bg:#e0f2fe; --rose:#e11d48; --rose-bg:#ffe4e6; --amber:#d97706; --amber-bg:#fef3c7;
+  --emerald:#059669; --emerald-bg:#d1fae5; --indigo:#4f46e5; --indigo-bg:#e0e7ff; --violet:#7c3aed;
+  --accent:#059669;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55;font-size:15px}
+a{color:var(--sky)}
+header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .in{max-width:1220px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.01em}
+.brand .dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--indigo),var(--rose))}
+.brand span{background:linear-gradient(90deg,var(--sky),var(--indigo),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav.links{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+nav.links a{font-size:13px;text-decoration:none;color:var(--ink2);padding:5px 10px;border-radius:8px;border:1px solid transparent}
+nav.links a:hover{border-color:var(--line);background:var(--card)}
+nav.links a.e{background:var(--emerald-bg);color:#047857}
+nav.links a.m{background:var(--sky-bg);color:#0369a1}
+nav.links a.c{background:var(--rose-bg);color:#be123c}
+main{max-width:1220px;margin:0 auto;padding:22px 20px 60px}
+section.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:26px;margin:22px 0;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.hero{position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.12),transparent 70%)}
+h1{font-size:34px;line-height:1.15;margin:8px 0 10px;letter-spacing:-.02em}
+h2{font-size:26px;margin:6px 0 6px;letter-spacing:-.01em}
+h3{font-size:16px;margin:0 0 8px}
+p.lead{color:var(--ink2);max-width:880px;margin:0}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:8px;background:var(--sky-bg);color:#0369a1}
+.tag.e{background:var(--emerald-bg);color:#047857}.tag.m{background:var(--sky-bg);color:#0369a1}.tag.c{background:var(--rose-bg);color:#be123c}.tag.q{background:var(--indigo-bg);color:#4338ca}.tag.v{background:var(--amber-bg);color:#b45309}
+.layers{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.layers span{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink2)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.sim{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;margin-top:16px}
+@media (max-width:900px){.g2,.g3,.g4,.sim{grid-template-columns:1fr}h1{font-size:28px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.card.white{background:#fff}
+.eq{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;overflow-x:auto;margin:8px 0}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.canvas-wrap{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+canvas{display:block;width:100%;touch-action:none}
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.controls.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:640px){.controls,.controls.c3{grid-template-columns:1fr}}
+.ctl label{display:flex;gap:4px;align-items:baseline;font-size:13px;color:var(--ink2)}
+.ctl label b{margin-left:auto;font-family:"JetBrains Mono",Consolas,monospace;font-weight:600;color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{width:100%;padding:6px 8px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font:inherit;font-size:13px}
+.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:9px;border:1px solid #cbd5e1;background:#fff;color:var(--ink2);cursor:pointer}
+.btn:hover{border-color:#94a3b8;color:var(--ink)}
+.btn.on{background:var(--sky-bg);border-color:#7dd3fc;color:#0369a1}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+table.read{width:100%;border-collapse:collapse;font-size:13px}
+table.read td{padding:5px 2px;border-bottom:1px dashed var(--line)}
+table.read td:last-child{text-align:right;font-family:"JetBrains Mono",Consolas,monospace;color:var(--ink)}
+.mono{font-family:"JetBrains Mono",Consolas,monospace}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:12px;font-weight:700;font-size:14px;text-align:center}
+.verdict.pass{background:var(--emerald-bg);color:#047857;border:1px solid #6ee7b7}
+.verdict.fail{background:var(--rose-bg);color:#be123c;border:1px solid #fda4af}
+.note{font-size:12.5px;color:var(--mute)}
+details.matlab{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:#0f172a;color:#e2e8f0}
+details.matlab summary{cursor:pointer;padding:9px 12px;font-size:13px;font-weight:600;color:#fbbf24}
+details.matlab pre{margin:0;padding:0 14px 14px;font-size:12.5px;overflow-x:auto;font-family:"JetBrains Mono",Consolas,monospace}
+.quiz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+@media (max-width:900px){.quiz{grid-template-columns:1fr}}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.qcard .qn{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--sky);text-transform:uppercase}
+.qcard button.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
+.qcard button.opt:hover{border-color:#94a3b8}
+.qcard button.opt[disabled]{cursor:default;opacity:.6}
+.qcard button.opt.right{opacity:1;border-color:#34d399;background:var(--emerald-bg)}
+.qcard button.opt.wrong{opacity:1;border-color:#fb7185;background:var(--rose-bg)}
+.qcard .fb{margin-top:10px;font-size:13.5px;padding:8px 10px;border-radius:10px;display:none}
+.qcard .fb.ok{display:block;background:var(--emerald-bg);color:#047857}
+.qcard .fb.no{display:block;background:var(--rose-bg);color:#be123c}
+.qcard .numrow{display:flex;gap:8px;margin-top:10px}
+.qcard input[type=number]{flex:1;padding:7px 9px;border-radius:9px;border:1px solid #cbd5e1;font:inherit}
+.score{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:#e2e8f0;color:#334155}
+.sechead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px}
+svg text{font-family:Inter,"Segoe UI",system-ui,sans-serif}
+footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);font-size:12.5px}
+</style>
+<script src="config.js"></script>
+<style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="brand"><div class="dot"></div><span>Điều khiển tự động</span></div>
+  <nav class="links">
+    <a href="#overview">Tổng quan</a>
+    <a class="e" href="#easy">Cơ bản</a>
+    <a class="m" href="#medium">Trung bình</a>
+    <a class="c" href="#complex">Nâng cao</a>
+    <a href="#quiz">Trắc nghiệm</a>
+  </nav>
+</div></header>
+<main>
+<section class="panel hero" id="overview">
+  <span class="tag">Học phần 5 · Điều khiển tự động</span>
+  <h1>Cực, đáp ứng bước và điều khiển PID</h1>
+  <p class="lead">Ba bài chuẩn CTL-E, CTL-M và CTL-C được trình bày trên cùng một trang. Tính ổn định được xác định từ vị trí các cực, các chỉ tiêu quá độ được liên hệ với $\zeta$ và $\omega_n$, và một bộ điều khiển PID tốc độ cho động cơ DC được hiệu chỉnh. Đáp ứng thời gian và các độ dự trữ Bode được tính ngay trong trình duyệt, và kết quả mô phỏng được kiểm chứng bằng nghiệm chính xác theo phương pháp phân tích thành phân thức tối giản.</p>
+  <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (mặt phẳng s, Bode)</span><span>④ Mô phỏng (RK4 vòng kín)</span><span>⑤ Đánh giá (tự chấm)</span></div>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><div class="kicker">Mục tiêu 1</div>Xác định tính ổn định BIBO từ các cực của $G(s)$.</div>
+    <div class="card"><div class="kicker">Mục tiêu 2</div>Liên hệ độ quá điều chỉnh, thời gian đỉnh và thời gian xác lập với $\zeta$ và $\omega_n$.</div>
+    <div class="card"><div class="kicker">Mục tiêu 3</div>Hiệu chỉnh $K_p,K_i,K_d$ và diễn giải độ dự trữ biên độ, độ dự trữ pha.</div>
+  </div>
+</section>
+
+<section class="panel" id="easy">
+  <div class="sechead"><div><span class="tag e">Mức E · CTL-E</span><h2>Hàm truyền, cực và tính ổn định</h2><p class="lead">Hệ tuyến tính bất biến theo thời gian ổn định BIBO khi và chỉ khi mọi cực của hàm truyền nằm hoàn toàn bên trái mặt phẳng $s$.</p></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="grid g2">
+      <div class="card"><h3>Hàm truyền</h3><div class="eq">$$G(s)=\frac{N(s)}{D(s)}=\frac{b_ms^m+\dots+b_0}{s^n+a_{n-1}s^{n-1}+\dots+a_0}$$</div></div>
+      <div class="card"><h3>Cực và các mode (thành phần dao động riêng)</h3><div class="eq">$$D(p_i)=0\ \Rightarrow\ y(t)\ni c_i e^{p_i t}$$</div><p class="note">$\mathrm{Re}\,p_i<0$: mode tắt dần. $\mathrm{Re}\,p_i>0$: mode tăng dần.</p></div>
+      <div class="card"><h3>Khâu bậc hai chuẩn</h3><div class="eq">$$G(s)=\frac{\omega_n^2}{s^2+2\zeta\omega_n s+\omega_n^2}$$</div></div>
+      <div class="card"><h3>Ví dụ</h3><p>$G(s)=\dfrac{10}{(s+1)(s^2+2s+5)}$ có các cực $-1$ và $-1\pm j2$, đều nằm ở nửa trái mặt phẳng, nên hệ ổn định.</p></div>
+    </div>
+    <div class="card white"><h3>Mặt phẳng $s$</h3>
+      <svg viewBox="0 0 340 260" width="100%" aria-label="Mặt phẳng s">
+        <rect x="20" y="15" width="150" height="225" fill="#d1fae5" opacity=".6"/><rect x="170" y="15" width="150" height="225" fill="#ffe4e6" opacity=".6"/>
+        <line x1="20" y1="128" x2="325" y2="128" stroke="#64748b"/><line x1="170" y1="240" x2="170" y2="12" stroke="#64748b"/>
+        <text x="300" y="145" font-size="12">σ</text><text x="176" y="24" font-size="12">jω</text>
+        <text x="40" y="34" font-size="12" fill="#047857" font-weight="700">ổn định (LHP)</text><text x="230" y="34" font-size="12" fill="#be123c" font-weight="700">không ổn định (RHP)</text>
+        <g font-size="14" font-weight="700"><text x="90" y="133" fill="#0f172a">×</text><text x="120" y="83" fill="#0f172a">×</text><text x="120" y="183" fill="#0f172a">×</text><text x="245" y="133" fill="#e11d48">×</text><text x="165" y="70" fill="#d97706">×</text><text x="165" y="193" fill="#d97706">×</text></g>
+        <text x="62" y="152" font-size="11">tắt dần</text><text x="128" y="70" font-size="11">dao động tắt dần</text><text x="240" y="152" font-size="11">tăng dần</text><text x="180" y="70" font-size="11" fill="#b45309">biên ổn định</text>
+      </svg></div>
+  </div>
+</section>
+
+<section class="panel" id="medium">
+  <div class="sechead"><div><span class="tag m">Mức M · CTL-M</span><h2>Đáp ứng bước của hệ bậc hai</h2><p class="lead">Thay đổi $\zeta$ và $\omega_n$ để thấy các cực $-\zeta\omega_n\pm j\omega_n\sqrt{1-\zeta^2}$ di chuyển trên các đường tròn và tia, kéo theo sự thay đổi của đáp ứng bước. Các chỉ tiêu tính theo công thức được so sánh với giá trị đo trực tiếp trên đường cong.</p></div></div>
+  <div class="sim">
+    <div>
+      <div class="grid g2">
+        <div class="canvas-wrap"><canvas id="pz" data-h="300"></canvas></div>
+        <div class="canvas-wrap"><canvas id="st" data-h="300"></canvas></div>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label>Hệ số tắt dần $\zeta$ <b id="z-v"></b></label><input type="range" id="z" min="0.05" max="1.5" step="0.01" value="0.35"></div>
+        <div class="ctl"><label>Tần số dao động riêng $\omega_n$ (rad/s) <b id="w-v"></b></label><input type="range" id="w" min="0.5" max="8" step="0.1" value="3"></div>
+      </div>
+    </div>
+    <div class="card white">
+      <h3>Chỉ tiêu chất lượng</h3>
+      <table class="read">
+        <tr><td></td><td><b>công thức · đo được</b></td></tr>
+        <tr><td>%OS $=100e^{-\zeta\pi/\sqrt{1-\zeta^2}}$</td><td id="m-os"></td></tr>
+        <tr><td>$T_p=\pi/\omega_d$</td><td id="m-tp"></td></tr>
+        <tr><td>$T_s\approx 4/(\zeta\omega_n)$ (2 %)</td><td id="m-ts"></td></tr>
+        <tr><td>Các cực</td><td id="m-p"></td></tr>
+      </table>
+      <p class="note">$T_s\approx4/\zeta\omega_n$ là xấp xỉ theo đường bao, nên thời gian xác lập đo được có thể lệch hàng chục phần trăm, nhất là khi $\zeta>0.7$. Đây là trường hợp công thức, chứ không phải mô phỏng, mới là giá trị tham chiếu gần đúng.</p>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="complex">
+  <div class="sechead"><div><span class="tag c">Mức C · CTL-C</span><h2>Điều khiển PID tốc độ động cơ DC</h2>
+    <p class="lead">Mô hình động cơ: $J=0.01$ kg·m², $b=0.1$ N·m·s, $K=0.01$, $R=1\,\Omega$, $L=0.5$ H. Đối tượng là $G(s)=\dfrac{K}{(Js+b)(Ls+R)+K^2}$ và bộ điều khiển là $C(s)=K_p+\dfrac{K_i}{s}+K_ds$. Đáp ứng với tín hiệu đặt bước đơn vị được tính bằng RK4 và kiểm chứng với nghiệm chính xác theo phân thức tối giản.</p></div>
+    <span class="tag v">Kiểm chứng: giải tích + MATLAB step/margin</span></div>
+  <div class="sim">
+    <div>
+      <div class="canvas-wrap"><canvas id="pid" data-h="280"></canvas></div>
+      <div class="grid g2" style="margin-top:10px">
+        <div class="canvas-wrap"><canvas id="bm" data-h="170"></canvas></div>
+        <div class="canvas-wrap"><canvas id="bp" data-h="170"></canvas></div>
+      </div>
+      <div class="controls c3">
+        <div class="ctl"><label>$K_p$ <b id="kp-v"></b></label><input type="range" id="kp" min="0" max="300" step="1" value="100"></div>
+        <div class="ctl"><label>$K_i$ <b id="ki-v"></b></label><input type="range" id="ki" min="1" max="400" step="1" value="200"></div>
+        <div class="ctl"><label>$K_d$ <b id="kd-v"></b></label><input type="range" id="kd" min="0" max="30" step="0.5" value="10"></div>
+        <div class="ctl"><label>Số bước RK4 $N$ <b id="np-v"></b></label><input type="range" id="np" min="100" max="6000" step="50" value="1500"></div>
+      </div>
+    </div>
+    <div class="card white">
+      <h3>Hệ vòng kín</h3>
+      <div class="eq">$$T(s)=\frac{K(K_ds^2+K_ps+K_i)}{D(s)}$$$$\begin{aligned}D(s)&=a_2s^3+(a_1+KK_d)s^2\\&\quad+(a_0+KK_p)s+KK_i\end{aligned}$$</div>
+      <table class="read">
+        <tr><td>Cực vòng kín</td><td id="p-poles"></td></tr>
+        <tr><td>Độ quá điều chỉnh · $T_s$ (2 %)</td><td id="p-os"></td></tr>
+        <tr><td>Giá trị xác lập (mô phỏng · FVT $T(0)$)</td><td id="p-fv"></td></tr>
+        <tr><td>Độ dự trữ biên độ · độ dự trữ pha</td><td id="p-m"></td></tr>
+        <tr><td>NRMSE RK4 so với nghiệm chính xác</td><td id="p-nr"></td></tr>
+      </table>
+      <div id="p-verdict" class="verdict"></div>
+      <details class="matlab"><summary>Mã MATLAB tham chiếu</summary><pre>J = 0.01; b = 0.1; K = 0.01; R = 1; L = 0.5;
+s = tf('s');  G = K/((J*s + b)*(L*s + R) + K^2);
+C = pid(100, 200, 10);
+T = feedback(C*G, 1);
+step(T, 3); grid on
+stepinfo(T)             % độ quá điều chỉnh, thời gian xác lập
+[Gm, Pm] = margin(C*G)  % độ dự trữ biên độ và độ dự trữ pha
+pole(T)</pre></details>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="quiz">
+  <div class="sechead"><div><span class="tag q">Đánh giá</span><h2>Câu hỏi tự đánh giá</h2></div><span class="score" id="score"></span></div>
+  <div class="quiz" id="quizBox"></div>
+</section>
+
+</main>
+<footer class="p2nav"><a href="index.html">← Trang chủ</a> · <a href="survey.html?role=student">Làm phiếu khảo sát sinh viên</a> · <a href="survey.html?role=lecturer">Phiếu giảng viên</a></footer>
+<script>
+/* ===================== shared helpers ===================== */
+const $ = id => document.getElementById(id);
+const fmt = (v, d=3) => (Math.abs(v) >= 1e4 || (Math.abs(v) < 1e-3 && v !== 0)) ? v.toExponential(2) : v.toFixed(d);
+const typeset = els => { if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise(els).catch(()=>{}); };
+const COLORS = {sky:'#0284c7', rose:'#e11d48', amber:'#d97706', emerald:'#059669', indigo:'#4f46e5', violet:'#7c3aed', slate:'#475569', grid:'#e2e8f0', axis:'#94a3b8'};
+
+/* Canvas plot with HiDPI support and data-to-pixel mapping */
+class Plot {
+  constructor(canvas, opt) {
+    this.c = canvas; this.ctx = canvas.getContext('2d'); this.opt = Object.assign({pad:[16,14,30,46], xlabel:'', ylabel:''}, opt);
+    this.resize(); new ResizeObserver(() => { this.resize(); if (this.onresize) this.onresize(); }).observe(canvas);
+  }
+  resize() {
+    const r = this.c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    const h = this.c.dataset.h ? +this.c.dataset.h : 300;
+    this.c.style.height = h + 'px';
+    this.W = Math.max(200, r.width); this.H = h;
+    this.c.width = this.W * dpr; this.c.height = this.H * dpr; this.ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  set(range) { Object.assign(this.opt, range); }
+  X(x) { const [t,r,b,l] = this.opt.pad; return l + (x - this.opt.xmin) / (this.opt.xmax - this.opt.xmin) * (this.W - l - r); }
+  Y(y) { const [t,r,b,l] = this.opt.pad; return t + (this.opt.ymax - y) / (this.opt.ymax - this.opt.ymin) * (this.H - t - b); }
+  clear() { this.ctx.clearRect(0,0,this.W,this.H); }
+  nice(span, n) { const raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p; }
+  axes() {
+    const g = this.ctx, o = this.opt, [t,r,b,l] = o.pad;
+    g.save(); g.font = '11px Inter, system-ui, sans-serif'; g.fillStyle = '#64748b'; g.strokeStyle = COLORS.grid; g.lineWidth = 1;
+    const dx = o.xstep || this.nice(o.xmax - o.xmin, 8), dy = o.ystep || this.nice(o.ymax - o.ymin, 5);
+    g.textAlign = 'center'; g.textBaseline = 'top';
+    for (let x = Math.ceil(o.xmin/dx)*dx; x <= o.xmax + 1e-9; x += dx) { const px = this.X(x); g.beginPath(); g.moveTo(px,t); g.lineTo(px,this.H-b); g.stroke(); g.fillText(o.xfmt ? o.xfmt(x) : +x.toPrecision(4), px, this.H - b + 5); }
+    g.textAlign = 'right'; g.textBaseline = 'middle';
+    for (let y = Math.ceil(o.ymin/dy)*dy; y <= o.ymax + 1e-9; y += dy) { const py = this.Y(y); g.beginPath(); g.moveTo(l,py); g.lineTo(this.W-r,py); g.stroke(); g.fillText(o.yfmt ? o.yfmt(y) : +y.toPrecision(4), l - 6, py); }
+    g.strokeStyle = COLORS.axis; g.lineWidth = 1.2;
+    if (o.ymin < 0 && o.ymax > 0) { g.beginPath(); g.moveTo(l,this.Y(0)); g.lineTo(this.W-r,this.Y(0)); g.stroke(); }
+    if (o.xmin < 0 && o.xmax > 0) { g.beginPath(); g.moveTo(this.X(0),t); g.lineTo(this.X(0),this.H-b); g.stroke(); }
+    g.strokeRect(l, t, this.W - l - r, this.H - t - b);
+    g.fillStyle = '#334155'; g.font = '12px Inter, system-ui, sans-serif';
+    if (o.xlabel) { g.textAlign = 'right'; g.textBaseline = 'bottom'; g.fillText(o.xlabel, this.W - r - 4, this.H - b - 4); }
+    if (o.ylabel) { g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText(o.ylabel, l + 6, t + 4); }
+    g.restore();
+  }
+  line(xs, ys, color, width=2, dash=null) { this.clipLine(xs, ys, color, width, dash); }
+  clipLine(xs, ys, color, width=2, dash=null) {
+    const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.beginPath(); g.rect(l,t,this.W-l-r,this.H-t-b); g.clip();
+    g.beginPath(); g.strokeStyle = color; g.lineWidth = width; if (dash) g.setLineDash(dash);
+    let pen = false;
+    for (let i = 0; i < xs.length; i++) { const y = ys[i]; if (!isFinite(y)) { pen = false; continue; } const px = this.X(xs[i]), py = this.Y(y); if (!pen) { g.moveTo(px,py); pen = true; } else g.lineTo(px,py); }
+    g.stroke(); g.restore();
+  }
+  fillArea(xs, ys, color) {
+    const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.beginPath(); g.rect(l,t,this.W-l-r,this.H-t-b); g.clip();
+    g.beginPath(); g.moveTo(this.X(xs[0]), this.Y(0));
+    for (let i = 0; i < xs.length; i++) g.lineTo(this.X(xs[i]), this.Y(ys[i]));
+    g.lineTo(this.X(xs[xs.length-1]), this.Y(0)); g.closePath(); g.fillStyle = color; g.fill(); g.restore();
+  }
+  stems(xs, ys, color, r=3) {
+    const g = this.ctx; g.save(); g.strokeStyle = color; g.fillStyle = color; g.lineWidth = 1.5;
+    for (let i = 0; i < xs.length; i++) { const px = this.X(xs[i]), py = this.Y(ys[i]), p0 = this.Y(Math.max(this.opt.ymin, Math.min(this.opt.ymax, 0))); g.beginPath(); g.moveTo(px,p0); g.lineTo(px,py); g.stroke(); g.beginPath(); g.arc(px,py,r,0,2*Math.PI); g.fill(); }
+    g.restore();
+  }
+  dot(x, y, color, r=4.5) { const g = this.ctx; g.save(); g.fillStyle = color; g.beginPath(); g.arc(this.X(x), this.Y(y), r, 0, 2*Math.PI); g.fill(); g.restore(); }
+  vline(x, color, dash=[4,4]) { const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.strokeStyle = color; g.setLineDash(dash); g.beginPath(); g.moveTo(this.X(x),t); g.lineTo(this.X(x),this.H-b); g.stroke(); g.restore(); }
+  hline(y, color, dash=[4,4]) { const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.strokeStyle = color; g.setLineDash(dash); g.beginPath(); g.moveTo(l,this.Y(y)); g.lineTo(this.W-r,this.Y(y)); g.stroke(); g.restore(); }
+  text(s, x, y, color='#334155', align='left', font='12px Inter, system-ui, sans-serif') { const g = this.ctx; g.save(); g.fillStyle = color; g.font = font; g.textAlign = align; g.textBaseline = 'middle'; g.fillText(s, this.X(x), this.Y(y)); g.restore(); }
+  legend(items) { const g = this.ctx, [t,r] = this.opt.pad; g.save(); g.font = '12px Inter, system-ui, sans-serif'; let y = t + 12; for (const [label,color,dash] of items) { const x = this.W - r - 150; g.strokeStyle = color; g.lineWidth = 2.5; g.setLineDash(dash || []); g.beginPath(); g.moveTo(x, y); g.lineTo(x + 22, y); g.stroke(); g.setLineDash([]); g.fillStyle = '#334155'; g.textBaseline = 'middle'; g.fillText(label, x + 28, y); y += 17; } g.restore(); }
+}
+
+/* Slider binding: returns current numeric values and redraws on input */
+function bind(ids, cb, fmts = {}) {
+  const read = () => { const v = {}; ids.forEach(id => { const el = $(id); v[id] = el.tagName === 'SELECT' ? el.value : +el.value; const out = $(id + '-v'); if (out) out.textContent = fmts[id] ? fmts[id](v[id]) : el.value; }); return v; };
+  ids.forEach(id => $(id).addEventListener('input', () => cb(read())));
+  return () => cb(read());
+}
+
+/* Validation metrics */
+function relErr(x, ref) { return Math.abs(x - ref) / Math.max(Math.abs(ref), 1e-12) * 100; }
+function nrmse(a, b) { let s = 0, mn = Infinity, mx = -Infinity; for (let i = 0; i < a.length; i++) { s += (a[i] - b[i]) ** 2; mn = Math.min(mn, b[i]); mx = Math.max(mx, b[i]); } return Math.sqrt(s / a.length) / Math.max(mx - mn, 1e-12) * 100; }
+function verdict(el, ok, msg) { el.className = 'verdict ' + (ok ? 'pass' : 'fail'); el.textContent = (ok ? '✓ PASS — ' : '✗ FAIL — ') + msg; }
+
+/* Classical RK4 for y' = f(t, y) with vector state */
+function rk4(f, y0, t0, t1, h) {
+  const ts = [t0], ys = [y0.slice()]; let t = t0, y = y0.slice(); const n = Math.round((t1 - t0) / h);
+  const add = (a, b, k) => a.map((v, i) => v + k * b[i]);
+  for (let i = 0; i < n; i++) {
+    const k1 = f(t, y), k2 = f(t + h/2, add(y, k1, h/2)), k3 = f(t + h/2, add(y, k2, h/2)), k4 = f(t + h, add(y, k3, h));
+    y = y.map((v, j) => v + h / 6 * (k1[j] + 2*k2[j] + 2*k3[j] + k4[j])); t = t0 + (i + 1) * h; ts.push(t); ys.push(y.slice());
+  }
+  return {ts, ys};
+}
+
+/* Radix-2 FFT (in place, re/im arrays, length power of two) */
+function fft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let bit = n >> 1; for (; j & bit; bit >>= 1) j ^= bit; j ^= bit; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) { let cr = 1, ci = 0; for (let k = 0; k < len / 2; k++) { const a = i + k, b = a + len / 2, xr = re[b] * cr - im[b] * ci, xi = re[b] * ci + im[b] * cr; re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi; const nr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = nr; } }
+  }
+}
+
+/* Quiz engine: multiple-choice {q, opts, ans, fb} and numeric {q, num, tol, unit, fb} items */
+function quiz(containerId, scoreId, items) {
+  let score = 0; const done = {};
+  const box = $(containerId);
+  box.innerHTML = items.map((it, i) => `
+    <div class="qcard" id="q${i}">
+      <div class="qn">Câu ${i + 1}${it.num !== undefined ? ' · tính số' : ''}</div>
+      <div style="margin-top:6px">${it.q}</div>
+      ${it.num !== undefined
+        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Kiểm tra</button></div>`
+        : it.opts.map((o, j) => `<button class="opt" data-j="${j}" onclick="__qa(${i},${j})">${String.fromCharCode(65 + j)}. ${o}</button>`).join('')}
+      <div class="fb" id="q${i}-fb"></div>
+    </div>`).join('');
+  const upd = () => { $(scoreId).textContent = `Điểm: ${score} / ${items.length}`; };
+  window.__qa = (i, j) => {
+    if (done[i]) return; const it = items[i]; let ok;
+    if (it.num !== undefined) { const v = parseFloat($(`q${i}-in`).value); if (!isFinite(v)) return; ok = Math.abs(v - it.num) <= it.tol; }
+    else { ok = j === it.ans; document.querySelectorAll(`#q${i} button.opt`).forEach(b => { b.disabled = true; const k = +b.dataset.j; if (k === it.ans) b.classList.add('right'); else if (k === j) b.classList.add('wrong'); }); }
+    done[i] = true; if (ok) score++;
+    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Đúng. ' : '✗ Chưa đúng. ') + it.fb; typeset([fb]); upd();
+  };
+  upd(); typeset([box]);
+}
+/* ---------- complex helpers and polynomial roots (Durand–Kerner) ---------- */
+const cx = (re, im=0) => ({re, im}), cadd = (a,b) => cx(a.re+b.re, a.im+b.im), csub = (a,b) => cx(a.re-b.re, a.im-b.im), cmul = (a,b) => cx(a.re*b.re-a.im*b.im, a.re*b.im+a.im*b.re);
+const cdiv = (a,b) => { const d = b.re*b.re + b.im*b.im; return cx((a.re*b.re + a.im*b.im)/d, (a.im*b.re - a.re*b.im)/d); }, cexp = a => { const e = Math.exp(a.re); return cx(e*Math.cos(a.im), e*Math.sin(a.im)); };
+function peval(c, z) { let r = cx(0); for (const k of c) r = cadd(cmul(r, z), cx(k)); return r; }   // c: highest power first
+function pderiv(c) { const n = c.length - 1; return c.slice(0, -1).map((k, i) => k*(n - i)); }
+function roots(c) { const a = c.map(k => k/c[0]), n = a.length - 1, Rb = 1 + Math.max(...a.slice(1).map(Math.abs));
+  let z = [], q = cx(1); for (let i = 0; i < n; i++) { z.push(cmul(cx(Rb*0.5), q)); q = cmul(q, cx(0.4, 0.9)); }
+  for (let it = 0; it < 2000; it++) { let mv = 0; z = z.map((zi, i) => { let den = cx(1); z.forEach((zj, j) => { if (j !== i) den = cmul(den, csub(zi, zj)); }); const d = cdiv(peval(a, zi), den); mv = Math.max(mv, Math.hypot(d.re, d.im)/(1 + Math.hypot(zi.re, zi.im))); return csub(zi, d); }); if (mv < 1e-15) break; }
+  return z.map(r => Math.abs(r.im) < 1e-9*(1 + Math.abs(r.re)) ? cx(r.re, 0) : r).sort((p, q) => q.re - p.re); }
+const pfmt = p => Math.abs(p.im) < 1e-6 ? fmt(p.re, 2) : `${fmt(p.re, 2)}${p.im >= 0 ? '+' : '−'}j${fmt(Math.abs(p.im), 2)}`;
+
+/* ---------- CTL-M ---------- */
+(function () {
+  const pz = new Plot($('pz'), {xlabel:'σ', ylabel:'jω', pad:[14,14,26,36]}), st = new Plot($('st'), {xlabel:'t (s)', ylabel:'y(t)', pad:[14,14,26,40]}); let V = null;
+  function y(z, w, t) { if (z < 1) { const wd = w*Math.sqrt(1 - z*z); return 1 - Math.exp(-z*w*t)*(Math.cos(wd*t) + z/Math.sqrt(1 - z*z)*Math.sin(wd*t)); }
+    if (z === 1) return 1 - (1 + w*t)*Math.exp(-w*t); const r = w*Math.sqrt(z*z - 1), s1 = -z*w + r, s2 = -z*w - r; return 1 + (s2*Math.exp(s1*t) - s1*Math.exp(s2*t))/(s1 - s2); }
+  function draw() {
+    if (!V) return; const z = V.z, w = V.w; const L = 9;
+    pz.set({xmin:-L, xmax:2, ymin:-L*0.75, ymax:L*0.75}); pz.clear(); pz.axes();
+    const g = pz.ctx; g.save(); g.strokeStyle = '#cbd5e1'; g.setLineDash([3,4]); g.beginPath(); g.arc(pz.X(0), pz.Y(0), Math.abs(pz.X(w) - pz.X(0)), Math.PI/2, 3*Math.PI/2); g.stroke(); g.restore();
+    const ps = z < 1 ? [cx(-z*w, w*Math.sqrt(1 - z*z)), cx(-z*w, -w*Math.sqrt(1 - z*z))] : [cx(-z*w + w*Math.sqrt(z*z - 1)), cx(-z*w - w*Math.sqrt(z*z - 1))];
+    ps.forEach(p => { pz.text('×', p.re, p.im, COLORS.rose, 'center', 'bold 20px Inter, sans-serif'); });
+    if (z < 1) { const g2 = pz.ctx; g2.save(); g2.strokeStyle = COLORS.indigo; g2.beginPath(); g2.moveTo(pz.X(0), pz.Y(0)); g2.lineTo(pz.X(ps[0].re), pz.Y(ps[0].im)); g2.stroke(); g2.restore(); pz.text('θ = cos⁻¹ζ', ps[0].re*0.5 + 0.3, ps[0].im*0.5 + 0.6, COLORS.indigo); }
+    const T = Math.max(6, Math.min(25, 10/(z*w))), ts = []; for (let i = 0; i <= 1500; i++) ts.push(i*T/1500); const ys = ts.map(t => y(z, w, t));
+    st.set({xmin:0, xmax:T, ymin:0, ymax:Math.max(1.2, Math.max(...ys)*1.1)}); st.clear(); st.axes(); st.hline(1, COLORS.slate); st.hline(1.02, '#a7f3d0', [2,3]); st.hline(0.98, '#a7f3d0', [2,3]); st.line(ts, ys, COLORS.emerald, 2.5);
+    const ym = Math.max(...ys), im = ys.indexOf(ym); let its = ys.length - 1; while (its > 0 && Math.abs(ys[its] - 1) <= 0.02) its--; const tsMeas = ts[Math.min(its + 1, ts.length - 1)];
+    if (z < 1) { st.dot(ts[im], ym, COLORS.rose); } st.vline(tsMeas, COLORS.amber);
+    const osF = z < 1 ? 100*Math.exp(-z*Math.PI/Math.sqrt(1 - z*z)) : 0, tpF = z < 1 ? Math.PI/(w*Math.sqrt(1 - z*z)) : NaN, tsF = 4/(z*w);
+    $('m-os').textContent = `${fmt(osF,2)} % · ${fmt(Math.max(0, (ym - 1)*100),2)} %`; $('m-tp').textContent = z < 1 ? `${fmt(tpF,3)} · ${fmt(ts[im],3)} s` : 'không có đỉnh';
+    $('m-ts').textContent = `${fmt(tsF,2)} · ${fmt(tsMeas,2)} s`; $('m-p').textContent = ps.map(pfmt).join(', ');
+  }
+  const upd = bind(['z','w'], v => { V = v; draw(); }); pz.onresize = draw; st.onresize = draw; upd();
+})();
+
+/* ---------- CTL-C: PID control of a DC motor ---------- */
+(function () {
+  const J = 0.01, b = 0.1, K = 0.01, R = 1, L = 0.5, a2 = J*L, a1 = J*R + b*L, a0 = b*R + K*K;
+  const ps = new Plot($('pid'), {xlabel:'t (s)', ylabel:'tốc độ ω(t) (rad/s), tín hiệu đặt bước đơn vị'});
+  const pm = new Plot($('bm'), {xlabel:'ω (rad/s)', ylabel:'|L(jω)| (dB)', pad:[12,12,26,44], xfmt: v => String(+Math.pow(10, v).toPrecision(2))}), pp = new Plot($('bp'), {xlabel:'ω (rad/s)', ylabel:'∠L(jω) (độ)', pad:[12,12,26,44], xfmt: v => String(+Math.pow(10, v).toPrecision(2))});
+  let V = null;
+  function draw() {
+    if (!V) return; const {kp, ki, kd, np} = V;
+    const num = [K*kd, K*kp, K*ki], den = [a2, a1 + K*kd, a0 + K*kp, K*ki];
+    const P = roots(den), slow = Math.min(...P.map(p => Math.abs(p.re))), stable = P.every(p => p.re < 0);
+    const T = Math.max(0.5, Math.min(stable ? 8/slow : 3, 15));
+    // exact step response: y = T(0) + sum N(p)/(p D'(p)) e^{pt}
+    const dD = pderiv(den), res = P.map(p => cdiv(peval(num, p), cmul(p, peval(dD, p)))), T0 = num[2]/den[3];
+    const exact = t => { let s = cx(T0); P.forEach((p, i) => { s = cadd(s, cmul(res[i], cexp(cx(p.re*t, p.im*t)))); }); return s.re; };
+    // RK4 on controllable canonical form of T(s) (normalized by a2)
+    const d = den.map(k => k/a2), n = num.map(k => k/a2);
+    const f = (t, x) => [x[1], x[2], -d[3]*x[0] - d[2]*x[1] - d[1]*x[2] + 1];
+    const sim = rk4(f, [0,0,0], 0, T, T/np), yn = sim.ys.map(x => n[2]*x[0] + n[1]*x[1] + n[0]*x[2]), ye = sim.ts.map(exact);
+    const fine = []; for (let i = 0; i <= 800; i++) fine.push(i*T/800);
+    const hi = Math.max(1.3, ...ye.filter(isFinite).map(Math.abs)) * 1.05;
+    ps.set({xmin:0, xmax:T, ymin:Math.min(0, ...ye) - 0.05, ymax:Math.min(hi, 3)}); ps.clear(); ps.axes(); ps.hline(1, COLORS.slate);
+    ps.line(fine, fine.map(exact), COLORS.slate, 4); ps.line(sim.ts, yn, COLORS.emerald, 2, [6,3]); ps.legend([['chính xác (thặng dư)', COLORS.slate], ['RK4', COLORS.emerald, [6,3]]]);
+    // metrics
+    const ymax = Math.max(...ye); let k = ye.length - 1; while (k > 0 && Math.abs(ye[k] - T0) <= 0.02*Math.abs(T0)) k--; const tset = sim.ts[Math.min(k + 1, ye.length - 1)];
+    $('p-poles').textContent = P.map(pfmt).join(', ');
+    $('p-os').textContent = stable ? `${fmt(Math.max(0, (ymax - T0)/T0*100), 2)} % · ${k >= ye.length - 2 ? '> khoảng mô phỏng' : fmt(tset, 3) + ' s'}` : 'không ổn định';
+    $('p-fv').textContent = `${fmt(yn[yn.length - 1], 4)} · ${fmt(T0, 4)}`;
+    // Bode of the loop L(jω) = C(jω) G(jω)
+    const ws = [], mag = [], ph = []; let prev = null, unwrap = 0;
+    for (let i = 0; i <= 600; i++) { const lw = -1 + i*4/600, w = Math.pow(10, lw), s = cx(0, w);
+      const Lj = cdiv(cmul(cx(K), cadd(cadd(cmul(cx(kd), cmul(s, s)), cmul(cx(kp), s)), cx(ki))), cmul(s, cadd(cadd(cmul(cx(a2), cmul(s, s)), cmul(cx(a1), s)), cx(a0))));
+      let a = Math.atan2(Lj.im, Lj.re)*180/Math.PI; if (prev !== null) { while (a + unwrap - prev > 180) unwrap -= 360; while (a + unwrap - prev < -180) unwrap += 360; } a += unwrap; prev = a;
+      ws.push(lw); mag.push(20*Math.log10(Math.hypot(Lj.re, Lj.im))); ph.push(a); }
+    let pmS = '∞', gmS = '∞';
+    for (let i = 1; i < ws.length; i++) { if (mag[i-1] >= 0 && mag[i] < 0) { const fr = mag[i-1]/(mag[i-1] - mag[i]), phc = ph[i-1] + fr*(ph[i] - ph[i-1]); pmS = fmt(180 + phc, 1) + '°'; } if ((ph[i-1] + 180)*(ph[i] + 180) < 0) { const fr = (ph[i-1] + 180)/(ph[i-1] - ph[i]), mc = mag[i-1] + fr*(mag[i] - mag[i-1]); gmS = fmt(-mc, 1) + ' dB'; } }
+    $('p-m').textContent = `${gmS} · ${pmS}`;
+    pm.set({xmin:-1, xmax:3, ymin:Math.max(-80, Math.min(...mag)) - 5, ymax:Math.min(120, Math.max(...mag)) + 5, xstep:1}); pm.clear(); pm.axes(); pm.hline(0, COLORS.rose); pm.line(ws, mag, COLORS.indigo, 2);
+    pp.set({xmin:-1, xmax:3, ymin:Math.min(-200, Math.min(...ph) - 10), ymax:Math.max(0, Math.max(...ph) + 10), xstep:1, ystep:45}); pp.clear(); pp.axes(); pp.hline(-180, COLORS.rose); pp.line(ws, ph, COLORS.amber, 2);
+    const nr = nrmse(yn, ye), fvErr = stable ? relErr(yn[yn.length - 1], T0) : NaN;
+    $('p-nr').textContent = fmt(nr, 5) + ' %';
+    if (!stable) verdict($('p-verdict'), nr <= 1, `vòng kín không ổn định — mô phỏng vẫn khớp với nghiệm chính xác (NRMSE ${fmt(nr,3)} %)`);
+    else verdict($('p-verdict'), nr <= 1, `NRMSE ${fmt(nr,3)} % ≤ 1 %` + (nr > 1 ? ' ✗ — hãy tăng N' : '') + `; sai số giá trị xác lập ${fmt(fvErr,3)} %`);
+  }
+  const upd = bind(['kp','ki','kd','np'], v => { V = v; draw(); }); [ps, pm, pp].forEach(p => p.onresize = draw); upd();
+})();
+
+quiz('quizBox', 'score', [
+  {q:'Hệ có các cực tại $-2$ và $+0.5$ là hệ', opts:['ổn định','không ổn định','ở biên giới ổn định'], ans:1, fb:'Một cực nằm ở nửa phải mặt phẳng, nên mode $e^{0.5t}$ tương ứng tăng dần.'},
+  {q:'Với $\\zeta=0.5$, độ quá điều chỉnh phần trăm của hệ bậc hai chuẩn xấp xỉ bằng (±0.5 %)', num:16.3, tol:0.5, unit:'%', fb:'$100e^{-0.5\\pi/\\sqrt{0.75}}\\approx16.3\\%$.'},
+  {q:'Tăng $\\omega_n$ trong khi giữ nguyên $\\zeta$ sẽ', opts:['làm đáp ứng nhanh hơn với cùng độ quá điều chỉnh','làm giảm độ quá điều chỉnh','làm hệ mất ổn định'], ans:0, fb:'Độ quá điều chỉnh chỉ phụ thuộc $\\zeta$, còn thang thời gian tỉ lệ với $1/\\omega_n$.'},
+  {q:'Thành phần tích phân trong bộ điều khiển PID', opts:['triệt tiêu sai số xác lập với tín hiệu bước','luôn làm tăng độ dự trữ pha','làm đối tượng nhanh hơn'], ans:0, fb:'Thành phần $1/s$ làm $T(0)=1$ (định lý giá trị cuối).'},
+  {q:'Độ dự trữ pha khoảng $60^\\circ$ thường cho thấy', opts:['vòng điều khiển không ổn định','hệ vòng kín tắt dần tốt','độ dự trữ biên độ bằng không'], ans:1, fb:'Độ dự trữ pha lớn tương ứng với độ quá điều chỉnh nhỏ (xấp xỉ $\\zeta\\approx PM/100$).'},
+  {q:'Thời gian xác lập (2 %) của hệ bậc hai chuẩn với $\\zeta=0.4$, $\\omega_n=5$ rad/s, tính theo $4/\\zeta\\omega_n$ (s)', num:2, tol:0.02, unit:'s', fb:'$4/(0.4\\cdot5)=2$ s.'}
+]);
+
+</script>
+<!-- ============ Anonymous research logger — Vietnamese UI (injected; see README) ============ -->
+<style>
+#rlog-banner{position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:12px 14px;font-size:13.5px;box-shadow:0 8px 30px rgba(15,23,42,.35);display:none;max-width:860px;margin:0 auto}
+#rlog-banner i{color:#94a3b8}
+#rlog-banner button{font:inherit;font-size:13px;margin:8px 8px 0 0;padding:6px 12px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#fff;cursor:pointer}
+#rlog-banner button.yes{background:#4f46e5;border-color:#4f46e5}
+#rlog-box{max-width:1220px;margin:0 auto 30px;padding:12px 20px;font-size:13px;color:#334155}
+#rlog-box .code{font-family:Consolas,monospace;font-size:16px;font-weight:700;letter-spacing:.08em;color:#4338ca;background:#eef2ff;padding:2px 8px;border-radius:6px}
+#rlog-box button,#rlog-box a{font:inherit;font-size:12.5px;margin-left:6px}
+</style>
+<div id="rlog-banner" role="dialog" aria-live="polite">
+  <b>Nghiên cứu đánh giá học liệu</b><br>
+  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá và cải tiến học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Việc đồng ý hay từ chối không ảnh hưởng đến việc sử dụng trang hay điểm học phần.<br>
+  <button class="yes" id="rlog-yes">Đồng ý</button><button id="rlog-no">Không đồng ý</button>
+</div>
+<div id="rlog-box"></div>
+<script>
+(function () {
+  /* ===================== CONFIGURATION ===================== */
+  const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
+  const SURVEY_URL   = 'survey.html?role=student';   // mã ẩn danh được tự gắn thêm
+  const STUDY = 'paper2-html-demos', DEMO = '05_CTL', VERSION = 'log-v1-vi', LANG = 'vi';
+  /* ========================================================= */
+  const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';
+  const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const rnd = n => Array.from(crypto.getRandomValues(new Uint8Array(n))).map(b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('');
+  const params = new URLSearchParams(location.search);
+  let code = ls.get(K_CODE); if (!code) { code = rnd(6); ls.set(K_CODE, code); }
+  const box = document.getElementById('rlog-box');
+
+  function renderBox(consent) {
+    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Làm phiếu khảo sát</a>` : '';
+    box.innerHTML = `Mã ẩn danh của bạn: <span class="code">${code}</span> — hãy nhập mã này vào phiếu khảo sát (không bắt buộc).${surveyLink}
+      <br>Nhật ký sử dụng: <b>${consent === 'yes' ? 'đang ghi' : 'đang tắt'}</b>
+      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt ghi nhật ký' : 'Bật ghi nhật ký'}</button>
+      <button id="rlog-dl">Tải nhật ký (JSON)</button>`;
+    document.getElementById('rlog-toggle').onclick = () => { ls.set(K_CONSENT, consent === 'yes' ? 'no' : 'yes'); location.reload(); };
+    document.getElementById('rlog-dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = `logs_${code}.json`; a.click(); };
+  }
+  const consent = ls.get(K_CONSENT);
+  if (!consent) { const b = document.getElementById('rlog-banner'); b.style.display = 'block';
+    document.getElementById('rlog-yes').onclick = () => { ls.set(K_CONSENT, 'yes'); location.reload(); };
+    document.getElementById('rlog-no').onclick = () => { ls.set(K_CONSENT, 'no'); b.style.display = 'none'; renderBox('no'); }; }
+  renderBox(consent);
+  if (consent !== 'yes') return;
+
+  /* ------------------------- logging ------------------------- */
+  const t0 = performance.now(), now = () => Math.round(performance.now() - t0);
+  const S = { study: STUDY, demo: DEMO, version: VERSION, lang: LANG, anon_code: code, session_id: rnd(8), seq: 0,
+    started_at: new Date().toISOString().slice(0, 16), device: matchMedia('(pointer:coarse)').matches ? 'touch' : 'desktop',
+    viewport_w: Math.round(innerWidth / 100) * 100, active_s: 0, n_ctrl_total: 0, n_clicks: 0,
+    sections: {}, ctrl_by_id: {}, quiz_answered: 0, quiz_correct: 0, quiz_items: {}, fail_seen: 0, fail_ids: [], events: [] };
+  const ev = (type, detail) => { if (S.events.length < 400) S.events.push([now(), type, detail]); };
+  // active time (tab visible) and per-section visible time
+  let lastTick = performance.now(); const visible = new Set();
+  document.querySelectorAll('section.panel[id]').forEach(s => S.sections[s.id] = { s: 0, n_ctrl: 0 });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { visible.add(e.target.id); ev('view', e.target.id); } else visible.delete(e.target.id); }), { threshold: 0.35 });
+  document.querySelectorAll('section.panel[id]').forEach(s => io.observe(s));
+  setInterval(() => { const t = performance.now(), dt = (t - lastTick) / 1000; lastTick = t; if (document.visibilityState !== 'visible' || dt > 5) return;
+    S.active_s += dt; visible.forEach(id => S.sections[id].s += dt); }, 1000);
+  // parameter changes (debounced per control)
+  const deb = {};
+  document.addEventListener('input', e => { const el = e.target; if (!el.id || !el.matches('input[type=range],select,input[type=number]')) return;
+    clearTimeout(deb[el.id]); deb[el.id] = setTimeout(() => { S.n_ctrl_total++; S.ctrl_by_id[el.id] = (S.ctrl_by_id[el.id] || 0) + 1;
+      const sec = el.closest('section.panel'); if (sec && S.sections[sec.id]) S.sections[sec.id].n_ctrl++; ev('ctrl', el.id + '=' + el.value); }, 400); }, true);
+  document.addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.closest('#rlog-box,#rlog-banner,.qcard')) { S.n_clicks++; ev('click', b.id || b.textContent.trim().slice(0, 20)); } }, true);
+  // quiz: wrap the global answer handler created by quiz()
+  const origQA = window.__qa;
+  if (typeof origQA === 'function') window.__qa = function (i, j) {
+    if (S.quiz_items[i] !== undefined) return origQA(i, j);
+    const r = origQA(i, j); const fb = document.getElementById('q' + i + '-fb');
+    if (fb && fb.className.match(/\b(ok|no)\b/)) { const ok = fb.classList.contains('ok'); S.quiz_items[i] = ok ? 1 : 0; S.quiz_answered++; if (ok) S.quiz_correct++; ev('quiz', i + ':' + (ok ? 1 : 0)); }
+    return r; };
+  // verification verdicts: wrap the global verdict() helper
+  const origV = window.verdict;
+  if (typeof origV === 'function') window.verdict = function (el, ok, msg) { const was = el.className; origV(el, ok, msg);
+    if (!ok && !/fail/.test(was)) { S.fail_seen++; if (!S.fail_ids.includes(el.id)) S.fail_ids.push(el.id); ev('fail', el.id); } };
+  // persist + send
+  function snapshot() { const o = JSON.parse(JSON.stringify(S)); Object.keys(o.sections).forEach(k => o.sections[k].s = Math.round(o.sections[k].s)); o.active_s = Math.round(o.active_s); return o; }
+  function persist() { S.seq++; const snap = snapshot(); let all = []; try { all = JSON.parse(ls.get(K_LOGS) || '[]'); } catch (e) {}
+    const k = all.findIndex(x => x.session_id === S.session_id); if (k >= 0) all[k] = snap; else all.push(snap); ls.set(K_LOGS, JSON.stringify(all.slice(-200)));
+    if (LOG_ENDPOINT && navigator.sendBeacon) { const d = Object.assign({}, snap, { events: JSON.stringify(snap.events) }); navigator.sendBeacon(LOG_ENDPOINT, JSON.stringify({ type: 'log_summary', data: d })); } }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') persist(); });
+  addEventListener('pagehide', persist);
+  setInterval(persist, 60000);
+  ev('start', DEMO);
+  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [quản trị] tải toàn bộ nhật ký trên máy này'; box.appendChild(a); }
+  window.__rlog = { snapshot, persist };   // for testing
+})();
+</script>
+<!-- ============ end of logger ============ -->
+
+</body>
+</html>

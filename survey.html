@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phiếu khảo sát — Học liệu HTML tương tác</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="config.js"></script>
+<style>
+:root{--ink:#0f172a;--ink2:#334155;--mute:#64748b;--line:#e2e8f0;--bg:#f8fafc;--accent:#4338ca;--ok:#047857;--err:#b91c1c}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Be Vietnam Pro",system-ui,"Segoe UI",Arial,sans-serif;font-size:19px;line-height:1.6;color:var(--ink);background:#f1f5f9}
+main{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+h1{font-size:clamp(28px,3.6vw,38px);line-height:1.25;margin:0 0 14px;letter-spacing:-.015em}
+h2{font-size:25px;margin:0 0 10px;line-height:1.3}
+h3{font-size:20px;margin:18px 0 8px}
+a{color:var(--accent)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;font-size:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px 28px;margin:20px 0;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.notice{background:#eef2ff;border:1px solid #c7d2fe;border-radius:18px;padding:18px 22px}
+.notice.err{background:#fef2f2;border-color:#fecaca;color:var(--err)}
+.notice.done{background:#ecfdf5;border-color:#a7f3d0}
+.hint{color:var(--mute);font-size:17px;margin:0 0 12px}
+.q{padding:16px 0;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0}
+.qid{display:inline-block;font-family:Consolas,monospace;font-size:13px;font-weight:700;color:var(--mute);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-right:8px;vertical-align:2px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.scale label{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;border:1.5px solid var(--line);border-radius:14px;padding:10px 4px;cursor:pointer;font-size:14.5px;line-height:1.3;color:var(--ink2);background:#fff;transition:.12s}
+.scale label b{font-size:22px;color:var(--ink)}
+.scale input{position:absolute;opacity:0;pointer-events:none}
+.scale label:has(input:checked){border-color:var(--accent);background:#eef2ff;box-shadow:0 0 0 2px #c7d2fe inset}
+.scale label:hover{border-color:#a5b4fc}
+select,input[type=text],textarea{font:inherit;font-size:18px;border:1.5px solid #cbd5e1;border-radius:12px;padding:9px 12px;background:#fff;max-width:100%}
+textarea{width:100%;min-height:120px}
+.multi{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:8px}
+.multi label{display:flex;align-items:center;gap:8px}
+input[type=checkbox]{width:20px;height:20px}
+.missing{background:#fef2f2;border-radius:14px;box-shadow:0 0 0 2px #fecaca;padding-left:10px;padding-right:10px}
+.btn{font:inherit;font-weight:700;font-size:19px;border-radius:14px;border:1.5px solid #cbd5e1;background:#fff;padding:12px 22px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{opacity:.6;cursor:wait}
+.landing{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:18px}
+.landing a{display:block;text-decoration:none;border-radius:22px;padding:26px;color:#fff;background:linear-gradient(135deg,#4338ca,#6d28d9)}
+.landing a.l{background:linear-gradient(135deg,#0369a1,#0f766e)}
+.landing a span{display:block;font-size:26px;font-weight:800}
+.landing a small{display:block;font-size:17px;opacity:.92}
+figure{margin:12px 0 0}
+figure img{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;cursor:zoom-in;background:#fff}
+figcaption{font-size:16px;color:var(--mute);margin-top:6px}
+ol.wf,ul.rules{padding-left:24px;margin:10px 0}
+ol.wf li,ul.rules li{margin:6px 0}
+.layers{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.layers span{font-size:15.5px;font-weight:600;border-radius:999px;padding:4px 12px;background:#eef2ff;color:#3730a3}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:12px}
+table.anch{border-collapse:collapse;width:100%;min-width:900px;font-size:15.5px;line-height:1.4}
+table.anch th{position:sticky;top:0;background:#334155;color:#fff;text-align:left;padding:9px 10px;font-size:15px}
+table.anch td{border-top:1px solid var(--line);padding:9px 10px;vertical-align:top}
+table.anch td.c{font-weight:700;background:var(--bg);min-width:160px}
+table.rate{border-collapse:collapse;width:100%;font-size:17px}
+table.rate th{background:var(--bg);text-align:center;padding:10px 6px;font-size:16px;border-bottom:2px solid var(--line)}
+table.rate th:first-child{text-align:left}
+table.rate td{border-bottom:1px solid var(--line);padding:10px 6px;vertical-align:top}
+table.rate td.s{text-align:center;width:13%}
+table.rate select{font-size:19px;font-weight:700;padding:6px 8px;min-width:70px}
+details{margin-top:4px;font-size:15.5px;color:var(--ink2)}
+details summary{cursor:pointer;color:var(--accent);font-weight:600}
+details ol{margin:6px 0 0;padding-left:0;list-style:none}
+details li{margin:3px 0}
+.scope{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:10px 0}
+.scope div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:16.5px}
+.sticky{position:sticky;bottom:0;background:rgba(241,245,249,.94);backdrop-filter:blur(6px);padding:12px 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.saved{font-size:15px;color:var(--mute)}
+@media (max-width:640px){body{font-size:18px}.card{padding:20px 16px}.scale label{font-size:12.5px;padding:8px 2px}.scale label b{font-size:20px}
+  table.rate{font-size:15.5px}table.rate select{min-width:56px;font-size:17px}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><a href="index.html">← Trang chủ (6 trang học tập)</a><span id="draftInfo" class="saved"></span></div>
+<div id="app"></div>
+</main>
+<script>
+const CFG = window.P2_CONFIG || {};
+const ENDPOINT = CFG.ENDPOINT || '';
+const STUDY_ID = CFG.STUDY_ID || 'paper2-html-survey-v1';
+const ITEMS = {"likert": ["Hoàn toàn không đồng ý", "Không đồng ý", "Trung lập", "Đồng ý", "Hoàn toàn đồng ý"], "student": {"role": "student", "title": "Phiếu khảo sát sinh viên – Học liệu HTML tương tác", "intro": "Phiếu khảo sát ẩn danh, mất khoảng 10 phút. Không thu thập họ tên, mã sinh viên hay email. Việc tham gia là tự nguyện và không ảnh hưởng đến điểm học phần. Bạn có thể dừng bất cứ lúc nào. Nếu chưa dùng các trang học tập, hãy mở trang chủ và khám phá trang của học phần bạn đang học trước khi làm phiếu.", "consent": "Tôi đã đọc thông tin trên và đồng ý tham gia.", "demographics": [{"id": "D_course", "type": "select", "title": "Học phần bạn đang học", "options": [["01_MAT", "Toán kỹ thuật"], ["02_CIR", "Lý thuyết mạch"], ["03_EMF", "Trường điện từ"], ["04_SIG", "Tín hiệu và hệ thống"], ["05_CTL", "Điều khiển tự động"], ["06_DSP", "Xử lý số tín hiệu"], ["other", "Khác"]]}, {"id": "D_year", "type": "select", "title": "Năm học", "options": [["1", "Năm 1"], ["2", "Năm 2"], ["3", "Năm 3"], ["4", "Năm 4+"]]}, {"id": "D_demos", "type": "multi", "title": "Bạn đã dùng trang học tập nào? (chọn tất cả)", "options": [["01_MAT", "Toán kỹ thuật"], ["02_CIR", "Lý thuyết mạch"], ["03_EMF", "Trường điện từ"], ["04_SIG", "Tín hiệu và hệ thống"], ["05_CTL", "Điều khiển tự động"], ["06_DSP", "Xử lý số tín hiệu"]]}, {"id": "D_minutes", "type": "select", "title": "Tổng thời gian bạn đã dùng các trang", "options": [["lt15", "< 15 phút"], ["15_30", "15–30 phút"], ["30_60", "30–60 phút"], ["gt60", "> 60 phút"]]}, {"id": "D_device", "type": "select", "title": "Thiết bị chủ yếu", "options": [["laptop", "Máy tính"], ["phone", "Điện thoại"], ["tablet", "Máy tính bảng"]]}, {"id": "D_matlab", "type": "select", "title": "Kinh nghiệm dùng MATLAB/Python trước đó", "options": [["none", "Chưa từng"], ["basic", "Cơ bản"], ["good", "Khá"], ["advanced", "Thành thạo"]]}, {"id": "D_code", "type": "text", "title": "Mã ẩn danh hiển thị ở cuối trang học tập (không bắt buộc)", "options": []}], "blocks": [{"id": "SUS", "title": "A. Khả năng sử dụng (SUS)", "note": "“Trang học tập” là các trang HTML bạn đã dùng.", "items": [{"id": "SUS1", "text": "Tôi nghĩ rằng tôi muốn sử dụng trang học tập này thường xuyên."}, {"id": "SUS2", "text": "Tôi thấy trang học tập này phức tạp một cách không cần thiết."}, {"id": "SUS3", "text": "Tôi thấy trang học tập này dễ sử dụng."}, {"id": "SUS4", "text": "Tôi nghĩ rằng tôi cần sự hỗ trợ của người có chuyên môn kỹ thuật để dùng được trang học tập này."}, {"id": "SUS5", "text": "Tôi thấy các chức năng khác nhau của trang được tích hợp tốt với nhau."}, {"id": "SUS6", "text": "Tôi thấy trang học tập này có quá nhiều điểm thiếu nhất quán."}, {"id": "SUS7", "text": "Tôi nghĩ hầu hết mọi người sẽ học cách dùng trang này rất nhanh."}, {"id": "SUS8", "text": "Tôi thấy trang học tập này rất rườm rà, khó thao tác."}, {"id": "SUS9", "text": "Tôi cảm thấy rất tự tin khi sử dụng trang học tập này."}, {"id": "SUS10", "text": "Tôi cần học nhiều thứ trước khi có thể bắt đầu dùng trang học tập này."}]}, {"id": "SI", "title": "B. Mức độ tích hợp", "note": "", "items": [{"id": "SI1", "text": "Có lời giải thích, công thức, mô phỏng và câu hỏi trên cùng một trang giúp tôi không phải chuyển qua lại giữa nhiều tệp."}, {"id": "SI2", "text": "Tôi dễ dàng thấy được mối liên hệ giữa công thức và mô phỏng."}, {"id": "SI3", "text": "Trang này kết nối lý thuyết với kết quả tính toán tốt hơn so với slide, PDF và tệp MATLAB riêng rẽ."}, {"id": "SI4", "text": "Tôi hiếm khi bị lạc khi theo dõi nội dung của chủ đề."}]}, {"id": "SL", "title": "C. Hỗ trợ học tập", "note": "", "items": [{"id": "SL1", "text": "Việc thay đổi tham số giúp tôi hiểu hệ thống hoạt động như thế nào."}, {"id": "SL2", "text": "Trang này giúp tôi hiểu ý nghĩa của các công thức."}, {"id": "SL3", "text": "Phản hồi của bài trắc nghiệm giúp tôi sửa những chỗ hiểu sai."}, {"id": "SL4", "text": "Tôi tự tin hơn khi giải bài tập về chủ đề này."}]}, {"id": "SE", "title": "D. Hứng thú và tương tác", "note": "", "items": [{"id": "SE1", "text": "Tôi muốn thử nhiều giá trị tham số khác nhau."}, {"id": "SE2", "text": "Các thành phần tương tác giúp tôi tập trung."}, {"id": "SE3", "text": "Tôi sẽ dùng những trang như thế này để tự học."}]}, {"id": "ST", "title": "E. Độ tin cậy của mô phỏng", "note": "", "items": [{"id": "ST1", "text": "Ô kiểm chứng (ĐẠT/KHÔNG ĐẠT) làm tôi tin vào kết quả mô phỏng."}, {"id": "ST2", "text": "Việc so sánh mô phỏng với nghiệm chính xác là hữu ích."}, {"id": "ST3", "text": "Tôi hiểu vì sao mô phỏng không đạt khi bước tính quá lớn."}]}, {"id": "SP", "title": "F. Mức độ ưa thích", "note": "", "items": [{"id": "SP1", "text": "Tôi thích trang tích hợp này hơn so với slide, PDF và tệp MATLAB riêng rẽ."}, {"id": "SP2", "text": "Tôi muốn nhiều chủ đề trong học phần được dạy theo cách này."}]}], "open": [{"id": "O1", "text": "Điều gì giúp bạn nhiều nhất?"}, {"id": "O2", "text": "Điều gì gây khó hiểu hoặc còn thiếu?"}]}, "lecturer": {"role": "lecturer", "title": "Phiếu khảo sát giảng viên – Học liệu HTML tích hợp với hỗ trợ của AI tạo sinh", "intro": "Trước khi trả lời, vui lòng xem ít nhất hai trang demo thuộc chuyên môn của bạn. Sơ đồ quy trình và bảng rubric cần cho việc trả lời đều có ngay trong phiếu này, bạn không cần đọc bài báo. Phiếu ẩn danh, mất khoảng 20–30 phút; câu trả lời được lưu tạm trên trình duyệt nên có thể làm tiếp nếu lỡ đóng trang.", "consent": "Tôi đồng ý tham gia và cho phép sử dụng câu trả lời ẩn danh cho mục đích nghiên cứu.", "demographics": [{"id": "D_years", "type": "select", "title": "Số năm giảng dạy", "options": [["lt5", "< 5"], ["5_10", "5–10"], ["10_20", "10–20"], ["gt20", "> 20"]]}, {"id": "D_area", "type": "multi", "title": "Lĩnh vực giảng dạy (chọn tất cả)", "options": [["01_MAT", "Toán kỹ thuật"], ["02_CIR", "Lý thuyết mạch"], ["03_EMF", "Trường điện từ"], ["04_SIG", "Tín hiệu và hệ thống"], ["05_CTL", "Điều khiển tự động"], ["06_DSP", "Xử lý số tín hiệu"], ["other", "Khác"]]}, {"id": "D_genai", "type": "select", "title": "Mức độ dùng AI tạo sinh (ChatGPT, Claude…) trong công việc", "options": [["never", "Chưa từng"], ["occasional", "Thỉnh thoảng"], ["weekly", "Hàng tuần"], ["daily", "Hàng ngày"]]}, {"id": "D_web", "type": "select", "title": "Kỹ năng lập trình web (HTML/JavaScript)", "options": [["none", "Không có"], ["basic", "Cơ bản"], ["good", "Khá"], ["advanced", "Thành thạo"]]}, {"id": "D_tools", "type": "multi", "title": "Công cụ bạn đang dùng để soạn học liệu", "options": [["PPTX", "PowerPoint"], ["LATEX", "LaTeX"], ["MATLAB", "MATLAB / Live Script"], ["JUPYTER", "Jupyter / Python"], ["HTML", "HTML / web"], ["LMS", "LMS (Moodle…)"]]}], "blocks": [{"id": "LU", "title": "A. Mức hữu ích", "note": "", "items": [{"id": "LU1", "text": "Các trang HTML tích hợp sẽ nâng cao chất lượng học liệu của tôi."}, {"id": "LU2", "text": "Chúng sẽ giúp sinh viên liên kết lý thuyết, toán học và mô phỏng."}, {"id": "LU3", "text": "Chúng sẽ hữu ích cho việc tự học ngoài giờ lên lớp."}, {"id": "LU4", "text": "Nhìn chung, cách tiếp cận này hữu ích cho các học phần của tôi."}]}, {"id": "LE", "title": "B. Mức dễ áp dụng", "note": "", "items": [{"id": "LE1", "text": "Quy trình trong Hình 1 rõ ràng với tôi."}, {"id": "LE2", "text": "Tôi có thể thực hiện quy trình này với sự hỗ trợ của AI tạo sinh."}, {"id": "LE3", "text": "Phân phối một tệp HTML duy nhất cho sinh viên là dễ dàng."}, {"id": "LE4", "text": "Áp dụng cách tiếp cận này không đòi hỏi kỹ năng mà tôi không thể học được."}]}, {"id": "LD", "title": "C. Công sức phát triển với AI tạo sinh (theo cảm nhận)", "note": "", "items": [{"id": "LD1", "text": "Với AI tạo sinh, xây dựng một trang như các demo sẽ tốn thời gian ở mức chấp nhận được."}, {"id": "LD2", "text": "AI tạo sinh sẽ giảm đáng kể phần lập trình tôi phải tự làm."}, {"id": "LD3", "text": "Nếu không có AI tạo sinh, xây dựng một trang như vậy sẽ quá tốn thời gian đối với tôi."}, {"id": "LD4", "text": "Bước kiểm chứng làm tăng khối lượng công việc ở mức chấp nhận được."}]}, {"id": "LM", "title": "D. Khả năng bảo trì", "note": "", "items": [{"id": "LM1", "text": "Cập nhật một trang (ví dụ thêm tham số hoặc câu hỏi) với AI tạo sinh là làm được."}, {"id": "LM2", "text": "Một tệp HTML duy nhất dễ cập nhật hơn so với slide, PDF và script riêng rẽ."}, {"id": "LM3", "text": "Tôi lo ngại về việc bảo trì các trang khi trình duyệt và thư viện thay đổi."}]}, {"id": "LT", "title": "E. Độ tin cậy và kiểm chứng", "note": "", "items": [{"id": "LT1", "text": "So sánh mô phỏng với tham chiếu giải tích và MATLAB làm tôi tin vào mã do AI tạo sinh viết."}, {"id": "LT2", "text": "Ngưỡng sai số 1% là phù hợp cho mục đích giảng dạy."}, {"id": "LT3", "text": "Tôi sẽ không phát hành mô phỏng do AI tạo sinh viết nếu chưa qua các bước kiểm tra như vậy."}]}, {"id": "LI", "title": "F. Ý định sử dụng", "note": "", "items": [{"id": "LI1", "text": "Tôi dự định thử trang HTML tích hợp trong ít nhất một học phần của mình."}, {"id": "LI2", "text": "Tôi sẽ giới thiệu cách tiếp cận này cho đồng nghiệp."}]}], "open": [{"id": "O1", "text": "Điều gì có thể cản trở bạn áp dụng cách tiếp cận này?"}, {"id": "O2", "text": "Những chủ đề nào trong học phần của bạn sẽ được lợi nhiều nhất?"}]}, "rubric": {"formats": [["PPTX", "PPTX"], ["LATEX", "LaTeX/PDF"], ["MATLAB", "MATLAB"], ["HTML", "HTML"]], "levels": ["1 – Rất hạn chế", "2 – Hạn chế", "3 – Đạt yêu cầu", "4 – Tốt", "5 – Xuất sắc"], "criteria": [{"id": "C1", "name": "Tổ chức nội dung", "levels": ["Không có cấu trúc; không có trình tự hay điều hướng", "Chỉ có trình tự tuyến tính", "Có các mục với tiêu đề; điều hướng thủ công", "Cấu trúc phân cấp có điều hướng (mục lục, liên kết)", "Như mức 4, thêm tham chiếu chéo tự động đến công thức và hình"]}, {"id": "C2", "name": "Biểu diễn toán học", "levels": ["Công thức dạng ảnh hoặc văn bản thường", "Ký hiệu trong dòng; không có công thức có cấu trúc", "Trình soạn công thức có cấu trúc; đánh số, căn chỉnh hạn chế", "Cú pháp LaTeX đầy đủ, có căn chỉnh và đánh số; hạn chế nhỏ khi in", "Dàn trang chất lượng xuất bản: đánh số, căn chỉnh, tham chiếu chéo, in chính xác"]}, {"id": "C3", "name": "Trực quan hóa tĩnh", "levels": ["Chỉ có văn bản", "Chỉ có ảnh chèn từ ngoài", "Sơ đồ tự vẽ <i>hoặc</i> đồ thị tự tạo", "Có cả sơ đồ và đồ thị tự tạo; dữ liệu nhập tay hoặc định dạng hạn chế", "Sơ đồ vectơ và đồ thị sinh từ dữ liệu, chất lượng xuất bản"]}, {"id": "C4", "name": "Trực quan hóa tương tác", "levels": ["Không có", "Hiệu ứng soạn sẵn (trình tự cố định)", "Duyệt các trạng thái tính sẵn (phóng to, xoay, chuyển khung)", "Người học đổi tham số; hình được tính lại sau khi chạy lại", "Người học đổi tham số; hình cập nhật liên tục theo thời gian thực"]}, {"id": "C5", "name": "Trực quan hóa 3D", "levels": ["Không có", "Hình chiếu 3D tĩnh (góc nhìn cố định)", "Vật thể 3D xoay được, không gắn với dữ liệu hay mô hình", "Đồ thị 3D tương tác sinh từ dữ liệu (mặt, trường vectơ)", "Như mức 4, thêm dữ liệu lớn (≥ 10<sup>5</sup> phần tử), cắt lớp, công cụ khối"]}, {"id": "C6", "name": "Mô phỏng số", "levels": ["Không có", "Kết quả tính sẵn nhập từ công cụ khác", "Tự chạy mô hình đơn giản (dạng đóng, bước lặp hiện)", "Tự chạy phương pháp tổng quát (PTVP, FFT, đại số tuyến tính), độ chính xác kép", "Thư viện giải đã kiểm chứng và toolbox (bộ giải PTVP, điều khiển, xử lý tín hiệu)"]}, {"id": "C7", "name": "Tương tác tham số", "levels": ["Không đổi được tham số", "Chọn trong các trường hợp định sẵn", "Đổi bằng cách sửa mã nguồn rồi chạy lại", "Đổi qua điều khiển giao diện, phải chạy lại", "Điều khiển giao diện, phản hồi tức thì, có kiểm tra miền giá trị"]}, {"id": "C8", "name": "Tích hợp đánh giá", "levels": ["Không có đánh giá", "Câu hỏi tĩnh; đáp án cung cấp riêng", "Tự kiểm tra (xem đáp án, phản hồi qua liên kết)", "Câu hỏi tự chấm nhúng sẵn (trắc nghiệm, số có sai số cho phép), phản hồi ngay", "Như mức 4, thêm câu hỏi tham số hóa hoặc dựa trên mô phỏng, gửi điểm về LMS"]}, {"id": "C9", "name": "Truy cập đa nền tảng", "levels": ["Phần mềm có bản quyền trên một hệ điều hành", "Phần mềm bản quyền hoặc tài khoản của trường (nhiều hệ điều hành)", "Trình xem miễn phí; giảm chức năng trên một số nền tảng", "Trình xem miễn phí, phổ biến; đầy đủ trên máy tính, giảm trên di động", "Trình duyệt/trình xem chuẩn; đầy đủ chức năng trên máy tính và di động"]}, {"id": "C10", "name": "Tích hợp nội dung (suy ra)", "levels": ["≤ 1 trong 5 lớp", "2 lớp", "3 lớp", "4 lớp", "Cả 5 lớp trong một sản phẩm"]}, {"id": "C11", "name": "Dễ cập nhật", "levels": ["Phải làm lại từ đầu", "Sửa phối hợp nhiều tệp/công cụ rồi xuất lại", "Sửa một nguồn rồi biên dịch lại; cần kỹ năng chuyên môn", "Giảng viên chuyên ngành tự sửa một nguồn văn bản; tự động dựng lại", "Như mức 4, thêm kiểm tra tự động xác nhận tính đúng sau khi sửa"]}, {"id": "C12", "name": "Yêu cầu soạn thảo (đảo chiều: điểm cao = dễ)", "levels": ["≥ 3 ngôn ngữ và kỹ năng gỡ lỗi chuyên sâu", "2–3 ngôn ngữ (vd. HTML, CSS, JavaScript) và kỹ năng web", "Hiểu biết làm việc (viết hoặc đọc) một ngôn ngữ", "Một ngôn ngữ ở mức cơ bản, hoặc trình soạn thảo có chút lệnh", "Chỉ soạn thảo trực quan (WYSIWYG); không lập trình"]}], "rules": ["<b>Phạm vi.</b> Chấm năng lực vốn có của mỗi định dạng như thường dùng trong giảng dạy: PPTX không cài thêm add-in; LaTeX ở dạng PDF đã biên dịch, mở bằng trình đọc thông thường; MATLAB ở dạng script và Live Script (không tính ứng dụng App Designer đã đóng gói); HTML là một trang độc lập dùng thư viện mở.", "<b>Chỉ cho một mức khi có đủ mọi đặc điểm của mức đó.</b> Nếu phân vân giữa hai mức, chọn mức thấp hơn.", "<b>C10 được suy ra, không chấm theo cảm nhận.</b> Năm lớp là: trình bày (C1), toán học (C2), trực quan hóa (C3), mô phỏng (C6), đánh giá (C8). C10 = số tiêu chí trong năm tiêu chí này đạt từ 3 điểm trở lên (≤ 1 lớp → 1; 5 lớp → 5).", "<b>C12 đảo chiều:</b> điểm cao nghĩa là yêu cầu soạn thảo thấp (dễ soạn).", "<b>Không cộng tổng.</b> Các tiêu chí không cùng thang đo và có phần chồng lấn (C4 và C7 cùng liên quan đến tương tác), nên không tính điểm tổng."]}};
+const $ = s => document.querySelector(s);
+const params = new URLSearchParams(location.search);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rid = () => Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('');
+const STORE = 'survey_responses_' + STUDY_ID;
+const ls = {get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} }};
+const store = () => { try { return JSON.parse(ls.get(STORE) || '[]'); } catch (e) { return []; } };
+const saveLocal = r => { const a = store(); a.push(r); ls.set(STORE, JSON.stringify(a)); };
+
+function columns(role) {
+  const def = ITEMS[role], cols = ['study', 'role', 'response_id', 'submitted_at', 'duration_s', 'cohort', 'ui_lang'];
+  def.demographics.forEach(d => cols.push(d.id));
+  def.blocks.forEach(b => b.items.forEach(i => cols.push(i.id)));
+  if (role === 'lecturer') ITEMS.rubric.criteria.forEach(c => ITEMS.rubric.formats.forEach(f => cols.push(`LR_${f[0]}_${c.id}`)));
+  def.open.forEach(o => cols.push(o.id));
+  return cols;
+}
+function toCSV(rows, cols) {
+  const q = v => { v = v === undefined || v === null ? '' : String(v); return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  return '﻿' + [cols.join(','), ...rows.map(r => cols.map(c => q(r[c])).join(','))].join('\n');
+}
+function download(name, text) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type: 'text/csv'})); a.download = name; a.click(); }
+
+function landing() {
+  $('#app').innerHTML = `<div class="card"><h1>Chọn phiếu khảo sát</h1><p class="hint">Phiếu ẩn danh, không thu thập họ tên, mã sinh viên, email hay địa chỉ IP.</p>
+    <div class="landing"><a href="?role=student"><span>Sinh viên</span><small>Khoảng 10 phút · 26 câu thang đo và 2 câu hỏi mở</small></a>
+    <a class="l" href="?role=lecturer"><span>Giảng viên</span><small>Khoảng 20–30 phút · sơ đồ quy trình, bảng rubric và phần chấm 4 định dạng × 12 tiêu chí</small></a></div></div>`;
+}
+
+const WORKFLOW = `
+  <h2>Quy trình đề xuất (Hình 1)</h2>
+  <p class="hint">Phần này tóm tắt cách các trang demo được xây dựng, để bạn trả lời các câu hỏi về mức hữu ích, công sức, bảo trì và độ tin cậy.</p>
+  <figure><a href="images/fig1_quy_trinh_vi.png" target="_blank" rel="noopener"><img src="images/fig1_quy_trinh_vi.png" alt="Sơ đồ quy trình đề xuất"></a>
+  <figcaption>Hình 1. Quy trình đề xuất (bấm vào hình để xem kích thước đầy đủ).</figcaption></figure>
+  <ol class="wf">
+    <li><b>Học liệu hiện có:</b> bài giảng PPTX, suy dẫn LaTeX, mô hình và kết quả MATLAB.</li>
+    <li><b>Phát triển với AI tạo sinh (S1–S5):</b> chuyển nội dung slide thành các mục có cấu trúc (S1); chuyển công thức LaTeX sang MathJax (S2); lập trình đồ họa SVG/Canvas/Three.js (S3); chuyển mô phỏng MATLAB sang JavaScript (S4); soạn câu hỏi đánh giá có phản hồi và sai số cho phép (S5).</li>
+    <li><b>Học liệu HTML tích hợp:</b> một trang duy nhất có năm lớp
+      <div class="layers"><span>① Trình bày</span><span>② Toán học</span><span>③ Trực quan hóa</span><span>④ Mô phỏng</span><span>⑤ Đánh giá</span></div></li>
+    <li><b>Kiểm chứng (tiêu chí hoàn thành):</b> so sánh với lời giải giải tích và kết quả MATLAB (sai số tương đối hoặc NRMSE ≤ 1 %; 2 % với FDTD), giảng viên thẩm định toán, vật lý và sư phạm, kiểm tra kỹ thuật trên các trình duyệt. Chưa đạt thì quay lại S1–S5. Kết quả kiểm chứng hiển thị ngay trên trang (ô PASS/FAIL).</li>
+    <li><b>Sử dụng và đánh giá:</b> triển khai trên mọi trình duyệt/thiết bị; sinh viên khám phá và tự đánh giá; khảo sát sinh viên, khảo sát giảng viên và chấm rubric (chính là phiếu này).</li>
+  </ol>
+  <p class="hint" style="margin-top:12px">Lưu ý: giảng viên luôn tham gia (đặt mục tiêu, viết prompt, đọc mã, phê duyệt); MATLAB vừa là nguồn mô hình vừa là tham chiếu tính toán; các thay đổi về sau đi lại qua cùng quy trình (vòng bảo trì). Mỗi trang demo có sẵn đoạn mã MATLAB tham chiếu trong ô “Mã MATLAB tham chiếu”.</p>
+  <p><a href="index.html" target="_blank" rel="noopener">Mở 6 trang demo trong thẻ mới →</a></p>`;
+
+function rubricGuide() {
+  const R = ITEMS.rubric;
+  return `<h2>G. Hướng dẫn chấm rubric (Bảng 4)</h2>
+    <p class="hint">Bạn sẽ chấm 4 định dạng theo 12 tiêu chí, mỗi tiêu chí 1–5 điểm. Mỗi mức có mô tả cụ thể để việc chấm dựa trên đặc điểm quan sát được.</p>
+    <ul class="rules">${R.rules.map(r => `<li>${r}</li>`).join('')}</ul>
+    <div class="scope"><div><b>PPTX</b><br>PowerPoint, không cài thêm add-in.</div><div><b>LaTeX/PDF</b><br>Tệp PDF đã biên dịch, mở bằng trình đọc thông thường.</div>
+      <div><b>MATLAB</b><br>Script và Live Script (không tính ứng dụng App Designer đã đóng gói).</div><div><b>HTML</b><br>Trang HTML độc lập dùng thư viện mở (như các trang demo).</div></div>
+    <h3>Bảng 4. Rubric có mô tả mức (1–5)</h3>
+    <div class="tw"><table class="anch"><thead><tr><th>Tiêu chí</th>${R.levels.map(l => `<th>${l}</th>`).join('')}</tr></thead><tbody>
+      ${R.criteria.map(c => `<tr><td class="c">${c.id}<br>${c.name}</td>${c.levels.map(x => `<td>${x}</td>`).join('')}</tr>`).join('')}
+    </tbody></table></div>
+    <p class="hint" style="margin-top:8px">Trên điện thoại, vuốt ngang để xem đủ bảng. Ở phần chấm bên dưới, mỗi tiêu chí có nút “Xem mô tả 5 mức”.</p>`;
+}
+
+function rubricRate() {
+  const R = ITEMS.rubric;
+  return `<h2>H. Chấm điểm 4 định dạng theo 12 tiêu chí (1–5)</h2>
+    <p class="hint">Chọn điểm cho từng ô. C10 = số tiêu chí trong C1, C2, C3, C6, C8 đạt từ 3 điểm (≤ 1 → 1; 5 → 5). C12 đảo chiều: điểm cao = dễ soạn.</p>
+    <table class="rate"><thead><tr><th>Tiêu chí</th>${R.formats.map(f => `<th>${esc(f[1])}</th>`).join('')}</tr></thead><tbody>
+    ${R.criteria.map(c => `<tr data-req="LR_${c.id}"><td><span class="qid">${c.id}</span><b>${c.name}</b>
+        <details><summary>Xem mô tả 5 mức</summary><ol>${c.levels.map((x, i) => `<li><b>${i + 1}</b> – ${x}</li>`).join('')}</ol></details></td>
+        ${R.formats.map(f => `<td class="s"><select name="LR_${f[0]}_${c.id}" aria-label="${c.id} ${esc(f[1])}"><option value="">–</option>${[1,2,3,4,5].map(v => `<option>${v}</option>`).join('')}</select></td>`).join('')}</tr>`).join('')}
+    </tbody></table>`;
+}
+
+function render(role) {
+  const def = ITEMS[role], L = ITEMS.likert, t0 = Date.now(), DRAFT = 'survey_draft_' + STUDY_ID + '_' + role;
+  let code = params.get('code') || ls.get('p2_anon_code') || '';
+  const likert = it => `<div class="q" data-req="${it.id}"><div><span class="qid">${it.id}</span>${esc(it.text)}</div>
+    <div class="scale">${[1,2,3,4,5].map(v => `<label><input type="radio" name="${it.id}" value="${v}"><b>${v}</b>${esc(L[v-1])}</label>`).join('')}</div></div>`;
+  const demo = d => {
+    const head = `<div><span class="qid">${d.id}</span>${esc(d.title)}</div>`;
+    if (d.type === 'select') return `<div class="q">${head}<select name="${d.id}"><option value="">— chọn —</option>${d.options.map(o => `<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('')}</select></div>`;
+    if (d.type === 'multi') return `<div class="q">${head}<div class="multi">${d.options.map(o => `<label><input type="checkbox" name="${d.id}" value="${esc(o[0])}"> ${esc(o[1])}</label>`).join('')}</div></div>`;
+    return `<div class="q">${head}<p class="hint">Mã 6 ký tự hiển thị ở cuối trang demo (không bắt buộc); nếu bạn đã dùng demo trên trình duyệt này, mã đã được điền sẵn.</p><input type="text" name="${d.id}" maxlength="20" value="${esc(code)}"></div>`;
+  };
+  let html = `<div class="card"><h1>${esc(def.title)}</h1><div class="notice">${esc(def.intro)}</div>
+    <p style="margin-top:16px"><label style="display:flex;gap:12px;align-items:flex-start"><input type="checkbox" id="consent" style="margin-top:6px"> <span>${esc(def.consent)}</span></label></p></div>
+    <form id="f" class="hidden" autocomplete="off" style="display:none">
+    <div class="card"><h2>Thông tin chung</h2><p class="hint">Không bắt buộc</p>${def.demographics.map(demo).join('')}</div>`;
+  if (role === 'lecturer') html += `<div class="card">${WORKFLOW}</div>`;
+  html += `<div class="card"><p class="hint" style="margin:0">Thang điểm cho các câu dưới đây: <b>1</b> = ${L[0]} · <b>2</b> = ${L[1]} · <b>3</b> = ${L[2]} · <b>4</b> = ${L[3]} · <b>5</b> = ${L[4]}.</p></div>`;
+  def.blocks.forEach(b => { html += `<div class="card"><h2>${esc(b.title)}</h2>${b.note ? `<p class="hint">${esc(b.note)}</p>` : ''}${b.items.map(likert).join('')}</div>`; });
+  if (role === 'lecturer') html += `<div class="card">${rubricGuide()}</div><div class="card">${rubricRate()}</div>`;
+  html += `<div class="card"><h2>Câu hỏi mở</h2>${def.open.map(o => `<div class="q"><div><span class="qid">${o.id}</span>${esc(o.text)}</div><textarea name="${o.id}" maxlength="3000"></textarea></div>`).join('')}</div>
+    <div id="msg"></div>
+    <div class="sticky"><button class="btn primary" type="submit" id="send">Gửi câu trả lời</button><span class="saved">Câu trả lời được lưu tạm trên trình duyệt này cho tới khi gửi.</span></div></form>`;
+  $('#app').innerHTML = html;
+  const form = $('#f');
+  $('#consent').onchange = e => { form.style.display = e.target.checked ? '' : 'none'; };
+  // ---- draft autosave ----
+  const collect = () => { const fd = new FormData(form), r = {}; for (const k of new Set(fd.keys())) r[k] = fd.getAll(k).join(';'); return r; };
+  const restore = () => { let d = null; try { d = JSON.parse(ls.get(DRAFT) || 'null'); } catch (e) {} if (!d) return;
+    Object.entries(d).forEach(([k, v]) => { const els = form.querySelectorAll(`[name="${k}"]`); els.forEach(el => {
+      if (el.type === 'radio' || el.type === 'checkbox') el.checked = String(v).split(';').includes(el.value); else el.value = v; }); });
+    $('#consent').checked = true; form.style.display = ''; $('#draftInfo').textContent = 'Đã khôi phục phần đang làm dở.'; };
+  restore();
+  let tm = null; form.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(() => { ls.set(DRAFT, JSON.stringify(collect())); $('#draftInfo').textContent = 'Đã lưu tạm ' + new Date().toLocaleTimeString('vi-VN'); }, 400); });
+  // ---- submit ----
+  form.onsubmit = async ev => {
+    ev.preventDefault();
+    const r = Object.assign({study: STUDY_ID, role, response_id: rid(), submitted_at: new Date().toISOString(), duration_s: Math.round((Date.now() - t0) / 1000), cohort: params.get('cohort') || '', ui_lang: 'vi'}, collect());
+    document.querySelectorAll('.missing').forEach(e => e.classList.remove('missing'));
+    const missing = [];
+    def.blocks.forEach(b => b.items.forEach(i => { if (!r[i.id]) { missing.push(i.id); document.querySelector(`[data-req="${i.id}"]`).classList.add('missing'); } }));
+    if (role === 'lecturer') ITEMS.rubric.criteria.forEach(c => { if (ITEMS.rubric.formats.some(f => !r[`LR_${f[0]}_${c.id}`])) { missing.push('LR_' + c.id); document.querySelector(`[data-req="LR_${c.id}"]`).classList.add('missing'); } });
+    if (missing.length) { $('#msg').innerHTML = `<div class="notice err">Còn ${missing.length} câu chưa trả lời (được tô đỏ). Vui lòng hoàn thành rồi bấm Gửi lại.</div>`; document.querySelector('.missing').scrollIntoView({behavior: 'smooth', block: 'center'}); return; }
+    $('#send').disabled = true; $('#send').textContent = 'Đang gửi…';
+    saveLocal(r);
+    let sent = false;
+    if (ENDPOINT) { try { await fetch(ENDPOINT, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({type: 'survey_' + role, data: r})}); sent = true; } catch (e) { sent = false; } }
+    ls.del(DRAFT);
+    $('#draftInfo').textContent = '';
+    $('#app').innerHTML = `<div class="card notice done"><h2>Cảm ơn bạn đã tham gia!</h2>
+      <p>${sent ? 'Câu trả lời đã được gửi tới nhóm nghiên cứu.' : (ENDPOINT ? 'Không gửi được do lỗi mạng. Vui lòng tải tệp CSV dưới đây và gửi cho người phụ trách khảo sát.' : 'Trang chưa được cấu hình địa chỉ thu thập. Vui lòng tải tệp CSV dưới đây và gửi cho người phụ trách khảo sát.')}</p>
+      <p>Mã phản hồi: <span class="qid" style="font-size:16px">${r.response_id}</span></p>
+      <p><button class="btn" id="dl">Tải câu trả lời (CSV)</button> <a class="btn" href="index.html" style="text-decoration:none">Về trang chủ</a></p></div>`;
+    $('#dl').onclick = () => download(`${role}_${r.response_id}.csv`, toCSV([r], columns(role)));
+    scrollTo(0, 0);
+  };
+}
+
+function admin() {
+  const all = store(), by = role => all.filter(r => r.role === role);
+  $('#app').innerHTML = `<div class="card"><h1>Chế độ quản trị</h1><p>${all.length} phiếu đang lưu trên trình duyệt này.</p>
+    <p><button class="btn" id="dS">Tải phiếu sinh viên (${by('student').length})</button> <button class="btn" id="dL">Tải phiếu giảng viên (${by('lecturer').length})</button> <button class="btn" id="clr">Xóa dữ liệu trên máy này</button></p>
+    <p class="hint">Địa chỉ thu thập (config.js): ${ENDPOINT ? esc(ENDPOINT) : '<b>chưa cấu hình</b>'}</p></div>`;
+  $('#dS').onclick = () => download('students_all.csv', toCSV(by('student'), columns('student')));
+  $('#dL').onclick = () => download('lecturers_all.csv', toCSV(by('lecturer'), columns('lecturer')));
+  $('#clr').onclick = () => { if (confirm('Xóa toàn bộ phiếu đang lưu trên máy này?')) { ls.del(STORE); admin(); } };
+}
+
+const role = params.get('role');
+if (params.get('admin') === '1') admin();
+else if (role === 'student' || role === 'lecturer') render(role);
+else landing();
+</script>
+</body>
+</html>

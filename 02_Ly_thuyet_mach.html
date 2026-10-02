@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lý thuyết mạch — Phasor, chế độ xác lập AC và quá độ mạch RLC (Demo tương tác)</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], tags: 'ams' },
+  chtml: { scale: 1.1 },
+  startup: { typeset: true }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --panel:#ffffff; --card:#f8fafc; --line:#e2e8f0; --ink:#0f172a; --ink2:#334155; --mute:#64748b;
+  --sky:#0284c7; --sky-bg:#e0f2fe; --rose:#e11d48; --rose-bg:#ffe4e6; --amber:#d97706; --amber-bg:#fef3c7;
+  --emerald:#059669; --emerald-bg:#d1fae5; --indigo:#4f46e5; --indigo-bg:#e0e7ff; --violet:#7c3aed;
+  --accent:#d97706;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55;font-size:15px}
+a{color:var(--sky)}
+header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .in{max-width:1220px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.01em}
+.brand .dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--indigo),var(--rose))}
+.brand span{background:linear-gradient(90deg,var(--sky),var(--indigo),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav.links{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+nav.links a{font-size:13px;text-decoration:none;color:var(--ink2);padding:5px 10px;border-radius:8px;border:1px solid transparent}
+nav.links a:hover{border-color:var(--line);background:var(--card)}
+nav.links a.e{background:var(--emerald-bg);color:#047857}
+nav.links a.m{background:var(--sky-bg);color:#0369a1}
+nav.links a.c{background:var(--rose-bg);color:#be123c}
+main{max-width:1220px;margin:0 auto;padding:22px 20px 60px}
+section.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:26px;margin:22px 0;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.hero{position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.12),transparent 70%)}
+h1{font-size:34px;line-height:1.15;margin:8px 0 10px;letter-spacing:-.02em}
+h2{font-size:26px;margin:6px 0 6px;letter-spacing:-.01em}
+h3{font-size:16px;margin:0 0 8px}
+p.lead{color:var(--ink2);max-width:880px;margin:0}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:8px;background:var(--sky-bg);color:#0369a1}
+.tag.e{background:var(--emerald-bg);color:#047857}.tag.m{background:var(--sky-bg);color:#0369a1}.tag.c{background:var(--rose-bg);color:#be123c}.tag.q{background:var(--indigo-bg);color:#4338ca}.tag.v{background:var(--amber-bg);color:#b45309}
+.layers{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.layers span{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink2)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.sim{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;margin-top:16px}
+@media (max-width:900px){.g2,.g3,.g4,.sim{grid-template-columns:1fr}h1{font-size:28px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.card.white{background:#fff}
+.eq{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;overflow-x:auto;margin:8px 0}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.canvas-wrap{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+canvas{display:block;width:100%;touch-action:none}
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.controls.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:640px){.controls,.controls.c3{grid-template-columns:1fr}}
+.ctl label{display:flex;gap:4px;align-items:baseline;font-size:13px;color:var(--ink2)}
+.ctl label b{margin-left:auto;font-family:"JetBrains Mono",Consolas,monospace;font-weight:600;color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{width:100%;padding:6px 8px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font:inherit;font-size:13px}
+.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:9px;border:1px solid #cbd5e1;background:#fff;color:var(--ink2);cursor:pointer}
+.btn:hover{border-color:#94a3b8;color:var(--ink)}
+.btn.on{background:var(--sky-bg);border-color:#7dd3fc;color:#0369a1}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+table.read{width:100%;border-collapse:collapse;font-size:13px}
+table.read td{padding:5px 2px;border-bottom:1px dashed var(--line)}
+table.read td:last-child{text-align:right;font-family:"JetBrains Mono",Consolas,monospace;color:var(--ink)}
+.mono{font-family:"JetBrains Mono",Consolas,monospace}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:12px;font-weight:700;font-size:14px;text-align:center}
+.verdict.pass{background:var(--emerald-bg);color:#047857;border:1px solid #6ee7b7}
+.verdict.fail{background:var(--rose-bg);color:#be123c;border:1px solid #fda4af}
+.note{font-size:12.5px;color:var(--mute)}
+details.matlab{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:#0f172a;color:#e2e8f0}
+details.matlab summary{cursor:pointer;padding:9px 12px;font-size:13px;font-weight:600;color:#fbbf24}
+details.matlab pre{margin:0;padding:0 14px 14px;font-size:12.5px;overflow-x:auto;font-family:"JetBrains Mono",Consolas,monospace}
+.quiz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+@media (max-width:900px){.quiz{grid-template-columns:1fr}}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.qcard .qn{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--sky);text-transform:uppercase}
+.qcard button.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
+.qcard button.opt:hover{border-color:#94a3b8}
+.qcard button.opt[disabled]{cursor:default;opacity:.6}
+.qcard button.opt.right{opacity:1;border-color:#34d399;background:var(--emerald-bg)}
+.qcard button.opt.wrong{opacity:1;border-color:#fb7185;background:var(--rose-bg)}
+.qcard .fb{margin-top:10px;font-size:13.5px;padding:8px 10px;border-radius:10px;display:none}
+.qcard .fb.ok{display:block;background:var(--emerald-bg);color:#047857}
+.qcard .fb.no{display:block;background:var(--rose-bg);color:#be123c}
+.qcard .numrow{display:flex;gap:8px;margin-top:10px}
+.qcard input[type=number]{flex:1;padding:7px 9px;border-radius:9px;border:1px solid #cbd5e1;font:inherit}
+.score{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:#e2e8f0;color:#334155}
+.sechead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px}
+svg text{font-family:Inter,"Segoe UI",system-ui,sans-serif}
+footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);font-size:12.5px}
+</style>
+<script src="config.js"></script>
+<style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="brand"><div class="dot"></div><span>Lý thuyết mạch</span></div>
+  <nav class="links">
+    <a href="#overview">Tổng quan</a>
+    <a class="e" href="#easy">Cơ bản</a>
+    <a class="m" href="#medium">Trung bình</a>
+    <a class="c" href="#complex">Nâng cao</a>
+    <a href="#quiz">Trắc nghiệm</a>
+  </nav>
+</div></header>
+<main>
+<section class="panel hero" id="overview">
+  <span class="tag">Học phần 2 · Lý thuyết mạch</span>
+  <h1>Phasor, cộng hưởng và quá độ mạch RLC</h1>
+  <p class="lead">Ba bài chuẩn CIR-E, CIR-M và CIR-C được trình bày trên cùng một trang. Trở kháng được giới thiệu dưới dạng số phức, sau đó dùng để dựng giản đồ phasor của mạch RLC nối tiếp ở chế độ xác lập AC. Cuối cùng, đáp ứng bước của chính mạch này được mô phỏng trong miền thời gian và kiểm chứng với nghiệm giải tích.</p>
+  <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (phasor, |Z(f)|)</span><span>④ Mô phỏng (quá độ bằng RK4)</span><span>⑤ Đánh giá (tự chấm)</span></div>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><div class="kicker">Mục tiêu 1</div>Viết trở kháng của R, L, C và ghép chúng nối tiếp.</div>
+    <div class="card"><div class="kicker">Mục tiêu 2</div>Giải thích hiện tượng cộng hưởng từ giản đồ phasor: $\mathbf{V}_L$ và $\mathbf{V}_C$ triệt tiêu nhau tại $\omega_0=1/\sqrt{LC}$.</div>
+    <div class="card"><div class="kicker">Mục tiêu 3</div>Phân loại đáp ứng bước theo hệ số tắt dần $\zeta=\tfrac{R}{2}\sqrt{C/L}$.</div>
+  </div>
+</section>
+
+<section class="panel" id="easy">
+  <div class="sechead"><div><span class="tag e">Mức E · CIR-E</span><h2>Phasor và trở kháng của R, L, C</h2><p class="lead">Tín hiệu điều hòa $v(t)=V_m\cos(\omega t+\phi)$ được biểu diễn bằng phasor (biên độ phức) $\mathbf{V}=V_m e^{j\phi}$. Phép đạo hàm trở thành phép nhân với $j\omega$, nên mỗi phần tử tuân theo định luật Ohm dạng phức $\mathbf{V}=Z\mathbf{I}$.</p></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="grid g3">
+      <div class="card"><h3>Điện trở</h3><div class="eq">$$Z_R=R$$</div><p class="note">Điện áp và dòng điện cùng pha.</p></div>
+      <div class="card"><h3>Cuộn cảm</h3><div class="eq">$$Z_L=j\omega L$$</div><p class="note">Điện áp sớm pha hơn dòng điện $90^\circ$.</p></div>
+      <div class="card"><h3>Tụ điện</h3><div class="eq">$$Z_C=\frac{1}{j\omega C}$$</div><p class="note">Điện áp chậm pha hơn dòng điện $90^\circ$.</p></div>
+      <div class="card" style="grid-column:1/-1"><h3>Ghép nối tiếp</h3><div class="eq">$$Z=R+j\left(\omega L-\frac{1}{\omega C}\right),\qquad |Z|=\sqrt{R^2+X^2},\quad \varphi=\arctan\frac{X}{R}$$</div>
+      <p class="note">Ví dụ mẫu: $R=30\,\Omega$, $\omega L=80\,\Omega$, $1/(\omega C)=40\,\Omega$ cho $Z=30+j40\,\Omega$, $|Z|=50\,\Omega$, $\varphi=53.1^\circ$.</p></div>
+    </div>
+    <div class="card white"><h3>Mặt phẳng trở kháng</h3>
+      <svg viewBox="0 0 320 260" width="100%" aria-label="Mặt phẳng trở kháng">
+        <defs><marker id="m1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#334155"/></marker></defs>
+        <line x1="30" y1="140" x2="305" y2="140" stroke="#94a3b8" marker-end="url(#m1)"/><line x1="60" y1="250" x2="60" y2="10" stroke="#94a3b8" marker-end="url(#m1)"/>
+        <text x="292" y="158" font-size="12">Re</text><text x="66" y="20" font-size="12">Im</text>
+        <line x1="60" y1="140" x2="150" y2="140" stroke="#0284c7" stroke-width="4"/><text x="92" y="157" font-size="12" fill="#0284c7">R</text>
+        <line x1="150" y1="140" x2="150" y2="40" stroke="#d97706" stroke-width="4"/><text x="156" y="72" font-size="12" fill="#d97706">jωL</text>
+        <line x1="150" y1="40" x2="150" y2="90" stroke="#7c3aed" stroke-width="4" stroke-dasharray="6 3"/><text x="156" y="104" font-size="12" fill="#7c3aed">−j/(ωC)</text>
+        <line x1="60" y1="140" x2="150" y2="90" stroke="#e11d48" stroke-width="3"/><text x="78" y="104" font-size="13" fill="#e11d48" font-weight="700">Z</text>
+        <path d="M95,140 A35,35 0 0,0 91,123" fill="none" stroke="#334155"/><text x="100" y="132" font-size="11">φ</text>
+        <text x="40" y="236" font-size="11" fill="#64748b">tính cảm: X &gt; 0 (nửa trên) · tính dung: X &lt; 0</text>
+      </svg></div>
+  </div>
+</section>
+
+<section class="panel" id="medium">
+  <div class="sechead"><div><span class="tag m">Mức M · CIR-M</span><h2>Mạch RLC nối tiếp ở chế độ xác lập AC</h2><p class="lead">Phasor dòng điện $\mathbf{I}$ được chọn làm gốc. Các phasor điện áp trên từng phần tử được cộng nối đuôi nhau để tạo thành phasor nguồn $\mathbf{V}_s$. Hãy quét tần số qua điểm cộng hưởng và quan sát $\mathbf{V}_L$ và $\mathbf{V}_C$ triệt tiêu nhau.</p></div></div>
+  <div class="sim">
+    <div>
+      <div class="grid g2">
+        <div class="canvas-wrap"><canvas id="ph" data-h="330"></canvas></div>
+        <div class="canvas-wrap"><canvas id="zf" data-h="330"></canvas></div>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label>$R$ ($\Omega$) <b id="R-v"></b></label><input type="range" id="R" min="5" max="200" step="1" value="40"></div>
+        <div class="ctl"><label>$L$ (mH) <b id="L-v"></b></label><input type="range" id="L" min="1" max="100" step="1" value="20"></div>
+        <div class="ctl"><label>$C$ ($\mu$F) <b id="C-v"></b></label><input type="range" id="C" min="1" max="100" step="1" value="10"></div>
+        <div class="ctl"><label>$f$ (Hz) <b id="f-v"></b></label><input type="range" id="f" min="50" max="1500" step="5" value="250"></div>
+      </div>
+    </div>
+    <div class="card white">
+      <h3>Tính toán phasor ($V_s=10$ V)</h3>
+      <table class="read">
+        <tr><td>$X_L=\omega L$, $X_C=1/\omega C$</td><td id="c-x"></td></tr>
+        <tr><td>$Z=R+jX$</td><td id="c-z"></td></tr>
+        <tr><td>$|Z|$, $\varphi$</td><td id="c-zm"></td></tr>
+        <tr><td>$|\mathbf{I}|=V_s/|Z|$</td><td id="c-i"></td></tr>
+        <tr><td>$|\mathbf{V}_R|,|\mathbf{V}_L|,|\mathbf{V}_C|$</td><td id="c-v"></td></tr>
+        <tr><td>$f_0=1/(2\pi\sqrt{LC})$</td><td id="c-f0"></td></tr>
+        <tr><td>$Q=\frac{1}{R}\sqrt{L/C}$</td><td id="c-q"></td></tr>
+      </table>
+      <div id="c-type" class="verdict pass"></div>
+      <p class="note">Kiểm tra định luật Kirchhoff về áp (KVL): tổng nối đuôi $\mathbf{V}_R+\mathbf{V}_L+\mathbf{V}_C$ phải bằng $\mathbf{V}_s$. Phần dư được hiển thị bên dưới.</p>
+      <div class="mono note" id="c-kvl"></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="complex">
+  <div class="sechead"><div><span class="tag c">Mức C · CIR-C</span><h2>Quá độ mạch RLC với tín hiệu bước</h2>
+    <p class="lead">Tại $t=0$, nguồn một chiều $V_s$ được đóng vào mạch RLC nối tiếp. Hệ phương trình trạng thái $\dot v_C=i/C$, $\dot i=(V_s-Ri-v_C)/L$ được tích phân bằng RK4 và so sánh với đáp ứng giải tích trong ba trường hợp: quá tắt dần, tắt dần tới hạn và dưới tắt dần.</p></div>
+    <span class="tag v">Kiểm chứng: giải tích + MATLAB</span></div>
+  <div class="sim">
+    <div>
+      <div class="canvas-wrap"><canvas id="tr" data-h="320"></canvas></div>
+      <div class="controls c3">
+        <div class="ctl"><label>$R$ ($\Omega$) <b id="R2-v"></b></label><input type="range" id="R2" min="0" max="200" step="1" value="20"></div>
+        <div class="ctl"><label>$L$ (mH) <b id="L2-v"></b></label><input type="range" id="L2" min="1" max="50" step="1" value="10"></div>
+        <div class="ctl"><label>$C$ ($\mu$F) <b id="C2-v"></b></label><input type="range" id="C2" min="1" max="50" step="1" value="10"></div>
+        <div class="ctl"><label>$V_s$ (V) <b id="Vs-v"></b></label><input type="range" id="Vs" min="1" max="20" step="1" value="10"></div>
+        <div class="ctl"><label>$v_C(0)$ (V) <b id="V0-v"></b></label><input type="range" id="V0" min="-10" max="10" step="1" value="0"></div>
+        <div class="ctl"><label>Số bước RK4 $N$ <b id="N-v"></b></label><input type="range" id="N" min="20" max="2000" step="10" value="400"></div>
+      </div>
+    </div>
+    <div class="card white">
+      <h3>Nghiệm giải tích tham chiếu</h3>
+      <div class="eq" id="t-eq"></div>
+      <table class="read">
+        <tr><td>$\alpha=R/2L$, $\omega_0=1/\sqrt{LC}$</td><td id="t-aw"></td></tr>
+        <tr><td>$\zeta=\alpha/\omega_0$ · chế độ</td><td id="t-reg"></td></tr>
+        <tr><td>Đỉnh $v_C$ (RK4 / chính xác)</td><td id="t-pk"></td></tr>
+        <tr><td>$E_{\mathrm{rel}}$ của giá trị đỉnh</td><td id="t-erel"></td></tr>
+        <tr><td>Độ quá điều chỉnh</td><td id="t-os"></td></tr>
+        <tr><td>NRMSE của $v_C(t)$</td><td id="t-nr"></td></tr>
+      </table>
+      <div id="t-verdict" class="verdict"></div>
+      <details class="matlab"><summary>Script MATLAB tham chiếu</summary><pre>R = 20; L = 10e-3; C = 10e-6; Vs = 10; V0 = 0;
+A = [0 1/C; -1/L -R/L];  B = [0; Vs/L];
+f = @(t,x) A*x + B;
+T = 10/max(R/(2*L), 1/sqrt(L*C));
+[t,x] = ode45(f, linspace(0,T,1001), [V0; 0], odeset('RelTol',1e-10));
+plot(t*1e3, x(:,1)); xlabel('t (ms)'); ylabel('v_C (V)')
+% so sánh giá trị đỉnh: max(x(:,1))</pre></details>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="quiz">
+  <div class="sechead"><div><span class="tag q">Đánh giá</span><h2>Câu hỏi tự đánh giá</h2></div><span class="score" id="score"></span></div>
+  <div class="quiz" id="quizBox"></div>
+</section>
+
+</main>
+<footer class="p2nav"><a href="index.html">← Trang chủ</a> · <a href="survey.html?role=student">Làm phiếu khảo sát sinh viên</a> · <a href="survey.html?role=lecturer">Phiếu giảng viên</a></footer>
+<script>
+/* ===================== shared helpers ===================== */
+const $ = id => document.getElementById(id);
+const fmt = (v, d=3) => (Math.abs(v) >= 1e4 || (Math.abs(v) < 1e-3 && v !== 0)) ? v.toExponential(2) : v.toFixed(d);
+const typeset = els => { if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise(els).catch(()=>{}); };
+const COLORS = {sky:'#0284c7', rose:'#e11d48', amber:'#d97706', emerald:'#059669', indigo:'#4f46e5', violet:'#7c3aed', slate:'#475569', grid:'#e2e8f0', axis:'#94a3b8'};
+
+/* Canvas plot with HiDPI support and data-to-pixel mapping */
+class Plot {
+  constructor(canvas, opt) {
+    this.c = canvas; this.ctx = canvas.getContext('2d'); this.opt = Object.assign({pad:[16,14,30,46], xlabel:'', ylabel:''}, opt);
+    this.resize(); new ResizeObserver(() => { this.resize(); if (this.onresize) this.onresize(); }).observe(canvas);
+  }
+  resize() {
+    const r = this.c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    const h = this.c.dataset.h ? +this.c.dataset.h : 300;
+    this.c.style.height = h + 'px';
+    this.W = Math.max(200, r.width); this.H = h;
+    this.c.width = this.W * dpr; this.c.height = this.H * dpr; this.ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  set(range) { Object.assign(this.opt, range); }
+  X(x) { const [t,r,b,l] = this.opt.pad; return l + (x - this.opt.xmin) / (this.opt.xmax - this.opt.xmin) * (this.W - l - r); }
+  Y(y) { const [t,r,b,l] = this.opt.pad; return t + (this.opt.ymax - y) / (this.opt.ymax - this.opt.ymin) * (this.H - t - b); }
+  clear() { this.ctx.clearRect(0,0,this.W,this.H); }
+  nice(span, n) { const raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p; }
+  axes() {
+    const g = this.ctx, o = this.opt, [t,r,b,l] = o.pad;
+    g.save(); g.font = '11px Inter, system-ui, sans-serif'; g.fillStyle = '#64748b'; g.strokeStyle = COLORS.grid; g.lineWidth = 1;
+    const dx = o.xstep || this.nice(o.xmax - o.xmin, 8), dy = o.ystep || this.nice(o.ymax - o.ymin, 5);
+    g.textAlign = 'center'; g.textBaseline = 'top';
+    for (let x = Math.ceil(o.xmin/dx)*dx; x <= o.xmax + 1e-9; x += dx) { const px = this.X(x); g.beginPath(); g.moveTo(px,t); g.lineTo(px,this.H-b); g.stroke(); g.fillText(o.xfmt ? o.xfmt(x) : +x.toPrecision(4), px, this.H - b + 5); }
+    g.textAlign = 'right'; g.textBaseline = 'middle';
+    for (let y = Math.ceil(o.ymin/dy)*dy; y <= o.ymax + 1e-9; y += dy) { const py = this.Y(y); g.beginPath(); g.moveTo(l,py); g.lineTo(this.W-r,py); g.stroke(); g.fillText(o.yfmt ? o.yfmt(y) : +y.toPrecision(4), l - 6, py); }
+    g.strokeStyle = COLORS.axis; g.lineWidth = 1.2;
+    if (o.ymin < 0 && o.ymax > 0) { g.beginPath(); g.moveTo(l,this.Y(0)); g.lineTo(this.W-r,this.Y(0)); g.stroke(); }
+    if (o.xmin < 0 && o.xmax > 0) { g.beginPath(); g.moveTo(this.X(0),t); g.lineTo(this.X(0),this.H-b); g.stroke(); }
+    g.strokeRect(l, t, this.W - l - r, this.H - t - b);
+    g.fillStyle = '#334155'; g.font = '12px Inter, system-ui, sans-serif';
+    if (o.xlabel) { g.textAlign = 'right'; g.textBaseline = 'bottom'; g.fillText(o.xlabel, this.W - r - 4, this.H - b - 4); }
+    if (o.ylabel) { g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText(o.ylabel, l + 6, t + 4); }
+    g.restore();
+  }
+  line(xs, ys, color, width=2, dash=null) { this.clipLine(xs, ys, color, width, dash); }
+  clipLine(xs, ys, color, width=2, dash=null) {
+    const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.beginPath(); g.rect(l,t,this.W-l-r,this.H-t-b); g.clip();
+    g.beginPath(); g.strokeStyle = color; g.lineWidth = width; if (dash) g.setLineDash(dash);
+    let pen = false;
+    for (let i = 0; i < xs.length; i++) { const y = ys[i]; if (!isFinite(y)) { pen = false; continue; } const px = this.X(xs[i]), py = this.Y(y); if (!pen) { g.moveTo(px,py); pen = true; } else g.lineTo(px,py); }
+    g.stroke(); g.restore();
+  }
+  fillArea(xs, ys, color) {
+    const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.beginPath(); g.rect(l,t,this.W-l-r,this.H-t-b); g.clip();
+    g.beginPath(); g.moveTo(this.X(xs[0]), this.Y(0));
+    for (let i = 0; i < xs.length; i++) g.lineTo(this.X(xs[i]), this.Y(ys[i]));
+    g.lineTo(this.X(xs[xs.length-1]), this.Y(0)); g.closePath(); g.fillStyle = color; g.fill(); g.restore();
+  }
+  stems(xs, ys, color, r=3) {
+    const g = this.ctx; g.save(); g.strokeStyle = color; g.fillStyle = color; g.lineWidth = 1.5;
+    for (let i = 0; i < xs.length; i++) { const px = this.X(xs[i]), py = this.Y(ys[i]), p0 = this.Y(Math.max(this.opt.ymin, Math.min(this.opt.ymax, 0))); g.beginPath(); g.moveTo(px,p0); g.lineTo(px,py); g.stroke(); g.beginPath(); g.arc(px,py,r,0,2*Math.PI); g.fill(); }
+    g.restore();
+  }
+  dot(x, y, color, r=4.5) { const g = this.ctx; g.save(); g.fillStyle = color; g.beginPath(); g.arc(this.X(x), this.Y(y), r, 0, 2*Math.PI); g.fill(); g.restore(); }
+  vline(x, color, dash=[4,4]) { const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.strokeStyle = color; g.setLineDash(dash); g.beginPath(); g.moveTo(this.X(x),t); g.lineTo(this.X(x),this.H-b); g.stroke(); g.restore(); }
+  hline(y, color, dash=[4,4]) { const g = this.ctx, [t,r,b,l] = this.opt.pad; g.save(); g.strokeStyle = color; g.setLineDash(dash); g.beginPath(); g.moveTo(l,this.Y(y)); g.lineTo(this.W-r,this.Y(y)); g.stroke(); g.restore(); }
+  text(s, x, y, color='#334155', align='left', font='12px Inter, system-ui, sans-serif') { const g = this.ctx; g.save(); g.fillStyle = color; g.font = font; g.textAlign = align; g.textBaseline = 'middle'; g.fillText(s, this.X(x), this.Y(y)); g.restore(); }
+  legend(items) { const g = this.ctx, [t,r] = this.opt.pad; g.save(); g.font = '12px Inter, system-ui, sans-serif'; let y = t + 12; for (const [label,color,dash] of items) { const x = this.W - r - 150; g.strokeStyle = color; g.lineWidth = 2.5; g.setLineDash(dash || []); g.beginPath(); g.moveTo(x, y); g.lineTo(x + 22, y); g.stroke(); g.setLineDash([]); g.fillStyle = '#334155'; g.textBaseline = 'middle'; g.fillText(label, x + 28, y); y += 17; } g.restore(); }
+}
+
+/* Slider binding: returns current numeric values and redraws on input */
+function bind(ids, cb, fmts = {}) {
+  const read = () => { const v = {}; ids.forEach(id => { const el = $(id); v[id] = el.tagName === 'SELECT' ? el.value : +el.value; const out = $(id + '-v'); if (out) out.textContent = fmts[id] ? fmts[id](v[id]) : el.value; }); return v; };
+  ids.forEach(id => $(id).addEventListener('input', () => cb(read())));
+  return () => cb(read());
+}
+
+/* Validation metrics */
+function relErr(x, ref) { return Math.abs(x - ref) / Math.max(Math.abs(ref), 1e-12) * 100; }
+function nrmse(a, b) { let s = 0, mn = Infinity, mx = -Infinity; for (let i = 0; i < a.length; i++) { s += (a[i] - b[i]) ** 2; mn = Math.min(mn, b[i]); mx = Math.max(mx, b[i]); } return Math.sqrt(s / a.length) / Math.max(mx - mn, 1e-12) * 100; }
+function verdict(el, ok, msg) { el.className = 'verdict ' + (ok ? 'pass' : 'fail'); el.textContent = (ok ? '✓ PASS — ' : '✗ FAIL — ') + msg; }
+
+/* Classical RK4 for y' = f(t, y) with vector state */
+function rk4(f, y0, t0, t1, h) {
+  const ts = [t0], ys = [y0.slice()]; let t = t0, y = y0.slice(); const n = Math.round((t1 - t0) / h);
+  const add = (a, b, k) => a.map((v, i) => v + k * b[i]);
+  for (let i = 0; i < n; i++) {
+    const k1 = f(t, y), k2 = f(t + h/2, add(y, k1, h/2)), k3 = f(t + h/2, add(y, k2, h/2)), k4 = f(t + h, add(y, k3, h));
+    y = y.map((v, j) => v + h / 6 * (k1[j] + 2*k2[j] + 2*k3[j] + k4[j])); t = t0 + (i + 1) * h; ts.push(t); ys.push(y.slice());
+  }
+  return {ts, ys};
+}
+
+/* Radix-2 FFT (in place, re/im arrays, length power of two) */
+function fft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let bit = n >> 1; for (; j & bit; bit >>= 1) j ^= bit; j ^= bit; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) { let cr = 1, ci = 0; for (let k = 0; k < len / 2; k++) { const a = i + k, b = a + len / 2, xr = re[b] * cr - im[b] * ci, xi = re[b] * ci + im[b] * cr; re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi; const nr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = nr; } }
+  }
+}
+
+/* Quiz engine: multiple-choice {q, opts, ans, fb} and numeric {q, num, tol, unit, fb} items */
+function quiz(containerId, scoreId, items) {
+  let score = 0; const done = {};
+  const box = $(containerId);
+  box.innerHTML = items.map((it, i) => `
+    <div class="qcard" id="q${i}">
+      <div class="qn">Câu ${i + 1}${it.num !== undefined ? ' · tính số' : ''}</div>
+      <div style="margin-top:6px">${it.q}</div>
+      ${it.num !== undefined
+        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Kiểm tra</button></div>`
+        : it.opts.map((o, j) => `<button class="opt" data-j="${j}" onclick="__qa(${i},${j})">${String.fromCharCode(65 + j)}. ${o}</button>`).join('')}
+      <div class="fb" id="q${i}-fb"></div>
+    </div>`).join('');
+  const upd = () => { $(scoreId).textContent = `Điểm: ${score} / ${items.length}`; };
+  window.__qa = (i, j) => {
+    if (done[i]) return; const it = items[i]; let ok;
+    if (it.num !== undefined) { const v = parseFloat($(`q${i}-in`).value); if (!isFinite(v)) return; ok = Math.abs(v - it.num) <= it.tol; }
+    else { ok = j === it.ans; document.querySelectorAll(`#q${i} button.opt`).forEach(b => { b.disabled = true; const k = +b.dataset.j; if (k === it.ans) b.classList.add('right'); else if (k === j) b.classList.add('wrong'); }); }
+    done[i] = true; if (ok) score++;
+    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Đúng. ' : '✗ Chưa đúng. ') + it.fb; typeset([fb]); upd();
+  };
+  upd(); typeset([box]);
+}
+/* ---------- CIR-M: phasor diagram and |Z(f)| ---------- */
+(function () {
+  const pp = new Plot($('ph'), {pad:[14,14,24,40], xlabel:'Re (V)', ylabel:'Im (V)'}), pz = new Plot($('zf'), {pad:[14,14,30,48], xlabel:'f (Hz)', ylabel:'|I| (A)'});
+  let V = null;
+  function arrow(p, x0, y0, x1, y1, color, label) { const g = p.ctx, a = [p.X(x0), p.Y(y0)], b = [p.X(x1), p.Y(y1)], an = Math.atan2(b[1]-a[1], b[0]-a[0]);
+    g.save(); g.strokeStyle = color; g.fillStyle = color; g.lineWidth = 3; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
+    if (Math.hypot(b[0]-a[0], b[1]-a[1]) > 6) { g.beginPath(); g.moveTo(...b); g.lineTo(b[0]-10*Math.cos(an-.4), b[1]-10*Math.sin(an-.4)); g.lineTo(b[0]-10*Math.cos(an+.4), b[1]-10*Math.sin(an+.4)); g.fill(); }
+    g.font = 'bold 12px Inter, sans-serif'; g.fillText(label, b[0] + 6, b[1] - 4); g.restore(); }
+  function draw() {
+    if (!V) return; const R = V.R, L = V.L*1e-3, C = V.C*1e-6, f = V.f, w = 2*Math.PI*f, Vs = 10;
+    const XL = w*L, XC = 1/(w*C), X = XL - XC, Zm = Math.hypot(R, X), ph = Math.atan2(X, R), I = Vs/Zm;
+    const VR = I*R, VL = I*XL, VC = I*XC;
+    const [t0,r0,b0,l0] = pp.opt.pad, asp = (pp.H - t0 - b0)/(pp.W - l0 - r0);
+    let xs = Math.max(Vs, VR)*1.35, yh = Math.max(VL, VC, Vs)*1.15; if (yh*2 > xs*asp) xs = yh*2/asp; else yh = xs*asp/2;
+    pp.set({xmin:-0.2*xs, xmax:0.8*xs, ymin:-yh, ymax:yh}); pp.clear(); pp.axes();
+    arrow(pp, 0, -0.08*yh, 0.3*xs, -0.08*yh, COLORS.slate, 'I (gốc)');
+    arrow(pp, 0, 0, VR, 0, COLORS.sky, 'V_R'); arrow(pp, VR, 0, VR, VL, COLORS.amber, 'V_L'); arrow(pp, VR, VL, VR, VL - VC, COLORS.violet, 'V_C');
+    arrow(pp, 0, 0, VR, VL - VC, COLORS.rose, 'V_s');
+    const f0 = 1/(2*Math.PI*Math.sqrt(L*C)), fs = [], Is = [];
+    for (let i = 0; i <= 400; i++) { const ff = 50 + i*(1500-50)/400, ww = 2*Math.PI*ff; fs.push(ff); Is.push(Vs/Math.hypot(R, ww*L - 1/(ww*C))); }
+    pz.set({xmin:50, xmax:1500, ymin:0, ymax:Math.max(...Is)*1.12}); pz.clear(); pz.axes(); pz.line(fs, Is, COLORS.amber, 2.5);
+    if (f0 >= 50 && f0 <= 1500) { pz.vline(f0, COLORS.emerald); pz.text('f₀', f0 + 10, Math.max(...Is)*1.04, COLORS.emerald); }
+    pz.dot(f, I, COLORS.rose, 5);
+    $('c-x').textContent = `${fmt(XL,1)} Ω, ${fmt(XC,1)} Ω`; $('c-z').textContent = `${fmt(R,1)} ${X >= 0 ? '+' : '−'} j${fmt(Math.abs(X),1)} Ω`;
+    $('c-zm').textContent = `${fmt(Zm,2)} Ω, ${(ph*180/Math.PI).toFixed(1)}°`; $('c-i').textContent = fmt(I,4) + ' A';
+    $('c-v').textContent = [VR, VL, VC].map(v => fmt(v,2)).join(', ') + ' V'; $('c-f0').textContent = fmt(f0,1) + ' Hz'; $('c-q').textContent = fmt(Math.sqrt(L/C)/R, 3);
+    const t = $('c-type'); const near = Math.abs(f - f0) / f0 < 0.02;
+    t.className = 'verdict' + (near ? ' pass' : ''); t.style.background = near ? '' : X > 0 ? '#fef3c7' : '#ede9fe'; t.style.color = near ? '' : X > 0 ? '#b45309' : '#6d28d9'; t.style.borderColor = near ? '' : X > 0 ? '#fcd34d' : '#c4b5fd';
+    t.textContent = near ? 'Cộng hưởng: V_L và V_C triệt tiêu nhau, dòng điện đạt cực đại' : X > 0 ? 'Tính cảm: dòng điện chậm pha so với điện áp nguồn' : 'Tính dung: dòng điện sớm pha so với điện áp nguồn';
+    const sr = VR - Vs*Math.cos(ph), si = (VL - VC) - Vs*Math.sin(ph); $('c-kvl').textContent = `Phần dư KVL |V_R+V_L+V_C−V_s| = ${Math.hypot(sr, si).toExponential(2)} V`;
+  }
+  const upd = bind(['R','L','C','f'], v => { V = v; draw(); }); pp.onresize = draw; pz.onresize = draw; upd();
+})();
+
+/* ---------- CIR-C: RLC step transient ---------- */
+(function () {
+  const p = new Plot($('tr'), {xlabel:'t (ms)', ylabel:'v_C(t) (V)'}); let V = null;
+  function exact(R, L, C, Vs, V0) {
+    const a = R/(2*L), w0 = 1/Math.sqrt(L*C), A = V0 - Vs;
+    if (a < w0*(1 - 1e-9)) { const wd = Math.sqrt(w0*w0 - a*a), B = a*A/wd; return {f: t => Vs + Math.exp(-a*t)*(A*Math.cos(wd*t) + B*Math.sin(wd*t)), reg:'dưới tắt dần (dao động)',
+      eq:'$$v_C(t)=V_s+e^{-\\alpha t}\\left[A\\cos\\omega_d t+B\\sin\\omega_d t\\right]$$<p class=\"note\">$A=v_C(0)-V_s$, $B=\\alpha A/\\omega_d$, $\\omega_d=\\sqrt{\\omega_0^2-\\alpha^2}$</p>'}; }
+    if (a > w0*(1 + 1e-9)) { const r = Math.sqrt(a*a - w0*w0), s1 = -a + r, s2 = -a - r, A1 = -s2*A/(s1 - s2), A2 = A - A1; return {f: t => Vs + A1*Math.exp(s1*t) + A2*Math.exp(s2*t), reg:'quá tắt dần',
+      eq:'$$v_C(t)=V_s+A_1e^{s_1t}+A_2e^{s_2t}$$<p class=\"note\">$s_{1,2}=-\\alpha\\pm\\sqrt{\\alpha^2-\\omega_0^2}$, $A_1+A_2=v_C(0)-V_s$, $s_1A_1+s_2A_2=0$</p>'}; }
+    return {f: t => Vs + (A + a*A*t)*Math.exp(-a*t), reg:'tắt dần tới hạn', eq:'$$v_C(t)=V_s+\\left(A+\\alpha A t\\right)e^{-\\alpha t}$$'};
+  }
+  function draw() {
+    if (!V) return; const R = V.R2, L = V.L2*1e-3, C = V.C2*1e-6, Vs = V.Vs, V0 = V.V0, a = R/(2*L), w0 = 1/Math.sqrt(L*C);
+    const T = Math.min(8/Math.max(a, 1e-9), 12*2*Math.PI/w0, 30*2*Math.PI/w0), N = V.N, h = T/N;
+    const ex = exact(R, L, C, Vs, V0); const s = rk4((t, x) => [x[1]/C, (Vs - R*x[1] - x[0])/L], [V0, 0], 0, T, h);
+    const vn = s.ys.map(x => x[0]), ve = s.ts.map(ex.f), tm = s.ts.map(t => t*1e3);
+    const fine = []; for (let i = 0; i <= 800; i++) fine.push(i*T/800);
+    const all = vn.concat(ve), lo = Math.min(...all, 0), hi = Math.max(...all, Vs);
+    p.set({xmin:0, xmax:T*1e3, ymin:lo - 0.1*(hi - lo), ymax:hi + 0.15*(hi - lo)}); p.clear(); p.axes(); p.hline(Vs, COLORS.emerald);
+    p.line(fine.map(t => t*1e3), fine.map(ex.f), COLORS.slate, 4); p.line(tm, vn, COLORS.amber, 2, [6,3]);
+    p.legend([['giải tích', COLORS.slate], ['RK4', COLORS.amber, [6,3]], ['V_s (giá trị xác lập)', COLORS.emerald, [4,4]]]);
+    $('t-eq').innerHTML = ex.eq; typeset([$('t-eq')]);
+    $('t-aw').textContent = `${fmt(a,1)} s⁻¹, ${fmt(w0,1)} rad/s`; $('t-reg').textContent = `${fmt(a/w0,3)} · ${ex.reg}`;
+    let ik = 0; vn.forEach((v,i) => { if (Math.abs(v - V0) > Math.abs(vn[ik] - V0)) ik = i; });
+    let ie = 0; ve.forEach((v,i) => { if (Math.abs(v - V0) > Math.abs(ve[ie] - V0)) ie = i; });
+    $('t-pk').textContent = `${fmt(vn[ik],4)} / ${fmt(ve[ie],4)} V`; const er = relErr(vn[ik], ve[ie]); $('t-erel').textContent = fmt(er,4) + ' %';
+    const os = (ve[ie] - Vs)/(Vs - V0)*100; $('t-os').textContent = Math.abs(Vs - V0) > 1e-9 && os > 0.01 ? fmt(os,2) + ' %' : 'không có';
+    const nr = nrmse(vn, ve); $('t-nr').textContent = fmt(nr,5) + ' %';
+    verdict($('t-verdict'), nr <= 1 && er <= 1, `NRMSE ${fmt(nr,3)} %, sai số đỉnh ${fmt(er,3)} % (ε = 1 %)` + (nr > 1 || er > 1 ? ' — hãy tăng N' : ''));
+  }
+  const upd = bind(['R2','L2','C2','Vs','V0','N'], v => { V = v; draw(); }); p.onresize = draw; upd();
+})();
+
+quiz('quizBox', 'score', [
+  {q:'Trở kháng của cuộn cảm là', opts:['$j\\omega L$','$1/(j\\omega L)$','$\\omega L$ (số thực)'], ans:0, fb:'$v=L\\,di/dt$ trở thành $\\mathbf{V}=j\\omega L\\,\\mathbf{I}$.'},
+  {q:'Khi cộng hưởng nối tiếp, dòng điện', opts:['cực tiểu','cực đại và cùng pha với $V_s$','bằng không'], ans:1, fb:'$X=0$ nên $|Z|=R$ đạt cực tiểu và $\\varphi=0$.'},
+  {q:'Với $L=20$ mH và $C=10\\,\\mu$F, tần số cộng hưởng $f_0$ tính bằng Hz là (±2 Hz)', num:355.9, tol:2, unit:'Hz', fb:'$f_0=1/(2\\pi\\sqrt{2\\times10^{-7}})\\approx 355.9$ Hz.'},
+  {q:'Nếu $|\\mathbf{V}_L|>|\\mathbf{V}_C|$ thì mạch có', opts:['tính cảm (dòng chậm pha)','tính dung (dòng sớm pha)','tính trở thuần'], ans:0, fb:'$X=X_L-X_C>0$ cho góc pha của $Z$ dương.'},
+  {q:'Đáp ứng bước của mạch RLC nối tiếp ở chế độ dưới tắt dần khi', opts:['$R>2\\sqrt{L/C}$','$R=2\\sqrt{L/C}$','$R<2\\sqrt{L/C}$'], ans:2, fb:'$\\alpha<\\omega_0 \\Leftrightarrow R/2L<1/\\sqrt{LC}$.'},
+  {q:'$Z=30+j40\\ \\Omega$. Tính $|Z|$ theo đơn vị ohm.', num:50, tol:0.01, unit:'Ω', fb:'$\\sqrt{30^2+40^2}=50\\ \\Omega$.'}
+]);
+
+</script>
+<!-- ============ Anonymous research logger — Vietnamese UI (injected; see README) ============ -->
+<style>
+#rlog-banner{position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:12px 14px;font-size:13.5px;box-shadow:0 8px 30px rgba(15,23,42,.35);display:none;max-width:860px;margin:0 auto}
+#rlog-banner i{color:#94a3b8}
+#rlog-banner button{font:inherit;font-size:13px;margin:8px 8px 0 0;padding:6px 12px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#fff;cursor:pointer}
+#rlog-banner button.yes{background:#4f46e5;border-color:#4f46e5}
+#rlog-box{max-width:1220px;margin:0 auto 30px;padding:12px 20px;font-size:13px;color:#334155}
+#rlog-box .code{font-family:Consolas,monospace;font-size:16px;font-weight:700;letter-spacing:.08em;color:#4338ca;background:#eef2ff;padding:2px 8px;border-radius:6px}
+#rlog-box button,#rlog-box a{font:inherit;font-size:12.5px;margin-left:6px}
+</style>
+<div id="rlog-banner" role="dialog" aria-live="polite">
+  <b>Nghiên cứu đánh giá học liệu</b><br>
+  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá và cải tiến học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Việc đồng ý hay từ chối không ảnh hưởng đến việc sử dụng trang hay điểm học phần.<br>
+  <button class="yes" id="rlog-yes">Đồng ý</button><button id="rlog-no">Không đồng ý</button>
+</div>
+<div id="rlog-box"></div>
+<script>
+(function () {
+  /* ===================== CONFIGURATION ===================== */
+  const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
+  const SURVEY_URL   = 'survey.html?role=student';   // mã ẩn danh được tự gắn thêm
+  const STUDY = 'paper2-html-demos', DEMO = '02_CIR', VERSION = 'log-v1-vi', LANG = 'vi';
+  /* ========================================================= */
+  const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';
+  const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const rnd = n => Array.from(crypto.getRandomValues(new Uint8Array(n))).map(b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('');
+  const params = new URLSearchParams(location.search);
+  let code = ls.get(K_CODE); if (!code) { code = rnd(6); ls.set(K_CODE, code); }
+  const box = document.getElementById('rlog-box');
+
+  function renderBox(consent) {
+    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Làm phiếu khảo sát</a>` : '';
+    box.innerHTML = `Mã ẩn danh của bạn: <span class="code">${code}</span> — hãy nhập mã này vào phiếu khảo sát (không bắt buộc).${surveyLink}
+      <br>Nhật ký sử dụng: <b>${consent === 'yes' ? 'đang ghi' : 'đang tắt'}</b>
+      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt ghi nhật ký' : 'Bật ghi nhật ký'}</button>
+      <button id="rlog-dl">Tải nhật ký (JSON)</button>`;
+    document.getElementById('rlog-toggle').onclick = () => { ls.set(K_CONSENT, consent === 'yes' ? 'no' : 'yes'); location.reload(); };
+    document.getElementById('rlog-dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = `logs_${code}.json`; a.click(); };
+  }
+  const consent = ls.get(K_CONSENT);
+  if (!consent) { const b = document.getElementById('rlog-banner'); b.style.display = 'block';
+    document.getElementById('rlog-yes').onclick = () => { ls.set(K_CONSENT, 'yes'); location.reload(); };
+    document.getElementById('rlog-no').onclick = () => { ls.set(K_CONSENT, 'no'); b.style.display = 'none'; renderBox('no'); }; }
+  renderBox(consent);
+  if (consent !== 'yes') return;
+
+  /* ------------------------- logging ------------------------- */
+  const t0 = performance.now(), now = () => Math.round(performance.now() - t0);
+  const S = { study: STUDY, demo: DEMO, version: VERSION, lang: LANG, anon_code: code, session_id: rnd(8), seq: 0,
+    started_at: new Date().toISOString().slice(0, 16), device: matchMedia('(pointer:coarse)').matches ? 'touch' : 'desktop',
+    viewport_w: Math.round(innerWidth / 100) * 100, active_s: 0, n_ctrl_total: 0, n_clicks: 0,
+    sections: {}, ctrl_by_id: {}, quiz_answered: 0, quiz_correct: 0, quiz_items: {}, fail_seen: 0, fail_ids: [], events: [] };
+  const ev = (type, detail) => { if (S.events.length < 400) S.events.push([now(), type, detail]); };
+  // active time (tab visible) and per-section visible time
+  let lastTick = performance.now(); const visible = new Set();
+  document.querySelectorAll('section.panel[id]').forEach(s => S.sections[s.id] = { s: 0, n_ctrl: 0 });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { visible.add(e.target.id); ev('view', e.target.id); } else visible.delete(e.target.id); }), { threshold: 0.35 });
+  document.querySelectorAll('section.panel[id]').forEach(s => io.observe(s));
+  setInterval(() => { const t = performance.now(), dt = (t - lastTick) / 1000; lastTick = t; if (document.visibilityState !== 'visible' || dt > 5) return;
+    S.active_s += dt; visible.forEach(id => S.sections[id].s += dt); }, 1000);
+  // parameter changes (debounced per control)
+  const deb = {};
+  document.addEventListener('input', e => { const el = e.target; if (!el.id || !el.matches('input[type=range],select,input[type=number]')) return;
+    clearTimeout(deb[el.id]); deb[el.id] = setTimeout(() => { S.n_ctrl_total++; S.ctrl_by_id[el.id] = (S.ctrl_by_id[el.id] || 0) + 1;
+      const sec = el.closest('section.panel'); if (sec && S.sections[sec.id]) S.sections[sec.id].n_ctrl++; ev('ctrl', el.id + '=' + el.value); }, 400); }, true);
+  document.addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.closest('#rlog-box,#rlog-banner,.qcard')) { S.n_clicks++; ev('click', b.id || b.textContent.trim().slice(0, 20)); } }, true);
+  // quiz: wrap the global answer handler created by quiz()
+  const origQA = window.__qa;
+  if (typeof origQA === 'function') window.__qa = function (i, j) {
+    if (S.quiz_items[i] !== undefined) return origQA(i, j);
+    const r = origQA(i, j); const fb = document.getElementById('q' + i + '-fb');
+    if (fb && fb.className.match(/\b(ok|no)\b/)) { const ok = fb.classList.contains('ok'); S.quiz_items[i] = ok ? 1 : 0; S.quiz_answered++; if (ok) S.quiz_correct++; ev('quiz', i + ':' + (ok ? 1 : 0)); }
+    return r; };
+  // verification verdicts: wrap the global verdict() helper
+  const origV = window.verdict;
+  if (typeof origV === 'function') window.verdict = function (el, ok, msg) { const was = el.className; origV(el, ok, msg);
+    if (!ok && !/fail/.test(was)) { S.fail_seen++; if (!S.fail_ids.includes(el.id)) S.fail_ids.push(el.id); ev('fail', el.id); } };
+  // persist + send
+  function snapshot() { const o = JSON.parse(JSON.stringify(S)); Object.keys(o.sections).forEach(k => o.sections[k].s = Math.round(o.sections[k].s)); o.active_s = Math.round(o.active_s); return o; }
+  function persist() { S.seq++; const snap = snapshot(); let all = []; try { all = JSON.parse(ls.get(K_LOGS) || '[]'); } catch (e) {}
+    const k = all.findIndex(x => x.session_id === S.session_id); if (k >= 0) all[k] = snap; else all.push(snap); ls.set(K_LOGS, JSON.stringify(all.slice(-200)));
+    if (LOG_ENDPOINT && navigator.sendBeacon) { const d = Object.assign({}, snap, { events: JSON.stringify(snap.events) }); navigator.sendBeacon(LOG_ENDPOINT, JSON.stringify({ type: 'log_summary', data: d })); } }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') persist(); });
+  addEventListener('pagehide', persist);
+  setInterval(persist, 60000);
+  ev('start', DEMO);
+  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [quản trị] tải toàn bộ nhật ký trên máy này'; box.appendChild(a); }
+  window.__rlog = { snapshot, persist };   // for testing
+})();
+</script>
+<!-- ============ end of logger ============ -->
+
+</body>
+</html>

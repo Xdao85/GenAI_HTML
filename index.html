@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Học liệu HTML tương tác — 6 học phần kỹ thuật</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="config.js"></script>
+<style>
+:root{--ink:#0f172a;--ink2:#334155;--mute:#64748b;--line:#e2e8f0;--bg:#f8fafc;--accent:#4338ca;--accent2:#0369a1}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Be Vietnam Pro",system-ui,"Segoe UI",Arial,sans-serif;font-size:19px;line-height:1.6;color:var(--ink);background:#fff}
+main{max-width:1180px;margin:0 auto;padding:40px 24px 60px}
+h1{font-size:clamp(30px,4.2vw,44px);line-height:1.2;margin:0 0 12px;letter-spacing:-.02em}
+h2{font-size:26px;margin:44px 0 14px}
+.lead{font-size:21px;color:var(--ink2);max-width:900px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:26px 0}
+.step{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.step b{display:block;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+a.card{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:20px;padding:22px 22px 20px;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.05);transition:.15s}
+a.card:hover{border-color:#a5b4fc;box-shadow:0 8px 24px rgba(67,56,202,.12);transform:translateY(-2px)}
+.k{font-size:14px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent2)}
+a.card h3{font-size:24px;margin:6px 0 6px}
+a.card p{margin:0;color:var(--mute);font-size:17px}
+.survey{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+a.big{display:block;text-decoration:none;border-radius:22px;padding:26px 26px;color:#fff;background:linear-gradient(135deg,#4338ca,#6d28d9);box-shadow:0 10px 30px rgba(67,56,202,.25)}
+a.big.l{background:linear-gradient(135deg,#0369a1,#0f766e);box-shadow:0 10px 30px rgba(3,105,161,.22)}
+a.big span{display:block;font-size:26px;font-weight:800}
+a.big small{display:block;font-size:17px;opacity:.92;margin-top:6px}
+.note{background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:14px 18px;font-size:17px;color:#713f12;margin-top:22px}
+.code{font-family:Consolas,monospace;font-weight:700;letter-spacing:.08em;color:var(--accent);background:#eef2ff;padding:2px 8px;border-radius:6px}
+footer{max-width:1180px;margin:0 auto;padding:0 24px 40px;color:var(--mute);font-size:15px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Học liệu HTML tương tác cho 6 học phần kỹ thuật</h1>
+  <p class="lead">Mỗi học phần là một trang web duy nhất gồm lý thuyết, công thức, hình minh họa, mô phỏng chạy ngay trên trình duyệt (có kiểm chứng với lời giải giải tích) và câu hỏi tự chấm. Không cần cài đặt phần mềm, dùng được trên máy tính và điện thoại.</p>
+
+  <div class="steps">
+    <div class="step"><b>Bước 1</b>Chọn trang của học phần bạn đang học (hoặc giảng dạy) ở bên dưới.</div>
+    <div class="step"><b>Bước 2</b>Khám phá khoảng 20–30 phút: đọc lý thuyết, thay đổi tham số, quan sát mô phỏng, làm phần trắc nghiệm.</div>
+    <div class="step"><b>Bước 3</b>Làm phiếu khảo sát (sinh viên khoảng 10 phút, giảng viên khoảng 20–30 phút).</div>
+  </div>
+
+  <h2>Sáu trang học tập</h2>
+  <div class="grid">
+    <a class="card" href="01_Toan_ky_thuat.html"><div class="k">Học phần 1 · MAT</div><h3>Toán kỹ thuật</h3><p>Tích vô hướng, tích có hướng · đại số vectơ 3D · giải PTVP bằng RK4 so với nghiệm giải tích</p></a>
+    <a class="card" href="02_Ly_thuyet_mach.html"><div class="k">Học phần 2 · CIR</div><h3>Lý thuyết mạch</h3><p>Trở kháng · giản đồ phasor và cộng hưởng RLC · quá độ RLC với đầu vào bậc thang</p></a>
+    <a class="card" href="03_Truong_dien_tu.html"><div class="k">Học phần 3 · EMF</div><h3>Trường điện từ</h3><p>Định luật Coulomb · đường sức và mặt đẳng thế · FDTD 1D tại mặt phân cách điện môi</p></a>
+    <a class="card" href="04_Tin_hieu_va_he_thong.html"><div class="k">Học phần 4 · SIG</div><h3>Tín hiệu và hệ thống</h3><p>Các phép biến đổi theo thời gian · tích chập bằng đồ thị · lấy mẫu và chồng phổ</p></a>
+    <a class="card" href="05_Dieu_khien_tu_dong.html"><div class="k">Học phần 5 · CTL</div><h3>Điều khiển tự động</h3><p>Điểm cực và tính ổn định · chỉ tiêu hệ bậc hai · điều khiển PID động cơ DC</p></a>
+    <a class="card" href="06_Xu_ly_so_tin_hieu.html"><div class="k">Học phần 6 · DSP</div><h3>Xử lý số tín hiệu</h3><p>Độ phân giải DFT · cửa sổ và rò rỉ phổ · thiết kế bộ lọc FIR bằng sinc có cửa sổ</p></a>
+  </div>
+
+  <h2>Phiếu khảo sát</h2>
+  <div class="survey">
+    <a class="big" id="sv" href="survey.html?role=student"><span>Phiếu sinh viên</span><small>Khoảng 10 phút · 26 câu thang đo 1–5 và 2 câu hỏi mở</small></a>
+    <a class="big l" id="lv" href="survey.html?role=lecturer"><span>Phiếu giảng viên</span><small>Khoảng 20–30 phút · có sơ đồ quy trình, bảng rubric và phần chấm 4 định dạng × 12 tiêu chí</small></a>
+  </div>
+  <div class="note" id="note">Phiếu khảo sát ẩn danh: không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Tham gia là tự nguyện và không ảnh hưởng đến điểm học phần.</div>
+</main>
+<footer>Khảo sát phục vụ nghiên cứu về học liệu HTML tích hợp có hỗ trợ của AI tạo sinh.</footer>
+<script>
+// Pass the anonymous code (set by the demo pages, same site) to the survey so usage logs can be linked to answers.
+(function () {
+  let code = null; try { code = localStorage.getItem('p2_anon_code'); } catch (e) {}
+  if (!code) return;
+  ['sv', 'lv'].forEach(id => { const a = document.getElementById(id); a.href += '&code=' + encodeURIComponent(code); });
+  document.getElementById('note').insertAdjacentHTML('beforeend', ` Mã ẩn danh của bạn trên trình duyệt này: <span class="code">${code}</span> (được điền sẵn vào phiếu).`);
+})();
+</script>
+</body>
+</html>
