@@ -71,6 +71,28 @@ details li{margin:3px 0}
 .scope div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:16.5px}
 .sticky{position:sticky;bottom:0;background:rgba(241,245,249,.94);backdrop-filter:blur(6px);padding:12px 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .saved{font-size:15px;color:var(--mute)}
+.rprog{position:sticky;top:0;z-index:5;display:inline-block;background:#eef2ff;color:#3730a3;font-weight:700;font-size:16px;border-radius:999px;padding:6px 14px;margin:4px 0 6px}
+.rcard{border:1.5px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0;background:#fff}
+.rcard.rdone{border-color:#a7f3d0;background:#f6fffb}
+.rc-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:20px;margin-bottom:10px}
+.rc-num{font-size:14px;color:var(--mute);font-weight:600}
+.auto-tag{font-size:13px;font-weight:700;color:#047857;background:#d1fae5;border-radius:999px;padding:2px 10px}
+.rgrid{display:grid;gap:6px}
+.rg-row{display:grid;grid-template-columns:130px repeat(5,1fr);gap:6px;align-items:stretch}
+.rg-fmt{font-weight:700;font-size:17px;display:flex;align-items:center}
+.rg-top .rg-fmt{font-size:14px;color:var(--mute);font-weight:600}
+.rg-lv{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 9px;font-size:14.5px;line-height:1.35;color:var(--ink2)}
+.rg-lv b{display:block;font-size:17px;color:var(--ink);margin-bottom:2px}
+.rg-cell{display:flex;align-items:center;justify-content:center;border:1.5px solid #cbd5e1;border-radius:12px;min-height:46px;cursor:pointer;font-weight:700;font-size:18px;color:#94a3b8;background:#fff;transition:.12s}
+.rg-cell input{position:absolute;opacity:0;pointer-events:none}
+.rg-cell:hover{border-color:#818cf8;color:var(--accent)}
+.rg-cell:has(input:checked){background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(67,56,202,.3)}
+.rg-mob{display:none}
+.c10{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.c10 div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.c10 span{display:block;font-size:15px;color:var(--mute)}
+.c10 b{font-size:20px}
+@media (max-width:760px){.rg-top{display:none}.rg-mob{display:block}.rg-row{grid-template-columns:96px repeat(5,1fr);gap:5px}.rg-fmt{font-size:15px}.rg-cell{min-height:42px}.c10{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){body{font-size:18px}.card{padding:20px 16px}.scale label{font-size:12.5px;padding:8px 2px}.scale label b{font-size:20px}
   table.rate{font-size:15.5px}table.rate select{min-width:56px;font-size:17px}}
 </style>
@@ -145,14 +167,44 @@ function rubricGuide() {
 }
 
 function rubricRate() {
-  const R = ITEMS.rubric;
+  const R = ITEMS.rubric, F = R.formats, SRC = ['C1', 'C2', 'C3', 'C6', 'C8'];
+  const card = (c, k) => {
+    const auto = c.id === 'C10';
+    const head = `<div class="rc-head"><span class="rc-num">${k + 1}/12</span><span class="qid">${c.id}</span><b>${c.name}</b>${auto ? '<span class="auto-tag">tự tính</span>' : ''}</div>`;
+    if (auto) return `<div class="rcard" data-req="LR_C10">${head}
+      <p class="hint">Không cần chấm: C10 = số lớp nội dung có trong một sản phẩm, được tính tự động từ điểm của C1 (trình bày), C2 (toán học), C3 (trực quan hóa), C6 (mô phỏng) và C8 (đánh giá) mà bạn đã chấm, tiêu chí nào từ 3 điểm trở lên được tính là một lớp (≤ 1 lớp → 1 điểm; 5 lớp → 5 điểm).</p>
+      <div class="c10">${F.map(f => `<div><span>${esc(f[1])}</span><b id="c10_${f[0]}">–</b><input type="hidden" name="LR_${f[0]}_C10" value=""></div>`).join('')}</div></div>`;
+    return `<div class="rcard" data-req="LR_${c.id}">${head}
+      <div class="rgrid" role="table">
+        <div class="rg-row rg-top"><div class="rg-fmt">Mức →</div>${c.levels.map((x, i) => `<div class="rg-lv"><b>${i + 1}</b><span>${x}</span></div>`).join('')}</div>
+        ${F.map(f => `<div class="rg-row"><div class="rg-fmt">${esc(f[1])}</div>${[1,2,3,4,5].map(v => `<label class="rg-cell" title="${esc(f[1])} – mức ${v}"><input type="radio" name="LR_${f[0]}_${c.id}" value="${v}"><span>${v}</span></label>`).join('')}</div>`).join('')}
+      </div>
+      <details class="rg-mob"><summary>Xem mô tả 5 mức</summary><ol>${c.levels.map((x, i) => `<li><b>${i + 1}</b> – ${x}</li>`).join('')}</ol></details>
+    </div>`;
+  };
   return `<h2>H. Chấm điểm 4 định dạng theo 12 tiêu chí (1–5)</h2>
-    <p class="hint">Chọn điểm cho từng ô. C10 = số tiêu chí trong C1, C2, C3, C6, C8 đạt từ 3 điểm (≤ 1 → 1; 5 → 5). C12 đảo chiều: điểm cao = dễ soạn.</p>
-    <table class="rate"><thead><tr><th>Tiêu chí</th>${R.formats.map(f => `<th>${esc(f[1])}</th>`).join('')}</tr></thead><tbody>
-    ${R.criteria.map(c => `<tr data-req="LR_${c.id}"><td><span class="qid">${c.id}</span><b>${c.name}</b>
-        <details><summary>Xem mô tả 5 mức</summary><ol>${c.levels.map((x, i) => `<li><b>${i + 1}</b> – ${x}</li>`).join('')}</ol></details></td>
-        ${R.formats.map(f => `<td class="s"><select name="LR_${f[0]}_${c.id}" aria-label="${c.id} ${esc(f[1])}"><option value="">–</option>${[1,2,3,4,5].map(v => `<option>${v}</option>`).join('')}</select></td>`).join('')}</tr>`).join('')}
-    </tbody></table>`;
+    <p class="hint">Mỗi thẻ là một tiêu chí. Đọc mô tả của 5 mức ở hàng trên, rồi với mỗi định dạng (PPTX, LaTeX/PDF, MATLAB, HTML) <b>bấm vào ô của mức mô tả đúng nhất</b>. Chỉ chọn một mức khi định dạng có đủ các đặc điểm của mức đó; nếu phân vân, chọn mức thấp hơn. C10 được tính tự động; C12 đảo chiều (điểm cao = dễ soạn).</p>
+    <div class="rprog" id="rprog">Đã chấm 0/44 ô</div>
+    ${R.criteria.map(card).join('')}`;
+}
+
+// recompute C10 and progress whenever a rubric radio changes
+function rubricWire(form) {
+  const R = ITEMS.rubric, F = R.formats, SRC = ['C1', 'C2', 'C3', 'C6', 'C8'];
+  const upd = () => {
+    F.forEach(f => {
+      const v = SRC.map(c => (form.querySelector(`input[name="LR_${f[0]}_${c}"]:checked`) || {}).value);
+      const h = form.querySelector(`input[name="LR_${f[0]}_C10"]`), out = document.getElementById('c10_' + f[0]);
+      if (v.every(Boolean)) { const n = v.filter(x => +x >= 3).length, sc = Math.max(1, n); h.value = sc; out.textContent = sc + ` (${n} lớp)`; }
+      else { h.value = ''; out.textContent = '–'; }
+    });
+    const done = form.querySelectorAll('.rgrid input:checked').length;
+    document.getElementById('rprog').textContent = `Đã chấm ${done}/44 ô` + (done === 44 ? ' ✓' : '');
+    form.querySelectorAll('.rcard').forEach(cd => { const id = cd.dataset.req.slice(3); if (id === 'C10') return;
+      cd.classList.toggle('rdone', F.every(f => form.querySelector(`input[name="LR_${f[0]}_${id}"]:checked`))); });
+  };
+  form.addEventListener('change', e => { if (e.target.name && e.target.name.startsWith('LR_')) upd(); });
+  upd();
 }
 
 function render(role) {
@@ -187,6 +239,7 @@ function render(role) {
       if (el.type === 'radio' || el.type === 'checkbox') el.checked = String(v).split(';').includes(el.value); else el.value = v; }); });
     $('#consent').checked = true; form.style.display = ''; $('#draftInfo').textContent = 'Đã khôi phục phần đang làm dở.'; };
   restore();
+  if (role === 'lecturer') rubricWire(form);
   let tm = null; form.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(() => { ls.set(DRAFT, JSON.stringify(collect())); $('#draftInfo').textContent = 'Đã lưu tạm ' + new Date().toLocaleTimeString('vi-VN'); }, 400); });
   // ---- submit ----
   form.onsubmit = async ev => {
