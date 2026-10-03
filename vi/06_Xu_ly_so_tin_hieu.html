@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trường điện từ — Định luật Coulomb, nguyên lý chồng chất và truyền sóng FDTD (Demo tương tác)</title>
+<title>Xử lý số tín hiệu — DFT, cửa sổ hóa và lọc FIR (Demo tương tác)</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], tags: 'ams' },
@@ -17,7 +17,7 @@ window.MathJax = {
   --bg:#ffffff; --panel:#ffffff; --card:#f8fafc; --line:#e2e8f0; --ink:#0f172a; --ink2:#334155; --mute:#64748b;
   --sky:#0284c7; --sky-bg:#e0f2fe; --rose:#e11d48; --rose-bg:#ffe4e6; --amber:#d97706; --amber-bg:#fef3c7;
   --emerald:#059669; --emerald-bg:#d1fae5; --indigo:#4f46e5; --indigo-bg:#e0e7ff; --violet:#7c3aed;
-  --accent:#7c3aed;
+  --accent:#e11d48;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -97,12 +97,12 @@ details.matlab pre{margin:0;padding:0 14px 14px;font-size:12.5px;overflow-x:auto
 svg text{font-family:Inter,"Segoe UI",system-ui,sans-serif}
 footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);font-size:12.5px}
 </style>
-<script src="config.js"></script>
+<script src="../config.js"></script>
 <style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand"><div class="dot"></div><span>Trường điện từ</span></div>
+  <div class="brand"><div class="dot"></div><span>Xử lý số tín hiệu</span></div>
   <nav class="links">
     <a href="#overview">Tổng quan</a>
     <a class="e" href="#easy">Cơ bản</a>
@@ -113,120 +113,104 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </div></header>
 <main>
 <section class="panel hero" id="overview">
-  <span class="tag">Học phần 3 · Trường điện từ</span>
-  <h1>Điện tích điểm, nguyên lý chồng chất và sóng tại mặt phân cách</h1>
-  <p class="lead">Trang này bao gồm các bài toán chuẩn EMF-E, EMF-M và EMF-C. Bắt đầu từ trường của một điện tích điểm, sau đó xây dựng trường của nhiều điện tích bằng nguyên lý chồng chất, kèm đường sức và mặt đẳng thế. Cuối cùng là mô phỏng sai phân hữu hạn miền thời gian (FDTD) một chiều cho một xung tới đập vào lớp điện môi. Hệ số phản xạ và hệ số truyền đo được từ mô phỏng được kiểm chứng với công thức Fresnel.</p>
-  <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (bản đồ trường, hoạt ảnh)</span><span>④ Mô phỏng (Yee/FDTD)</span><span>⑤ Đánh giá (tự chấm)</span></div>
+  <span class="tag">Học phần 6 · Xử lý số tín hiệu</span>
+  <h1>DFT, rò rỉ phổ và thiết kế bộ lọc FIR</h1>
+  <p class="lead">Ba bài chuẩn DSP-E, DSP-M và DSP-C được trình bày trên cùng một trang. Trước hết định nghĩa DFT và lưới tần số của nó, sau đó cho thấy việc chọn cửa sổ là sự đánh đổi giữa độ rộng búp chính và mức rò rỉ qua búp phụ. Cuối cùng, thiết kế bộ lọc FIR theo phương pháp sinc có cửa sổ và áp dụng cho tín hiệu hai thành phần có nhiễu. Hệ số khuếch đại đo được được kiểm chứng với đáp ứng tần số giải tích.</p>
+  <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (phổ theo dB)</span><span>④ Mô phỏng (FFT, lọc FIR)</span><span>⑤ Đánh giá (tự chấm)</span></div>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="kicker">Mục tiêu 1</div>Áp dụng định luật Coulomb dạng vectơ và tính $\mathbf{E}$ của một điện tích điểm.</div>
-    <div class="card"><div class="kicker">Mục tiêu 2</div>Cộng trường của nhiều điện tích và liên hệ đường sức với mặt đẳng thế qua $\mathbf{E}=-\nabla V$.</div>
-    <div class="card"><div class="kicker">Mục tiêu 3</div>Dự đoán $\Gamma$ và $\tau$ tại biên điện môi và kiểm chứng bằng mô phỏng FDTD.</div>
+    <div class="card"><div class="kicker">Mục tiêu 1</div>Liên hệ chỉ số bin DFT $k$ với tần số $f_k=kf_s/N$.</div>
+    <div class="card"><div class="kicker">Mục tiêu 2</div>Giải thích hiện tượng rò rỉ phổ và chọn cửa sổ theo yêu cầu về dải động.</div>
+    <div class="card"><div class="kicker">Mục tiêu 3</div>Thiết kế bộ lọc FIR pha tuyến tính và kiểm chứng hệ số khuếch đại tại các tần số cho trước.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · EMF-E</span><h2>Định luật Coulomb và trường của điện tích điểm</h2><p class="lead">Điện tích $q$ tạo ra trường điện hướng xuyên tâm ra xa nó (hoặc hướng vào nó nếu $q<0$). Cường độ trường giảm theo $1/R^2$. Một điện tích thử $q'$ đặt trong trường này chịu lực $\mathbf{F}=q'\mathbf{E}$.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Mức E · DSP-E</span><h2>DFT và độ phân giải tần số</h2><p class="lead">DFT $N$ điểm lấy mẫu phổ của một đoạn tín hiệu hữu hạn tại $N$ tần số cách đều nhau. Khoảng cách $\Delta f=f_s/N=1/T$ chỉ phụ thuộc vào độ dài đoạn ghi, không phụ thuộc vào tần số lấy mẫu.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g2">
-      <div class="card"><h3>Định luật Coulomb</h3><div class="eq">$$\mathbf{F}_{21}=\hat{\mathbf{R}}_{12}\,\frac{q_1q_2}{4\pi\varepsilon R_{12}^2}$$</div><p class="note">Lực do $q_1$ tác dụng lên $q_2$. $\hat{\mathbf{R}}_{12}$ hướng từ $q_1$ đến $q_2$.</p></div>
-      <div class="card"><h3>Cường độ trường điện</h3><div class="eq">$$\mathbf{E}=\hat{\mathbf{R}}\,\frac{q}{4\pi\varepsilon R^2}\quad(\mathrm{V/m})$$</div><p class="note">Trường được định nghĩa là lực tác dụng lên một đơn vị điện tích thử, $\mathbf{E}=\mathbf{F}/q'$.</p></div>
-      <div class="card"><h3>Dạng vectơ</h3><div class="eq">$$\mathbf{E}(\mathbf{R})=\frac{q\,(\mathbf{R}-\mathbf{R}_1)}{4\pi\varepsilon|\mathbf{R}-\mathbf{R}_1|^3}$$</div><p class="note">Dùng dạng này khi điện tích không nằm ở gốc tọa độ.</p></div>
-      <div class="card"><h3>Ví dụ minh họa</h3><p>Xét $q=2$ nC trong không khí. Tại $R=0.3$ m, cường độ trường là $|\mathbf{E}|=\dfrac{9\times10^{9}\cdot2\times10^{-9}}{0.09}=200$ V/m. Điện tích thử $q'=-1$ nC đặt tại đó chịu lực $0.2\ \mu$N, hướng về phía $q$.</p></div>
+      <div class="card"><h3>Định nghĩa</h3><div class="eq">$$X[k]=\sum_{n=0}^{N-1}x[n]\,e^{-j2\pi kn/N}$$</div></div>
+      <div class="card"><h3>Tần số của các bin</h3><div class="eq">$$f_k=k\frac{f_s}{N},\quad \Delta f=\frac{f_s}{N}=\frac1T$$</div></div>
+      <div class="card"><h3>Tính đối xứng ($x$ thực)</h3><div class="eq">$$X[N-k]=X^*[k]$$</div><p class="note">Chỉ các bin $0\dots N/2$ mang thông tin độc lập.</p></div>
+      <div class="card"><h3>Ví dụ</h3><p>Với $f_s=8$ kHz và $N=8$ ta có $\Delta f=1$ kHz. Tín hiệu $x[n]=\cos(2\pi\cdot2n/8)+\tfrac12\cos(2\pi\cdot3n/8)$ chỉ có năng lượng tại bin 2 và 3 (cùng các bin ảnh đối xứng 6 và 5), với $|X[2]|=4$ và $|X[3]|=2$.</p></div>
     </div>
-    <div class="card white"><h3>Trường của điện tích điểm dương và âm</h3>
-      <svg viewBox="0 0 360 230" width="100%" aria-label="Đường sức xuyên tâm của các điện tích điểm">
-        <defs><marker id="ea" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z" fill="#0284c7"/></marker>
-              <marker id="eb" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7z" fill="#e11d48"/></marker></defs>
-        <g id="radial"></g>
-        <circle cx="95" cy="110" r="16" fill="#0284c7"/><text x="95" y="116" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">+</text>
-        <circle cx="265" cy="110" r="16" fill="#e11d48"/><text x="265" y="116" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">−</text>
-        <text x="95" y="220" text-anchor="middle" font-size="12" fill="#334155">q &gt; 0: E hướng ra ngoài</text>
-        <text x="265" y="220" text-anchor="middle" font-size="12" fill="#334155">q &lt; 0: E hướng vào trong</text>
-      </svg>
-      <p class="note">Mật độ đường sức tỉ lệ với $|\mathbf{E}|$. Số đường sức đi qua một mặt cầu là như nhau ở mọi bán kính, trong khi diện tích mặt cầu tăng theo $R^2$; đó là nguồn gốc của định luật nghịch đảo bình phương.</p></div>
+    <div class="card white"><h3>Tín hiệu ví dụ và DFT 8 điểm của nó</h3>
+      <div class="canvas-wrap"><canvas id="d1" data-h="150"></canvas></div>
+      <div class="canvas-wrap" style="margin-top:8px"><canvas id="d2" data-h="150"></canvas></div></div>
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · EMF-M</span><h2>Đường sức và mặt đẳng thế của các điện tích điểm</h2><p class="lead">Kéo các điện tích hoặc điểm đo $P$. Nền hiển thị điện thế $V$ (hồng: dương, xanh: âm), các đường cong trắng là đường sức xuất phát từ các điện tích dương. Trường tổng tại $P$ là tổng vectơ của trường do từng điện tích gây ra.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Mức M · DSP-M</span><h2>Cửa sổ hóa và rò rỉ phổ</h2><p class="lead">Khi một thành phần sin không chứa số nguyên chu kỳ trong đoạn ghi, năng lượng của nó rò rỉ sang mọi bin. Khi đó, một thành phần thứ hai yếu hơn có thể bị che lấp dưới các búp phụ của thành phần mạnh. Các cửa sổ có biên giảm dần làm hạ thấp búp phụ, nhưng phải trả giá bằng búp chính rộng hơn.</p></div></div>
   <div class="sim">
     <div>
-      <div class="canvas-wrap"><canvas id="fm" data-h="430" style="cursor:pointer"></canvas></div>
-      <div class="controls">
-        <div class="ctl"><label>Cấu hình</label><select id="cfg"><option value="dipole" selected>Lưỡng cực (+q, −q)</option><option value="like">Hai điện tích cùng dấu (+q, +q)</option><option value="three">Ba điện tích (+2q, −q, −q)</option><option value="unequal">Cặp không bằng nhau (+3q, −q)</option></select></div>
-        <div class="ctl"><label>Hệ số điện tích $q$ (nC) <b id="qs-v"></b></label><input type="range" id="qs" min="0.5" max="5" step="0.5" value="1"></div>
-        <div class="ctl"><label>Số đường sức trên một đơn vị điện tích <b id="nl-v"></b></label><input type="range" id="nl" min="6" max="24" step="2" value="14"></div>
-        <div class="ctl"><label>Hiển thị</label><div class="chips"><button class="btn on" id="tgV">Điện thế</button><button class="btn on" id="tgL">Đường sức</button><button class="btn" id="tgA">Lưới mũi tên</button></div></div>
+      <div class="canvas-wrap"><canvas id="lk" data-h="320"></canvas></div>
+      <div class="controls c3">
+        <div class="ctl"><label>Cửa sổ</label><select id="win"><option value="rect">Chữ nhật</option><option value="hann" selected>Hann</option><option value="hamming">Hamming</option><option value="blackman">Blackman</option></select></div>
+        <div class="ctl"><label>Thành phần 1 (bin) <b id="k1-v"></b></label><input type="range" id="k1" min="8" max="24" step="0.05" value="16.5"></div>
+        <div class="ctl"><label>Độ lệch thành phần 2 (bin) <b id="dk-v"></b></label><input type="range" id="dk" min="2" max="20" step="0.5" value="6"></div>
+        <div class="ctl"><label>Mức thành phần 2 (dB) <b id="a2-v"></b></label><input type="range" id="a2" min="-80" max="0" step="1" value="-50"></div>
+        <div class="ctl"><label>$N$</label><select id="Nw"><option>64</option><option selected>128</option><option>256</option></select></div>
       </div>
     </div>
     <div class="card white">
-      <h3>Chồng chất tại $P$</h3>
-      <div class="eq">$$\mathbf{E}(P)=\sum_{i=1}^{N}\frac{q_i(\mathbf{R}_P-\mathbf{R}_i)}{4\pi\varepsilon_0|\mathbf{R}_P-\mathbf{R}_i|^3}$$</div>
-      <table class="read" id="sp-tab"></table>
-      <table class="read" style="margin-top:6px">
-        <tr><td>$\mathbf{E}(P)$ (chồng chất)</td><td id="sp-E"></td></tr>
-        <tr><td>$-\nabla V$ (số, sai phân trung tâm)</td><td id="sp-G"></td></tr>
-        <tr><td>$V(P)$</td><td id="sp-V"></td></tr>
+      <h3>Đặc tính cửa sổ</h3>
+      <table class="read">
+        <tr><td></td><td><b>lý thuyết · đo được</b></td></tr>
+        <tr><td>Mức búp phụ lớn nhất</td><td id="w-psl"></td></tr>
+        <tr><td>Độ rộng búp chính (giữa hai điểm không)</td><td id="w-ml"></td></tr>
+        <tr><td>Thành phần 2 có nổi trên mức rò rỉ?</td><td id="w-vis"></td></tr>
       </table>
-      <div id="sp-verdict" class="verdict"></div>
-      <p class="note">Hai cách tính độc lập — tổng giải tích của $\mathbf{E}$ và gradient số của $V$ — phải cho cùng kết quả. Đây là phép kiểm tra nhất quán $\mathbf{E}=-\nabla V$. Đường sức luôn cắt mặt đẳng thế theo góc vuông.</p>
+      <div id="w-verdict" class="verdict"></div>
+      <p class="note">Giá trị đo được lấy từ FFT có chèn không của chính hàm cửa sổ. Lý thuyết: chữ nhật −13,3 dB / 2 bin, Hann −31,5 dB / 4 bin, Hamming −42,7 dB / 4 bin, Blackman −58,1 dB / 6 bin.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
-  <div class="sechead"><div><span class="tag c">Mức C · EMF-C</span><h2>FDTD 1D: xung tới mặt phân cách điện môi</h2>
-    <p class="lead">Một xung Gauss truyền trong không khí ($z&lt;z_i$) và gặp lớp điện môi không tổn hao có hằng số điện môi tương đối $\varepsilon_r$ ($z&gt;z_i$). Các phương trình rota Maxwell được rời rạc hóa trên lưới Yee so le với số Courant bằng 1; các xung tới, phản xạ và truyền qua được ghi lại tại hai điểm đo. Các hệ số đo được từ các bản ghi này được so sánh với công thức Fresnel.</p></div>
-    <span class="tag v">Kiểm chứng: giải tích ($\varepsilon=2\%$) + MATLAB</span></div>
+  <div class="sechead"><div><span class="tag c">Mức C · DSP-C</span><h2>Thiết kế FIR bằng sinc có cửa sổ và lọc tín hiệu</h2>
+    <p class="lead">Đáp ứng xung thông thấp lý tưởng $h_d[n]=2f_c/f_s\,\mathrm{sinc}\!\left(2f_c(n-\tfrac{M-1}{2})/f_s\right)$ được cắt cụt còn $M$ hệ số và nhân với một cửa sổ. Bộ lọc thông cao nhận được bằng phép đảo phổ. Bộ lọc được áp dụng cho $x[n]=\sin(2\pi50n/f_s)+0.5\sin(2\pi300n/f_s)+$ nhiễu, với $f_s=1$ kHz.</p></div>
+    <span class="tag v">Kiểm chứng: giải tích + MATLAB fir1/freqz</span></div>
   <div class="sim">
     <div>
-      <div class="canvas-wrap"><canvas id="fd" data-h="280"></canvas></div>
-      <div class="canvas-wrap" style="margin-top:10px"><canvas id="pr" data-h="200"></canvas></div>
+      <div class="canvas-wrap"><canvas id="hf" data-h="240"></canvas></div>
+      <div class="canvas-wrap" style="margin-top:10px"><canvas id="ty" data-h="220"></canvas></div>
       <div class="controls c3">
-        <div class="ctl"><label>$\varepsilon_r$ của môi trường 2 <b id="er-v"></b></label><input type="range" id="er" min="1.5" max="12" step="0.25" value="4"></div>
-        <div class="ctl"><label>Độ rộng xung $w$ (bước) <b id="pw-v"></b></label><input type="range" id="pw" min="6" max="40" step="1" value="25"></div>
-        <div class="ctl"><label>Phát lại</label><div class="chips"><button class="btn on" id="fdPlay">Tạm dừng</button><button class="btn" id="fdReset">Chạy lại</button></div></div>
+        <div class="ctl"><label>Loại</label><select id="ftype"><option value="lp" selected>Thông thấp</option><option value="hp">Thông cao</option></select></div>
+        <div class="ctl"><label>Tần số cắt $f_c$ (Hz) <b id="fc-v"></b></label><input type="range" id="fc" min="20" max="450" step="5" value="150"></div>
+        <div class="ctl"><label>Số hệ số $M$ (lẻ) <b id="M-v"></b></label><input type="range" id="M" min="11" max="201" step="2" value="61"></div>
+        <div class="ctl"><label>Cửa sổ</label><select id="fw"><option value="rect">Chữ nhật</option><option value="hann">Hann</option><option value="hamming" selected>Hamming</option><option value="blackman">Blackman</option></select></div>
+        <div class="ctl"><label>Mức nhiễu <b id="nz-v"></b></label><input type="range" id="nz" min="0" max="1" step="0.05" value="0.3"></div>
       </div>
     </div>
     <div class="card white">
-      <h3>Tham chiếu Fresnel (tới vuông góc)</h3>
-      <div class="eq">$$\Gamma=\frac{\eta_2-\eta_1}{\eta_2+\eta_1}=\frac{1-n_2}{1+n_2},\qquad \tau=1+\Gamma=\frac{2}{1+n_2}$$</div>
-      <div class="eq">$$H_y^{q+\frac12}[m]=H_y^{q-\frac12}[m]+\frac{E_z^q[m+1]-E_z^q[m]}{\eta_0}$$$$E_z^{q+1}[m]=E_z^{q}[m]+\frac{\eta_0}{\varepsilon_r[m]}\,\Delta H_y^{q+\frac12}[m]$$<p class=\"note\">$\Delta H_y[m]=H_y[m]-H_y[m-1]$; số Courant $c\Delta t/\Delta z=1$.</p></div>
+      <h3>Hệ số khuếch đại đo được so với giải tích</h3>
       <table class="read">
-        <tr><td>$n_2=\sqrt{\varepsilon_r}$</td><td id="f-n"></td></tr>
-        <tr><td>$\Gamma$ giải tích · FDTD</td><td id="f-G"></td></tr>
-        <tr><td>$\tau$ giải tích · FDTD</td><td id="f-t"></td></tr>
-        <tr><td>$E_{\mathrm{rel}}$ ($\Gamma$, $\tau$)</td><td id="f-e"></td></tr>
-        <tr><td>Số ô trên một độ rộng xung trong môi trường 2</td><td id="f-ppw"></td></tr>
-        <tr><td>Kiểm tra năng lượng $\Gamma^2+n_2\tau^2$</td><td id="f-en"></td></tr>
+        <tr><td>$|H(50\,\text{Hz})|$ giải tích · đo được</td><td id="g1"></td></tr>
+        <tr><td>$|H(300\,\text{Hz})|$ giải tích · đo được</td><td id="g2"></td></tr>
+        <tr><td>Hệ số khuếch đại tại $f_c$ (dB)</td><td id="gfc"></td></tr>
+        <tr><td>Trễ nhóm $(M-1)/2$</td><td id="gd"></td></tr>
+        <tr><td>Hệ số khuếch đại dải chắn lớn nhất ngoài $f_c\pm$dải chuyển tiếp</td><td id="sb"></td></tr>
       </table>
       <div id="f-verdict" class="verdict"></div>
-      <p class="note">Xung hẹp trong điện môi đậm đặc chỉ được biểu diễn bởi vài ô lưới, nên tán sắc số làm méo xung và giá trị $\tau$ đo được bị lệch. Hãy giảm $w$ khi $\varepsilon_r=12$ để thấy phép kiểm chứng thất bại. Đây là lý do quy trình cho phép $\varepsilon=2\%$ đối với FDTD.</p>
-      <details class="matlab"><summary>Script MATLAB tham chiếu (cùng sơ đồ Yee)</summary><pre>N = 1400; zi = 700; src = 150; pA = 420; pB = 950;
-er2 = 4; w = 25; t0 = 4*w; T = 2400; imp0 = 377;
-ez = zeros(1,N); hy = zeros(1,N); eps = ones(1,N);
-eps(zi+2:end) = er2; eps(zi+1) = (1+er2)/2;
-A = zeros(1,T); B = zeros(1,T);
-for q = 1:T
-  hy(1:N-1) = hy(1:N-1) + diff(ez)/imp0;
-  e1 = ez(2);
-  ez(2:N) = ez(2:N) + diff(hy).*imp0./eps(2:N);
-  ez(1) = e1;                          % Biên hấp thụ Mur (chính xác khi S = 1)
-  ez(src) = ez(src) + exp(-((q-1-t0)/w)^2);
-  A(q) = ez(pA); B(q) = ez(pB);
-end
-n2 = sqrt(er2); Gamma_th = (1-n2)/(1+n2); tau_th = 2/(1+n2);</pre></details>
+      <p class="note">Hệ số khuếch đại đo được lấy từ DFT của đầu ra bộ lọc ở trạng thái xác lập khi chỉ có từng thành phần riêng lẻ. Hệ số khuếch đại giải tích được tính theo $|H(e^{j\omega})|=\left|\sum_n h[n]e^{-j\omega n}\right|$.</p>
+      <details class="matlab"><summary>Script MATLAB tham chiếu</summary><pre>fs = 1000; fc = 150; M = 61;
+h = fir1(M-1, fc/(fs/2), 'low', hamming(M));
+[H, f] = freqz(h, 1, 4096, fs);
+plot(f, 20*log10(abs(H))); grid on
+n = 0:fs-1;  x = sin(2*pi*50*n/fs) + 0.5*sin(2*pi*300*n/fs);
+y = filter(h, 1, x);
+abs(H(round(50/fs*2*4096)+1))   % so sánh với hệ số khuếch đại trên trang</pre></details>
     </div>
   </div>
 </section>
 
 <section class="panel" id="quiz">
-  <div class="sechead"><div><span class="tag q">Đánh giá</span><h2>Bài kiểm tra tự đánh giá</h2></div><span class="score" id="score"></span></div>
+  <div class="sechead"><div><span class="tag q">Đánh giá</span><h2>Câu hỏi tự đánh giá</h2></div><span class="score" id="score"></span></div>
   <div class="quiz" id="quizBox"></div>
 </section>
 
 </main>
-<footer class="p2nav"><a href="index.html">← Trang chủ</a> · <a href="survey.html?role=student">Làm phiếu khảo sát sinh viên</a> · <a href="survey.html?role=lecturer">Phiếu giảng viên</a></footer>
+<footer class="p2nav"><a href="../index.html?lang=vi">← Trang chủ</a> · <a href="../survey.html?role=student&amp;lang=vi">Làm phiếu khảo sát sinh viên</a> · <a href="../survey.html?role=lecturer&amp;lang=vi">Phiếu giảng viên</a></footer>
 <script>
 /* ===================== shared helpers ===================== */
 const $ = id => document.getElementById(id);
@@ -351,120 +335,88 @@ function quiz(containerId, scoreId, items) {
   };
   upd(); typeset([box]);
 }
-/* ---------- EMF-E: radial lines in the static SVG ---------- */
+/* windows (periodic / DFT-even form for spectral analysis, symmetric for FIR design) */
+function win(type, N, sym=false) { const L = sym ? N - 1 : N; return [...Array(N).keys()].map(n => { const x = 2*Math.PI*n/L;
+  return type === 'rect' ? 1 : type === 'hann' ? 0.5 - 0.5*Math.cos(x) : type === 'hamming' ? 0.54 - 0.46*Math.cos(x) : 0.42 - 0.5*Math.cos(x) + 0.08*Math.cos(2*x); }); }
+function specDB(x, Nf) { const re = new Float64Array(Nf), im = new Float64Array(Nf); x.forEach((v,i) => re[i] = v); fft(re, im); const m = []; for (let k = 0; k <= Nf/2; k++) m.push(Math.hypot(re[k], im[k])); return m; }
+
+/* ---------- DSP-E: static 8-point example ---------- */
 (function () {
-  const g = document.getElementById('radial'); let s = '';
-  for (let k = 0; k < 12; k++) { const a = k*Math.PI/6, c = Math.cos(a), d = Math.sin(a);
-    s += `<line x1="${95 + 22*c}" y1="${110 + 22*d}" x2="${95 + 72*c}" y2="${110 + 72*d}" stroke="#0284c7" stroke-width="2" marker-end="url(#ea)"/>`;
-    s += `<line x1="${265 + 72*c}" y1="${110 + 72*d}" x2="${265 + 22*c}" y2="${110 + 22*d}" stroke="#e11d48" stroke-width="2" marker-end="url(#eb)"/>`; }
-  g.innerHTML = s;
+  const N = 8, x = [...Array(N).keys()].map(n => Math.cos(2*Math.PI*2*n/N) + 0.5*Math.cos(2*Math.PI*3*n/N));
+  const X = [...Array(N).keys()].map(k => { let r = 0, i = 0; x.forEach((v, n) => { r += v*Math.cos(2*Math.PI*k*n/N); i -= v*Math.sin(2*Math.PI*k*n/N); }); return Math.hypot(r, i); });
+  const p1 = new Plot($('d1'), {xmin:-0.5, xmax:7.5, ymin:-1.6, ymax:1.6, xstep:1, ystep:1, xlabel:'n', pad:[10,10,24,30]}), p2 = new Plot($('d2'), {xmin:-0.5, xmax:7.5, ymin:0, ymax:4.6, xstep:1, ystep:1, xlabel:'k', ylabel:'|X[k]|', pad:[10,10,24,30]});
+  const draw = () => { p1.clear(); p1.axes(); p1.stems([...x.keys()], x, COLORS.indigo); p2.clear(); p2.axes(); p2.stems([...X.keys()], X, COLORS.rose); };
+  p1.onresize = draw; p2.onresize = draw; draw();
 })();
 
-/* ---------- EMF-M: superposition, field lines, equipotentials ---------- */
+/* ---------- DSP-M: windowing and leakage ---------- */
 (function () {
-  const K = 8.9875517923e9, cv = $('fm'), ctx = cv.getContext('2d'); let W = 0, H = 0, V = null, drag = null;
-  const show = {V: true, L: true, A: false};
-  const CFG = { dipole: [[-1, 0, 1], [1, 0, -1]], like: [[-1, 0, 1], [1, 0, 1]], three: [[0, 0.7, 2], [-1.1, -0.6, -1], [1.1, -0.6, -1]], unequal: [[-0.8, 0, 3], [0.9, 0, -1]] };
-  let Q = [], P = [0.2, 1.2];
-  const span = 3.2; // half width in metres (scaled units)
-  function size() { const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1; W = r.width; H = +cv.dataset.h; cv.style.height = H + 'px'; cv.width = W*d; cv.height = H*d; ctx.setTransform(d,0,0,d,0,0); }
-  const sc = () => W/(2*span), X = x => W/2 + x*sc(), Y = y => H/2 - y*sc(), ix = px => (px - W/2)/sc(), iy = py => (H/2 - py)/sc();
-  function field(x, y) { let ex = 0, ey = 0, v = 0; for (const [qx, qy, qq] of Q) { const dx = x - qx, dy = y - qy, r2 = dx*dx + dy*dy + 1e-9, r = Math.sqrt(r2), q = qq*V.qs*1e-9; ex += K*q*dx/(r2*r); ey += K*q*dy/(r2*r); v += K*q/r; } return [ex, ey, v]; }
+  const p = new Plot($('lk'), {xlabel:'tần số (bin)', ylabel:'|X| (dB, chuẩn hóa)', ymin:-110, ymax:5, ystep:20}); let V = null;
+  const TH = {rect:[-13.26, 2], hann:[-31.47, 4], hamming:[-42.68, 4], blackman:[-58.11, 6]};
+  function props(type, N) { const Nf = 1 << 16, m = specDB(win(type, N), Nf), mx = m[0], db = m.map(v => 20*Math.log10(v/mx + 1e-300)), per = Nf/N;
+    let k = 1; while (k < db.length - 1 && !(db[k] < db[k-1] && db[k] <= db[k+1])) k++; const ml = 2*k/per;
+    let psl = -Infinity; for (let j = k; j < db.length; j++) psl = Math.max(psl, db[j]); return {psl, ml}; }
   function draw() {
-    if (!V || !W) return; ctx.clearRect(0, 0, W, H);
-    if (show.V) { const st = 2, img = ctx.createImageData(Math.ceil(W/st), Math.ceil(H/st)), vm = K*V.qs*1e-9/0.6;
-      for (let j = 0; j < img.height; j++) for (let i = 0; i < img.width; i++) { const v = field(ix(i*st), iy(j*st))[2], a = Math.tanh(Math.abs(v)/vm), q = 4*(j*img.width + i), c = v >= 0 ? [244, 63, 94] : [14, 165, 233];
-        const band = Math.abs(((Math.asinh(v/vm*3)*3) % 1 + 1) % 1 - 0.5) < 0.03 ? 0.30 : 0; img.data[q] = c[0]; img.data[q+1] = c[1]; img.data[q+2] = c[2]; img.data[q+3] = 255*(0.10 + 0.45*a + band); }
-      const off = document.createElement('canvas'); off.width = img.width; off.height = img.height; off.getContext('2d').putImageData(img, 0, 0); ctx.save(); ctx.imageSmoothingEnabled = true; ctx.drawImage(off, 0, 0, img.width*st, img.height*st); ctx.restore(); }
-    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; for (let g = -3; g <= 3; g++) { ctx.beginPath(); ctx.moveTo(X(g), 0); ctx.lineTo(X(g), H); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, Y(g)); ctx.lineTo(W, Y(g)); ctx.stroke(); }
-    if (show.A) { ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.2; for (let gx = -3; gx <= 3.01; gx += 0.4) for (let gy = -2.2; gy <= 2.21; gy += 0.4) { const [ex, ey] = field(gx, gy), m = Math.hypot(ex, ey); if (!m) continue; const l = 11, ux = ex/m, uy = ey/m, x0 = X(gx), y0 = Y(gy);
-      ctx.beginPath(); ctx.moveTo(x0 - ux*l/2, y0 + uy*l/2); ctx.lineTo(x0 + ux*l/2, y0 - uy*l/2); ctx.stroke(); } }
-    if (show.L) { ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = 1.6;
-      const xlim = span + 0.5, ylim = H/2/sc() + 0.5;
-      for (const [qx, qy, qq] of Q) { const sgn = Math.sign(qq), n = Math.round(Math.abs(qq)*V.nl);
-        if (!(sgn > 0 || !Q.some(c => c[2] > 0))) continue;
-        for (let k = 0; k < n; k++) { const a = 2*Math.PI*(k + 0.5)/n; let x = qx + 0.06*Math.cos(a), y = qy + 0.06*Math.sin(a); ctx.beginPath(); ctx.moveTo(X(x), Y(y));
-          for (let s = 0; s < 1400; s++) { let [ex, ey] = field(x, y), m = Math.hypot(ex, ey); const h = 0.012*sgn; const mx = x + h*ex/m/2, my = y + h*ey/m/2; [ex, ey] = field(mx, my); m = Math.hypot(ex, ey); x += h*ex/m; y += h*ey/m;
-            ctx.lineTo(X(x), Y(y)); if (Math.abs(x) > xlim || Math.abs(y) > ylim || Q.some(c => c !== null && Math.hypot(x - c[0], y - c[1]) < 0.05)) break; }
-          ctx.stroke(); } } }
-    for (const [qx, qy, qq] of Q) { ctx.beginPath(); ctx.arc(X(qx), Y(qy), 13, 0, 2*Math.PI); ctx.fillStyle = qq > 0 ? '#0284c7' : '#e11d48'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText((qq > 0 ? '+' : '−') + (Math.abs(qq) === 1 ? '' : Math.abs(qq)), X(qx), Y(qy)); }
-    const [ex, ey, v] = field(...P), m = Math.hypot(ex, ey), L = 60, ux = ex/m, uy = ey/m, px = X(P[0]), py = Y(P[1]);
-    ctx.strokeStyle = '#059669'; ctx.fillStyle = '#059669'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + ux*L, py - uy*L); ctx.stroke();
-    const an = Math.atan2(-uy, ux); ctx.beginPath(); ctx.moveTo(px + ux*L, py - uy*L); ctx.lineTo(px + ux*L - 11*Math.cos(an - .4), py - uy*L - 11*Math.sin(an - .4)); ctx.lineTo(px + ux*L - 11*Math.cos(an + .4), py - uy*L - 11*Math.sin(an + .4)); ctx.fill();
-    ctx.beginPath(); ctx.arc(px, py, 7, 0, 2*Math.PI); ctx.fill(); ctx.fillStyle = '#064e3b'; ctx.font = 'bold 13px Inter, sans-serif'; ctx.textAlign = 'left'; ctx.fillText('P', px + 10, py - 10);
-    ctx.fillStyle = '#334155'; ctx.font = '11px Inter, sans-serif'; ctx.fillText('lưới: 1 m · kéo điện tích hoặc P', 8, H - 10);
-    // readouts
-    $('sp-tab').innerHTML = '<tr><td><b>điện tích</b></td><td><b>đóng góp E_i (V/m)</b></td></tr>' + Q.map(([qx, qy, qq], i) => { const dx = P[0] - qx, dy = P[1] - qy, r = Math.hypot(dx, dy), q = qq*V.qs*1e-9, e = K*q/(r*r*r); return `<tr><td>q${i + 1} = ${fmt(qq*V.qs, 1)} nC tại (${fmt(qx, 2)}, ${fmt(qy, 2)})</td><td>(${fmt(e*dx, 2)}, ${fmt(e*dy, 2)})</td></tr>`; }).join('');
-    const h = 1e-4, gx = -(field(P[0] + h, P[1])[2] - field(P[0] - h, P[1])[2])/(2*h), gy = -(field(P[0], P[1] + h)[2] - field(P[0], P[1] - h)[2])/(2*h);
-    $('sp-E').textContent = `(${fmt(ex, 3)}, ${fmt(ey, 3)}) |E| = ${fmt(m, 3)}`; $('sp-G').textContent = `(${fmt(gx, 3)}, ${fmt(gy, 3)})`; $('sp-V').textContent = fmt(v, 3) + ' V';
-    const e = Math.hypot(gx - ex, gy - ey)/m*100; verdict($('sp-verdict'), e <= 1, `|E − (−∇V)| / |E| = ${e.toExponential(2)} % (ε = 1 %)`);
+    if (!V) return; const N = +V.Nw, w = win(V.win, N), Nf = 8192, A2 = Math.pow(10, V.a2/20);
+    const x = [...Array(N).keys()].map(n => (Math.cos(2*Math.PI*V.k1*n/N) + A2*Math.cos(2*Math.PI*(V.k1 + V.dk)*n/N + 1.1))*w[n]);
+    const m = specDB(x, Nf), mx = Math.max(...m), fb = m.map((_, k) => k*N/Nf), db = m.map(v => 20*Math.log10(v/mx + 1e-12));
+    const fr = Math.min(N/2, 48); const sel = fb.map((f,i) => i).filter(i => fb[i] <= fr);
+    p.set({xmin:0, xmax:fr}); p.clear(); p.axes(); p.line(sel.map(i => fb[i]), sel.map(i => db[i]), COLORS.rose, 1.8);
+    p.vline(V.k1, COLORS.indigo); p.vline(V.k1 + V.dk, COLORS.emerald); p.text('thành phần 2', V.k1 + V.dk + 0.4, -8, COLORS.emerald); p.hline(V.a2, '#a7f3d0');
+    const pr = props(V.win, N), th = TH[V.win];
+    $('w-psl').textContent = `${fmt(th[0],1)} · ${fmt(pr.psl,2)} dB`; $('w-ml').textContent = `${th[1]} · ${fmt(pr.ml,2)} bin`;
+    // visibility: local peak near tone 2 exceeds the leakage floor of tone 1 alone at that frequency
+    const x1 = [...Array(N).keys()].map(n => Math.cos(2*Math.PI*V.k1*n/N)*w[n]), m1 = specDB(x1, Nf), kk = Math.round((V.k1 + V.dk)*Nf/N);
+    const span = Math.round(Nf/N); let env = 0; for (let j = Math.max(0, kk - span); j <= Math.min(m1.length - 1, kk + span); j++) env = Math.max(env, m1[j]);
+    const lvl2 = 20*Math.log10(m[kk]/mx), floor = 20*Math.log10(env/mx + 1e-12), vis = lvl2 - floor > 6;
+    $('w-vis').textContent = vis ? `có (cao hơn mức rò rỉ ${fmt(lvl2 - floor,1)} dB)` : 'không — bị che lấp bởi rò rỉ';
+    const ok = Math.abs(pr.psl - th[0]) <= 0.5 + (N <= 64 ? 0.5 : 0) && Math.abs(pr.ml - th[1]) <= 0.1;
+    verdict($('w-verdict'), ok, `các tham số cửa sổ đo được ${ok ? 'khớp với' : 'lệch khỏi'} lý thuyết (PSL trong ±0,5 dB, độ rộng trong ±0,1 bin)`);
   }
-  function setCfg(c) { Q = CFG[c].map(a => a.slice()); }
-  const upd = bind(['cfg','qs','nl'], v => { if (!V || v.cfg !== V.cfg) setCfg(v.cfg); V = v; draw(); });
-  [['tgV','V'],['tgL','L'],['tgA','A']].forEach(([id, k]) => $(id).onclick = () => { show[k] = !show[k]; $(id).classList.toggle('on', show[k]); draw(); });
-  cv.addEventListener('pointerdown', e => { const r = cv.getBoundingClientRect(), x = ix(e.clientX - r.left), y = iy(e.clientY - r.top);
-    if (Math.hypot(x - P[0], y - P[1]) < 0.2) drag = P; else drag = Q.find(c => Math.hypot(x - c[0], y - c[1]) < 0.2) || null; if (drag) cv.setPointerCapture(e.pointerId); });
-  cv.addEventListener('pointermove', e => { if (!drag) return; const r = cv.getBoundingClientRect(); drag[0] = Math.max(-span + 0.1, Math.min(span - 0.1, ix(e.clientX - r.left))); drag[1] = Math.max(-H/2/sc() + 0.1, Math.min(H/2/sc() - 0.1, iy(e.clientY - r.top)));
-    if (drag !== P && Math.hypot(P[0] - drag[0], P[1] - drag[1]) < 0.12) { P[0] += 0.15; } draw(); });
-  cv.addEventListener('pointerup', () => drag = null);
-  new ResizeObserver(() => { size(); draw(); }).observe(cv); size(); upd();
+  const upd = bind(['win','k1','dk','a2','Nw'], v => { V = v; draw(); }); p.onresize = draw; upd();
 })();
 
-/* ---------- EMF-C: 1D FDTD on a Yee grid ---------- */
+/* ---------- DSP-C: FIR design and filtering ---------- */
 (function () {
-  const N = 1400, zi = 700, src = 150, pA = 420, pB = 950, T = 2400, imp0 = 377, every = 3;
-  const pf = new Plot($('fd'), {xmin:0, xmax:N, ymin:-1.15, ymax:1.15, xlabel:'z (ô lưới)', ylabel:'E_z(z, t)', pad:[14,14,28,42]});
-  const pp = new Plot($('pr'), {xmin:0, xmax:T, ymin:-1.15, ymax:1.15, xlabel:'bước thời gian q', ylabel:'tín hiệu tại điểm đo', pad:[14,14,28,42]});
-  let sim = null, frame = 0, play = true;
-  function run(er2, w) {
-    const ez = new Float64Array(N), hy = new Float64Array(N), eps = new Float64Array(N).fill(1); for (let m = zi + 1; m < N; m++) eps[m] = er2; eps[zi] = (1 + er2)/2;
-    const n2 = Math.sqrt(er2), cR = (1/n2 - 1)/(1/n2 + 1), t0 = 4*w, A = new Float64Array(T), B = new Float64Array(T), frames = [];
-    for (let q = 0; q < T; q++) {
-      for (let m = 0; m < N - 1; m++) hy[m] += (ez[m + 1] - ez[m])/imp0;
-      const e1 = ez[1], eNm2 = ez[N - 2], eNm1 = ez[N - 1];
-      for (let m = 1; m < N; m++) ez[m] += (hy[m] - hy[m - 1])*imp0/eps[m];
-      ez[0] = e1;                                             // Mur ABC, exact in vacuum with S = 1
-      ez[N - 1] = eNm2 + cR*(ez[N - 2] - eNm1);              // first-order Mur ABC in medium 2
-      ez[src] += Math.exp(-Math.pow((q - t0)/w, 2));
-      A[q] = ez[pA]; B[q] = ez[pB];
-      if (q % every === 0) frames.push(Float32Array.from(ez));
-    }
-    // separate incident and reflected pulses at probe A; transmitted at probe B
-    const split = t0 + (zi - src), ext = (arr, a, b) => { let k = a; for (let i = a; i < b; i++) if (Math.abs(arr[i]) > Math.abs(arr[k])) k = i; return [k, arr[k]]; };
-    const [ki, Ei] = ext(A, 0, split), [kr, Er] = ext(A, split, T), tB = t0 + (zi - src) + Math.round((pB - zi)*n2), [kt, Et] = ext(B, 0, Math.min(T, tB + 6*w));
-    return {frames, A, B, Ei, Er, Et, ki, kr, kt, n2, G:Er/Ei, tau:Et/Ei, Ga:(1 - n2)/(1 + n2), ta:2/(1 + n2), w, er2};
+  const fs = 1000, ph = new Plot($('hf'), {xmin:0, xmax:500, ymin:-100, ymax:8, ystep:20, xlabel:'f (Hz)', ylabel:'|H(f)| (dB)'}), pt = new Plot($('ty'), {xlabel:'n (mẫu)', ylabel:'đầu vào (nhạt) và đầu ra (đã bù trễ)', ymin:-2.6, ymax:2.6});
+  let V = null;
+  function design(type, fc, M, wt) { const c = (M - 1)/2, w = win(wt, M, true), r = 2*fc/fs;
+    let h = [...Array(M).keys()].map(n => { const t = n - c; return (t === 0 ? r : Math.sin(Math.PI*r*t)/(Math.PI*t))*w[n]; });
+    const s = h.reduce((a, b) => a + b, 0); h = h.map(v => v/s);
+    if (type === 'hp') { h = h.map(v => -v); h[c] += 1; const g = Math.abs(h.reduce((a, v, n) => a + v*(n % 2 ? -1 : 1), 0)); h = h.map(v => v/g); } return h; }
+  const Hmag = (h, f) => { let r = 0, i = 0; h.forEach((v, n) => { r += v*Math.cos(2*Math.PI*f/fs*n); i -= v*Math.sin(2*Math.PI*f/fs*n); }); return Math.hypot(r, i); };
+  const filt = (h, x) => x.map((_, n) => { let s = 0; for (let k = 0; k < h.length && k <= n; k++) s += h[k]*x[n - k]; return s; });
+  function toneGain(h, f) { const N = 1000, M = h.length, x = [...Array(N + M).keys()].map(n => Math.sin(2*Math.PI*f*n/fs)), y = filt(h, x).slice(M);
+    let a = 0, b = 0; for (let n = 0; n < N; n++) { a += y[n]*Math.sin(2*Math.PI*f*(n + M)/fs); b += y[n]*Math.cos(2*Math.PI*f*(n + M)/fs); } return 2*Math.hypot(a, b)/N; }
+  let seed = 7; const rnd = () => { seed = (seed*1103515245 + 12345) % 2147483648; return seed/2147483648; };
+  function draw() {
+    if (!V) return; const h = design(V.ftype, V.fc, V.M, V.fw), M = V.M;
+    const Nf = 8192, m = specDB(h, Nf), fx = m.map((_, k) => k*fs/Nf), db = m.map(v => 20*Math.log10(v + 1e-12));
+    ph.clear(); ph.axes(); ph.line(fx, db, COLORS.rose, 2); ph.vline(V.fc, COLORS.indigo); ph.vline(50, COLORS.emerald, [2,3]); ph.vline(300, COLORS.amber, [2,3]);
+    const fd = [], dd = []; for (let i = 0; i <= 60; i++) { const f = i*500/60; fd.push(f); dd.push(20*Math.log10(Hmag(h, f) + 1e-12)); } fd.forEach((f, i) => ph.dot(f, Math.max(-100, dd[i]), COLORS.slate, 2.2));
+    ph.legend([['FFT của h[n]', COLORS.rose], ['DTFT trực tiếp (chấm)', COLORS.slate]]);
+    seed = 7; const L = 600, x = [...Array(L).keys()].map(n => Math.sin(2*Math.PI*50*n/fs) + 0.5*Math.sin(2*Math.PI*300*n/fs) + V.nz*(2*rnd() - 1)), y = filt(h, x), c = (M - 1)/2;
+    const nn = [...Array(L - c).keys()].map(n => n + c), view = 200;
+    pt.set({xmin:c, xmax:c + view}); pt.clear(); pt.axes(); pt.line(nn, nn.map(n => x[n - c]), '#cbd5e1', 1.5); pt.line(nn, nn.map(n => y[n]), COLORS.indigo, 2.2);
+    const a1 = Hmag(h, 50), a2 = Hmag(h, 300), m1 = toneGain(h, 50), m2 = toneGain(h, 300);
+    $('g1').textContent = `${fmt(a1,4)} · ${fmt(m1,4)}`; $('g2').textContent = `${fmt(a2,4)} · ${fmt(m2,4)}`;
+    $('gfc').textContent = fmt(20*Math.log10(Hmag(h, V.fc)), 2) + ' dB'; $('gd').textContent = c + ' mẫu = ' + fmt(c/fs*1e3, 1) + ' ms';
+    const tw = {rect:0.9, hann:3.1, hamming:3.3, blackman:5.5}[V.fw]*fs/M; let sbm = -Infinity;
+    fx.forEach((f, k) => { if ((V.ftype === 'lp' && f > V.fc + tw) || (V.ftype === 'hp' && f < V.fc - tw)) sbm = Math.max(sbm, db[k]); });
+    $('sb').textContent = isFinite(sbm) ? fmt(sbm, 1) + ' dB' : '—';
+    const pass = [[a1, m1], [a2, m2]].every(([a, mm]) => a > 0.1 ? relErr(mm, a) <= 1 : Math.abs(20*Math.log10(mm + 1e-12) - 20*Math.log10(a + 1e-12)) <= 1 || Math.abs(mm - a) < 1e-4);
+    verdict($('f-verdict'), pass, 'hệ số khuếch đại đo được của các thành phần ' + (pass ? 'khớp với' : 'không khớp với') + ' |H(e^jω)| (E_rel ≤ 1 % trong dải thông, ≤ 1 dB trong dải chắn)');
   }
-  function readouts() {
-    const s = sim, eG = relErr(s.G, s.Ga), eT = relErr(s.tau, s.ta);
-    $('f-n').textContent = fmt(s.n2, 4); $('f-G').textContent = `${fmt(s.Ga, 4)} · ${fmt(s.G, 4)}`; $('f-t').textContent = `${fmt(s.ta, 4)} · ${fmt(s.tau, 4)}`;
-    $('f-e').textContent = `${fmt(eG, 3)} %, ${fmt(eT, 3)} %`; $('f-ppw').textContent = fmt(2*s.w/s.n2, 1); $('f-en').textContent = fmt(s.G*s.G + s.n2*s.tau*s.tau, 4) + ' (lý tưởng 1)';
-    const ok = eG <= 2 && eT <= 2; verdict($('f-verdict'), ok, `E_rel(Γ) = ${fmt(eG,2)} %, E_rel(τ) = ${fmt(eT,2)} % (ε = 2 %)` + (ok ? '' : ' — hãy tăng độ rộng xung'));
-    const qs = [...Array(T).keys()]; pp.clear(); pp.axes(); pp.line(qs, Array.from(s.A), COLORS.indigo, 1.8); pp.line(qs, Array.from(s.B), COLORS.amber, 1.8);
-    pp.dot(s.ki, s.Ei, COLORS.indigo); pp.dot(s.kr, s.Er, COLORS.rose); pp.dot(s.kt, s.Et, COLORS.amber);
-    pp.legend([['A: sóng tới, sóng phản xạ', COLORS.indigo], ['B: sóng truyền qua', COLORS.amber]]);
-  }
-  function drawFrame() {
-    if (!sim) return; const f = sim.frames[frame], zs = [...Array(N).keys()];
-    pf.clear(); const g = pf.ctx; g.save(); g.fillStyle = 'rgba(124,58,237,.08)'; g.fillRect(pf.X(zi), pf.opt.pad[0], pf.X(N) - pf.X(zi), pf.H - pf.opt.pad[0] - pf.opt.pad[2]); g.restore();
-    pf.axes(); pf.vline(zi, COLORS.violet, [5,3]); pf.vline(pA, COLORS.indigo, [2,3]); pf.vline(pB, COLORS.amber, [2,3]);
-    pf.text('không khí (n = 1)', 120, 0.9, COLORS.slate); pf.text(`điện môi εr = ${sim.er2}`, zi + 20, 0.9, COLORS.violet); pf.text('A', pA + 8, -0.95, COLORS.indigo); pf.text('B', pB + 8, -0.95, COLORS.amber);
-    pf.line(zs, Array.from(f), COLORS.sky, 2); pf.text(`q = ${frame*3}`, N - 140, 0.9, COLORS.slate);
-  }
-  const upd = bind(['er','pw'], v => { sim = run(v.er, v.pw); frame = 0; readouts(); drawFrame(); });
-  $('fdPlay').onclick = () => { play = !play; $('fdPlay').textContent = play ? 'Tạm dừng' : 'Phát'; $('fdPlay').classList.toggle('on', play); };
-  $('fdReset').onclick = () => { frame = 0; drawFrame(); };
-  let last = 0; (function tick(t) { if (play && sim && t - last > 30) { frame = (frame + 2) % sim.frames.length; drawFrame(); last = t; } requestAnimationFrame(tick); })(0);
-  pf.onresize = drawFrame; pp.onresize = readouts; upd();
+  const upd = bind(['ftype','fc','M','fw','nz'], v => { V = v; draw(); }); ph.onresize = draw; pt.onresize = draw; upd();
 })();
 
 quiz('quizBox', 'score', [
-  {q:'Nếu khoảng cách tới một điện tích điểm tăng gấp đôi thì $|\\mathbf{E}|$', opts:['giảm một nửa','giảm còn một phần tư','không đổi'], ans:1, fb:'$|\\mathbf{E}|\\propto1/R^2$.'},
-  {q:'$q=2$ nC trong không khí. Tính $|\\mathbf{E}|$ tại $R=0.3$ m, theo V/m? (±2 V/m)', num:200, tol:2, unit:'V/m', fb:'$9\\times10^9\\cdot2\\times10^{-9}/0.09=200$ V/m.'},
-  {q:'Trên đường trung trực của lưỡng cực ($+q$, $-q$), trường điện hướng', opts:['dọc theo đường trung trực, ra xa lưỡng cực','song song với trục lưỡng cực, từ $+q$ về phía $-q$','không hướng nào, vì $\\mathbf{E}=0$'], ans:1, fb:'Các thành phần dọc đường trung trực triệt tiêu nhau, còn các thành phần dọc trục cộng lại.'},
-  {q:'Đường sức và đường đẳng thế cắt nhau theo góc', opts:['vuông','45°','bất kỳ'], ans:0, fb:'$\\mathbf{E}=-\\nabla V$ vuông góc với các mặt có $V$ không đổi.'},
-  {q:'Sóng trong không khí tới vuông góc lên thủy tinh có $\\varepsilon_r=2.25$. Hệ số $\\Gamma$ bằng bao nhiêu?', num:-0.2, tol:0.005, fb:'$n_2=1.5$, nên $\\Gamma=(1-1.5)/(1+1.5)=-0.2$.'},
-  {q:'Vì sao phép kiểm chứng FDTD thất bại với xung rất hẹp trong điện môi đậm đặc?', opts:['Công thức Fresnel sai với xung ngắn','Quá ít ô lưới trên một độ rộng xung gây tán sắc số','Nguồn quá mạnh'], ans:1, fb:'Sóng chậm lại $n_2$ lần trong môi trường 2, nên xung ngắn chỉ được biểu diễn bởi vài ô lưới.'}
+  {q:'$f_s=48$ kHz và $N=1024$. Khoảng cách giữa các bin DFT tính theo Hz là (±0,1)', num:46.875, tol:0.1, unit:'Hz', fb:'$48000/1024=46.875$ Hz.'},
+  {q:'Rò rỉ phổ xảy ra chủ yếu khi', opts:['thành phần sin chứa số chu kỳ không nguyên trong đoạn ghi','$N$ là lũy thừa của 2','tín hiệu là tín hiệu thực'], ans:0, fb:'Cắt cụt một đoạn ghi không tuần hoàn tương đương với tích chập phổ tín hiệu với biến đổi Fourier của cửa sổ.'},
+  {q:'Để phát hiện một thành phần yếu hơn 60 dB nằm gần một thành phần mạnh, nên chọn', opts:['cửa sổ chữ nhật','cửa sổ Blackman','không dùng cửa sổ, chỉ chèn không'], ans:1, fb:'Búp phụ của cửa sổ Blackman ở khoảng −58 dB và suy giảm nhanh.'},
+  {q:'Chèn không (zero-padding) vào đoạn ghi trước khi tính FFT sẽ', opts:['cải thiện độ phân giải tần số thực sự','nội suy phổ trên một lưới mịn hơn','giảm rò rỉ phổ'], ans:1, fb:'Độ phân giải do $T$ quyết định; chèn không chỉ lấy mẫu dày hơn cùng một DTFT.'},
+  {q:'Bộ lọc FIR pha tuyến tính có $M=61$ hệ số làm trễ mọi tần số bao nhiêu mẫu?', num:30, tol:0.01, unit:'mẫu', fb:'$(M-1)/2=30$ mẫu.'},
+  {q:'Tăng $M$ khi giữ nguyên loại cửa sổ sẽ', opts:['thu hẹp dải chuyển tiếp','làm tăng độ gợn dải chắn','dịch chuyển tần số cắt'], ans:0, fb:'Độ rộng dải chuyển tiếp tỉ lệ với $1/M$; mức búp phụ do loại cửa sổ quyết định.'}
 ]);
 
 </script>
@@ -488,8 +440,8 @@ quiz('quizBox', 'score', [
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = 'survey.html?role=student';   // mã ẩn danh được tự gắn thêm
-  const STUDY = 'paper2-html-demos', DEMO = '03_EMF', VERSION = 'log-v1-vi', LANG = 'vi';
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
+  const STUDY = 'paper2-html-demos', DEMO = '06_DSP', VERSION = 'log-v1-vi', LANG = 'vi';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';
   const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };

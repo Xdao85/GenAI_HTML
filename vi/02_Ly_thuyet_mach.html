@@ -97,7 +97,7 @@ details.matlab pre{margin:0;padding:0 14px 14px;font-size:12.5px;overflow-x:auto
 svg text{font-family:Inter,"Segoe UI",system-ui,sans-serif}
 footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);font-size:12.5px}
 </style>
-<script src="config.js"></script>
+<script src="../config.js"></script>
 <style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
 </head>
 <body>
@@ -227,7 +227,7 @@ plot(t*1e3, x(:,1)); xlabel('t (ms)'); ylabel('v_C (V)')
 </section>
 
 </main>
-<footer class="p2nav"><a href="index.html">← Trang chủ</a> · <a href="survey.html?role=student">Làm phiếu khảo sát sinh viên</a> · <a href="survey.html?role=lecturer">Phiếu giảng viên</a></footer>
+<footer class="p2nav"><a href="../index.html?lang=vi">← Trang chủ</a> · <a href="../survey.html?role=student&amp;lang=vi">Làm phiếu khảo sát sinh viên</a> · <a href="../survey.html?role=lecturer&amp;lang=vi">Phiếu giảng viên</a></footer>
 <script>
 /* ===================== shared helpers ===================== */
 const $ = id => document.getElementById(id);
@@ -449,7 +449,7 @@ quiz('quizBox', 'score', [
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = 'survey.html?role=student';   // mã ẩn danh được tự gắn thêm
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
   const STUDY = 'paper2-html-demos', DEMO = '02_CIR', VERSION = 'log-v1-vi', LANG = 'vi';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';

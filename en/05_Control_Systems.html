@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toán kỹ thuật — Vectơ và phương trình vi phân (Demo tương tác)</title>
+<title>Control Systems — Poles, Step Response and PID Control (Interactive Demo)</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], tags: 'ams' },
@@ -17,7 +17,7 @@ window.MathJax = {
   --bg:#ffffff; --panel:#ffffff; --card:#f8fafc; --line:#e2e8f0; --ink:#0f172a; --ink2:#334155; --mute:#64748b;
   --sky:#0284c7; --sky-bg:#e0f2fe; --rose:#e11d48; --rose-bg:#ffe4e6; --amber:#d97706; --amber-bg:#fef3c7;
   --emerald:#059669; --emerald-bg:#d1fae5; --indigo:#4f46e5; --indigo-bg:#e0e7ff; --violet:#7c3aed;
-  --accent:#4f46e5;
+  --accent:#059669;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -97,145 +97,129 @@ details.matlab pre{margin:0;padding:0 14px 14px;font-size:12.5px;overflow-x:auto
 svg text{font-family:Inter,"Segoe UI",system-ui,sans-serif}
 footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);font-size:12.5px}
 </style>
-<script src="config.js"></script>
+<script src="../config.js"></script>
 <style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand"><div class="dot"></div><span>Toán kỹ thuật</span></div>
+  <div class="brand"><div class="dot"></div><span>Control Systems</span></div>
   <nav class="links">
-    <a href="#overview">Tổng quan</a>
-    <a class="e" href="#easy">Cơ bản</a>
-    <a class="m" href="#medium">Trung bình</a>
-    <a class="c" href="#complex">Nâng cao</a>
-    <a href="#quiz">Trắc nghiệm</a>
+    <a href="#overview">Overview</a>
+    <a class="e" href="#easy">Easy</a>
+    <a class="m" href="#medium">Medium</a>
+    <a class="c" href="#complex">Complex</a>
+    <a href="#quiz">Quiz</a>
   </nav>
 </div></header>
 <main>
 <section class="panel hero" id="overview">
-  <span class="tag">Học phần 1 · Toán kỹ thuật</span>
-  <h1>Vectơ và phương trình vi phân</h1>
-  <p class="lead">Học liệu này gom ba bài toán chuẩn (MAT-E, MAT-M, MAT-C) trên cùng một trang. Bắt đầu từ định nghĩa tích vô hướng và tích có hướng, tiếp theo cho phép bạn thao tác với hai vectơ trong không gian 3D, và kết thúc bằng bộ giải Runge–Kutta cho phương trình vi phân cấp hai, được kiểm chứng với nghiệm giải tích.</p>
-  <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (Canvas/SVG)</span><span>④ Mô phỏng (JavaScript RK4)</span><span>⑤ Đánh giá (tự chấm)</span></div>
+  <span class="tag">Course 5 · Control Systems</span>
+  <h1>Poles, Step Response and PID Control</h1>
+  <p class="lead">Benchmark tasks CTL-E, CTL-M and CTL-C share one page. Stability is read from pole locations, transient specifications are linked to $\zeta$ and $\omega_n$, and a PID speed controller for a DC motor is tuned. The time response and the Bode margins are computed in the browser, and the simulation is validated against an exact partial-fraction solution.</p>
+  <div class="layers"><span>① Presentation</span><span>② Mathematics (MathJax)</span><span>③ Visualization (s-plane, Bode)</span><span>④ Simulation (closed-loop RK4)</span><span>⑤ Assessment (auto-scored)</span></div>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="kicker">Mục tiêu 1</div>Tính $\mathbf{A}\cdot\mathbf{B}$ và $\mathbf{A}\times\mathbf{B}$, đồng thời giải thích ý nghĩa hình học của chúng.</div>
-    <div class="card"><div class="kicker">Mục tiêu 2</div>Liên hệ góc giữa hai vectơ với hình chiếu và với diện tích hình bình hành.</div>
-    <div class="card"><div class="kicker">Mục tiêu 3</div>Giải số phương trình $y''+2\zeta\omega_n y'+\omega_n^2 y=0$ và đánh giá độ chính xác so với nghiệm chính xác.</div>
+    <div class="card"><div class="kicker">Objective 1</div>Decide BIBO stability from the poles of $G(s)$.</div>
+    <div class="card"><div class="kicker">Objective 2</div>Relate overshoot, peak time and settling time to $\zeta$ and $\omega_n$.</div>
+    <div class="card"><div class="kicker">Objective 3</div>Tune $K_p,K_i,K_d$ and interpret gain and phase margins.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · MAT-E</span><h2>Tích vô hướng và tích có hướng</h2><p class="lead">Hai phép nhân, hai ý nghĩa hình học: tích vô hướng đo mức độ cùng phương, còn tích có hướng đo diện tích căng bởi hai vectơ và cho một phương pháp tuyến.</p></div></div>
-  <div class="grid g3" style="margin-top:16px">
-    <div class="card"><h3>Tích vô hướng (vô hướng)</h3>
-      <div class="eq">$$\begin{aligned}\mathbf{A}\cdot\mathbf{B}&=A_xB_x+A_yB_y+A_zB_z\\&=|\mathbf{A}||\mathbf{B}|\cos\theta_{AB}\end{aligned}$$</div>
-      <p class="note">Bằng không khi hai vectơ vuông góc. Hình chiếu vô hướng của $\mathbf{A}$ lên $\mathbf{B}$ là $\mathbf{A}\cdot\hat{\mathbf{b}}$.</p></div>
-    <div class="card"><h3>Tích có hướng (vectơ)</h3>
-      <div class="eq">$$\mathbf{A}\times\mathbf{B}=\begin{vmatrix}\hat{\mathbf{x}}&\hat{\mathbf{y}}&\hat{\mathbf{z}}\\A_x&A_y&A_z\\B_x&B_y&B_z\end{vmatrix}$$</div>
-      <p class="note">$|\mathbf{A}\times\mathbf{B}|=|\mathbf{A}||\mathbf{B}|\sin\theta_{AB}$ là diện tích hình bình hành; chiều tuân theo quy tắc bàn tay phải.</p></div>
-    <div class="card white"><h3>Hình học</h3>
-      <svg viewBox="0 0 300 190" width="100%" aria-label="Hình học của tích vô hướng và tích có hướng">
-        <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4f46e5"/></marker>
-              <marker id="ah2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#e11d48"/></marker>
-              <marker id="ah3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#059669"/></marker></defs>
-        <polygon points="40,160 250,160 290,80 80,80" fill="#e0e7ff" opacity=".7"/>
-        <line x1="40" y1="160" x2="250" y2="160" stroke="#4f46e5" stroke-width="3" marker-end="url(#ah)"/>
-        <line x1="40" y1="160" x2="80" y2="80" stroke="#e11d48" stroke-width="3" marker-end="url(#ah2)"/>
-        <line x1="40" y1="160" x2="40" y2="25" stroke="#059669" stroke-width="3" marker-end="url(#ah3)"/>
-        <line x1="80" y1="80" x2="80" y2="160" stroke="#94a3b8" stroke-dasharray="4 4"/>
-        <path d="M70,160 A30,30 0 0,0 53,134" fill="none" stroke="#334155"/>
-        <text x="74" y="147" font-size="12">θ</text>
-        <text x="200" y="178" font-size="13" fill="#4f46e5">B</text><text x="60" y="76" font-size="13" fill="#e11d48">A</text>
-        <text x="48" y="32" font-size="13" fill="#059669">A×B</text>
-        <text x="130" y="122" font-size="12" fill="#3730a3">diện tích = |A×B|</text>
-        <text x="48" y="186" font-size="11" fill="#64748b">hình chiếu A·b̂</text>
+  <div class="sechead"><div><span class="tag e">Level E · CTL-E</span><h2>Transfer Functions, Poles and Stability</h2><p class="lead">A linear time-invariant system is BIBO stable if and only if every pole of its transfer function lies strictly in the left half of the $s$-plane.</p></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="grid g2">
+      <div class="card"><h3>Transfer function</h3><div class="eq">$$G(s)=\frac{N(s)}{D(s)}=\frac{b_ms^m+\dots+b_0}{s^n+a_{n-1}s^{n-1}+\dots+a_0}$$</div></div>
+      <div class="card"><h3>Poles and modes</h3><div class="eq">$$D(p_i)=0\ \Rightarrow\ y(t)\ni c_i e^{p_i t}$$</div><p class="note">$\mathrm{Re}\,p_i<0$: the mode decays. $\mathrm{Re}\,p_i>0$: it grows.</p></div>
+      <div class="card"><h3>Second-order prototype</h3><div class="eq">$$G(s)=\frac{\omega_n^2}{s^2+2\zeta\omega_n s+\omega_n^2}$$</div></div>
+      <div class="card"><h3>Example</h3><p>$G(s)=\dfrac{10}{(s+1)(s^2+2s+5)}$ has poles $-1$ and $-1\pm j2$, all in the LHP, so the system is stable.</p></div>
+    </div>
+    <div class="card white"><h3>The $s$-plane</h3>
+      <svg viewBox="0 0 340 260" width="100%" aria-label="s-plane">
+        <rect x="20" y="15" width="150" height="225" fill="#d1fae5" opacity=".6"/><rect x="170" y="15" width="150" height="225" fill="#ffe4e6" opacity=".6"/>
+        <line x1="20" y1="128" x2="325" y2="128" stroke="#64748b"/><line x1="170" y1="240" x2="170" y2="12" stroke="#64748b"/>
+        <text x="300" y="145" font-size="12">σ</text><text x="176" y="24" font-size="12">jω</text>
+        <text x="40" y="34" font-size="12" fill="#047857" font-weight="700">stable (LHP)</text><text x="230" y="34" font-size="12" fill="#be123c" font-weight="700">unstable (RHP)</text>
+        <g font-size="14" font-weight="700"><text x="90" y="133" fill="#0f172a">×</text><text x="120" y="83" fill="#0f172a">×</text><text x="120" y="183" fill="#0f172a">×</text><text x="245" y="133" fill="#e11d48">×</text><text x="165" y="70" fill="#d97706">×</text><text x="165" y="193" fill="#d97706">×</text></g>
+        <text x="62" y="152" font-size="11">decay</text><text x="128" y="70" font-size="11">damped osc.</text><text x="240" y="152" font-size="11">growth</text><text x="180" y="70" font-size="11" fill="#b45309">marginal</text>
       </svg></div>
-  </div>
-  <div class="card" style="margin-top:14px"><h3>Ví dụ minh họa</h3>
-    Với $\mathbf{A}=(1,2,2)$ và $\mathbf{B}=(3,0,4)$: $\mathbf{A}\cdot\mathbf{B}=3+0+8=11$, $|\mathbf{A}|=3$, $|\mathbf{B}|=5$, nên $\cos\theta=11/15$ và $\theta\approx 42.8^\circ$. Tích có hướng là $\mathbf{A}\times\mathbf{B}=(8,\,2,\,-6)$ với độ lớn $\sqrt{104}\approx 10.2=15\sin\theta$.
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · MAT-M</span><h2>Đại số vectơ 3D tương tác</h2><p class="lead">Đặt các thành phần của $\mathbf{A}$ và $\mathbf{B}$, kéo khung nhìn để xoay, và quan sát tích vô hướng, góc, hình bình hành cùng vectơ pháp tuyến $\mathbf{A}\times\mathbf{B}$ cập nhật đồng thời.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Level M · CTL-M</span><h2>Second-Order Step Response</h2><p class="lead">Move $\zeta$ and $\omega_n$ and watch the poles $-\zeta\omega_n\pm j\omega_n\sqrt{1-\zeta^2}$ move along circles and rays. The step response changes with them. Closed-form specifications are compared with values measured from the curve.</p></div></div>
   <div class="sim">
     <div>
-      <div class="canvas-wrap"><canvas id="v3d" data-h="400" style="cursor:grab"></canvas></div>
-      <div class="controls c3">
-        <div class="ctl"><label>$A_x$ <b id="ax-v"></b></label><input type="range" id="ax" min="-4" max="4" step="0.5" value="3"></div>
-        <div class="ctl"><label>$A_y$ <b id="ay-v"></b></label><input type="range" id="ay" min="-4" max="4" step="0.5" value="1"></div>
-        <div class="ctl"><label>$A_z$ <b id="az-v"></b></label><input type="range" id="az" min="-4" max="4" step="0.5" value="0"></div>
-        <div class="ctl"><label>$B_x$ <b id="bx-v"></b></label><input type="range" id="bx" min="-4" max="4" step="0.5" value="1"></div>
-        <div class="ctl"><label>$B_y$ <b id="by-v"></b></label><input type="range" id="by" min="-4" max="4" step="0.5" value="3"></div>
-        <div class="ctl"><label>$B_z$ <b id="bz-v"></b></label><input type="range" id="bz" min="-4" max="4" step="0.5" value="1"></div>
+      <div class="grid g2">
+        <div class="canvas-wrap"><canvas id="pz" data-h="300"></canvas></div>
+        <div class="canvas-wrap"><canvas id="st" data-h="300"></canvas></div>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label>Damping ratio $\zeta$ <b id="z-v"></b></label><input type="range" id="z" min="0.05" max="1.5" step="0.01" value="0.35"></div>
+        <div class="ctl"><label>Natural frequency $\omega_n$ (rad/s) <b id="w-v"></b></label><input type="range" id="w" min="0.5" max="8" step="0.1" value="3"></div>
       </div>
     </div>
     <div class="card white">
-      <h3>Tính toán trực tiếp</h3>
+      <h3>Specifications</h3>
       <table class="read">
-        <tr><td>$\mathbf{A}\cdot\mathbf{B}$</td><td id="r-dot"></td></tr>
-        <tr><td>$|\mathbf{A}|,\ |\mathbf{B}|$</td><td id="r-mag"></td></tr>
-        <tr><td>$\theta_{AB}$</td><td id="r-ang"></td></tr>
-        <tr><td>$\mathbf{A}\times\mathbf{B}$</td><td id="r-cross"></td></tr>
-        <tr><td>Diện tích $|\mathbf{A}\times\mathbf{B}|$</td><td id="r-area"></td></tr>
-        <tr><td>Hình chiếu $\mathbf{A}\cdot\hat{\mathbf{b}}$</td><td id="r-proj"></td></tr>
-        <tr><td>Kiểm tra $|\mathbf{A}||\mathbf{B}|\sin\theta$</td><td id="r-chk"></td></tr>
+        <tr><td></td><td><b>formula · measured</b></td></tr>
+        <tr><td>%OS $=100e^{-\zeta\pi/\sqrt{1-\zeta^2}}$</td><td id="m-os"></td></tr>
+        <tr><td>$T_p=\pi/\omega_d$</td><td id="m-tp"></td></tr>
+        <tr><td>$T_s\approx 4/(\zeta\omega_n)$ (2 %)</td><td id="m-ts"></td></tr>
+        <tr><td>Poles</td><td id="m-p"></td></tr>
       </table>
-      <div id="r-rel" class="verdict pass"></div>
-      <p class="note">Chàm: $\mathbf{A}$ · hồng: $\mathbf{B}$ · xanh lục: $\mathbf{A}\times\mathbf{B}$ · vùng tô: hình bình hành. Kéo khung vẽ để xoay.</p>
+      <p class="note">$T_s\approx4/\zeta\omega_n$ is an envelope approximation, so the measured settling time can differ by tens of percent, especially for $\zeta>0.7$. This is an example where the formula, not the simulation, is the approximate reference.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
-  <div class="sechead"><div><span class="tag c">Mức C · MAT-C</span><h2>Phương trình vi phân tuyến tính cấp hai: RK4 so với nghiệm giải tích</h2>
-    <p class="lead">Dao động tử tắt dần $y''+2\zeta\omega_n y'+\omega_n^2y=0$ với $y(0)=y_0$, $y'(0)=v_0$ được tích phân bằng phương pháp Runge–Kutta bậc bốn cổ điển. Nghiệm chính xác được vẽ bên dưới, và sai số được kiểm tra theo ngưỡng chấp nhận $\varepsilon=1\%$.</p></div>
-    <span class="tag v">Kiểm chứng: giải tích + MATLAB ode45</span></div>
+  <div class="sechead"><div><span class="tag c">Level C · CTL-C</span><h2>PID Speed Control of a DC Motor</h2>
+    <p class="lead">Motor model: $J=0.01$ kg·m², $b=0.1$ N·m·s, $K=0.01$, $R=1\,\Omega$, $L=0.5$ H. The plant is $G(s)=\dfrac{K}{(Js+b)(Ls+R)+K^2}$ and the controller is $C(s)=K_p+\dfrac{K_i}{s}+K_ds$. The unit-step reference response is computed with RK4 and validated against the exact partial-fraction solution.</p></div>
+    <span class="tag v">Validation: analytical + MATLAB step/margin</span></div>
   <div class="sim">
     <div>
-      <div class="canvas-wrap"><canvas id="ode" data-h="300"></canvas></div>
-      <div class="canvas-wrap" style="margin-top:10px"><canvas id="odeErr" data-h="150"></canvas></div>
+      <div class="canvas-wrap"><canvas id="pid" data-h="280"></canvas></div>
+      <div class="grid g2" style="margin-top:10px">
+        <div class="canvas-wrap"><canvas id="bm" data-h="170"></canvas></div>
+        <div class="canvas-wrap"><canvas id="bp" data-h="170"></canvas></div>
+      </div>
       <div class="controls c3">
-        <div class="ctl"><label>Hệ số tắt dần $\zeta$ <b id="zeta-v"></b></label><input type="range" id="zeta" min="0" max="2" step="0.05" value="0.2"></div>
-        <div class="ctl"><label>$\omega_n$ (rad/s) <b id="wn-v"></b></label><input type="range" id="wn" min="0.5" max="6" step="0.1" value="2"></div>
-        <div class="ctl"><label>Bước tích phân $h$ (s) <b id="h-v"></b></label><input type="range" id="h" min="0.01" max="0.6" step="0.01" value="0.1"></div>
-        <div class="ctl"><label>$y_0$ <b id="y0-v"></b></label><input type="range" id="y0" min="-2" max="2" step="0.1" value="1"></div>
-        <div class="ctl"><label>$v_0$ <b id="v0-v"></b></label><input type="range" id="v0" min="-4" max="4" step="0.1" value="0"></div>
-        <div class="ctl"><label>Thời gian mô phỏng $T$ (s) <b id="T-v"></b></label><input type="range" id="T" min="5" max="20" step="1" value="10"></div>
+        <div class="ctl"><label>$K_p$ <b id="kp-v"></b></label><input type="range" id="kp" min="0" max="300" step="1" value="100"></div>
+        <div class="ctl"><label>$K_i$ <b id="ki-v"></b></label><input type="range" id="ki" min="1" max="400" step="1" value="200"></div>
+        <div class="ctl"><label>$K_d$ <b id="kd-v"></b></label><input type="range" id="kd" min="0" max="30" step="0.5" value="10"></div>
+        <div class="ctl"><label>RK4 steps $N$ <b id="np-v"></b></label><input type="range" id="np" min="100" max="6000" step="50" value="1500"></div>
       </div>
     </div>
     <div class="card white">
-      <h3>Nghiệm giải tích tham chiếu</h3>
-      <div class="eq" id="odeCase"></div>
+      <h3>Closed loop</h3>
+      <div class="eq">$$T(s)=\frac{K(K_ds^2+K_ps+K_i)}{D(s)}$$$$\begin{aligned}D(s)&=a_2s^3+(a_1+KK_d)s^2\\&\quad+(a_0+KK_p)s+KK_i\end{aligned}$$</div>
       <table class="read">
-        <tr><td>Chế độ</td><td id="o-reg"></td></tr>
-        <tr><td>Số bước $N=T/h$</td><td id="o-n"></td></tr>
-        <tr><td>Giá trị nhỏ nhất của $y$ (RK4 / chính xác)</td><td id="o-peak"></td></tr>
-        <tr><td>$E_{\mathrm{rel}}$ của $y(T)$</td><td id="o-erel"></td></tr>
-        <tr><td>NRMSE trên $[0,T]$</td><td id="o-nrmse"></td></tr>
-        <tr><td>Giá trị lớn nhất của $|e(t)|$</td><td id="o-max"></td></tr>
+        <tr><td>Closed-loop poles</td><td id="p-poles"></td></tr>
+        <tr><td>Overshoot · $T_s$ (2 %)</td><td id="p-os"></td></tr>
+        <tr><td>Final value (sim · FVT $T(0)$)</td><td id="p-fv"></td></tr>
+        <tr><td>Gain margin · phase margin</td><td id="p-m"></td></tr>
+        <tr><td>NRMSE RK4 vs exact</td><td id="p-nr"></td></tr>
       </table>
-      <div id="o-verdict" class="verdict"></div>
-      <h3 style="margin-top:14px">Kiểm tra hội tụ</h3>
-      <table class="read" id="o-conv"></table>
-      <p class="note">Khi giảm $h$ đi một nửa, sai số phải giảm khoảng $2^4=16$ lần: đây là dấu hiệu bậc bốn của RK4. Tỉ số lệch xa 16 cho thấy lỗi cài đặt; đây chính là cách sàng lọc các bộ giải do GenAI sinh ra.</p>
-      <details class="matlab"><summary>Script MATLAB tham chiếu (ode45)</summary><pre>zeta = 0.2; wn = 2; y0 = 1; v0 = 0; T = 10;
-f = @(t,x) [x(2); -2*zeta*wn*x(2) - wn^2*x(1)];
-opts = odeset('RelTol',1e-10,'AbsTol',1e-12);
-[t,x] = ode45(f, linspace(0,T,1001), [y0; v0], opts);
-plot(t, x(:,1)); grid on
-% xuất dữ liệu tham chiếu: writematrix([t x(:,1)], 'mat_c_ref.csv')</pre></details>
+      <div id="p-verdict" class="verdict"></div>
+      <details class="matlab"><summary>MATLAB reference script</summary><pre>J = 0.01; b = 0.1; K = 0.01; R = 1; L = 0.5;
+s = tf('s');  G = K/((J*s + b)*(L*s + R) + K^2);
+C = pid(100, 200, 10);
+T = feedback(C*G, 1);
+step(T, 3); grid on
+stepinfo(T)             % overshoot, settling time
+[Gm, Pm] = margin(C*G)  % gain and phase margins
+pole(T)</pre></details>
     </div>
   </div>
 </section>
 
 <section class="panel" id="quiz">
-  <div class="sechead"><div><span class="tag q">Đánh giá</span><h2>Câu hỏi tự đánh giá</h2></div><span class="score" id="score"></span></div>
+  <div class="sechead"><div><span class="tag q">Assessment</span><h2>Self-Assessment Quiz</h2></div><span class="score" id="score"></span></div>
   <div class="quiz" id="quizBox"></div>
 </section>
 
 </main>
-<footer class="p2nav"><a href="index.html">← Trang chủ</a> · <a href="survey.html?role=student">Làm phiếu khảo sát sinh viên</a> · <a href="survey.html?role=lecturer">Phiếu giảng viên</a></footer>
+<footer class="p2nav"><a href="../index.html?lang=en">← Home</a> · <a href="../survey.html?role=student&amp;lang=en">Student questionnaire</a> · <a href="../survey.html?role=lecturer&amp;lang=en">Lecturer questionnaire</a></footer>
 <script>
 /* ===================== shared helpers ===================== */
 const $ = id => document.getElementById(id);
@@ -343,112 +327,114 @@ function quiz(containerId, scoreId, items) {
   const box = $(containerId);
   box.innerHTML = items.map((it, i) => `
     <div class="qcard" id="q${i}">
-      <div class="qn">Câu ${i + 1}${it.num !== undefined ? ' · tính số' : ''}</div>
+      <div class="qn">Question ${i + 1}${it.num !== undefined ? ' · numerical' : ''}</div>
       <div style="margin-top:6px">${it.q}</div>
       ${it.num !== undefined
-        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Kiểm tra</button></div>`
+        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Check</button></div>`
         : it.opts.map((o, j) => `<button class="opt" data-j="${j}" onclick="__qa(${i},${j})">${String.fromCharCode(65 + j)}. ${o}</button>`).join('')}
       <div class="fb" id="q${i}-fb"></div>
     </div>`).join('');
-  const upd = () => { $(scoreId).textContent = `Điểm: ${score} / ${items.length}`; };
+  const upd = () => { $(scoreId).textContent = `Score: ${score} / ${items.length}`; };
   window.__qa = (i, j) => {
     if (done[i]) return; const it = items[i]; let ok;
     if (it.num !== undefined) { const v = parseFloat($(`q${i}-in`).value); if (!isFinite(v)) return; ok = Math.abs(v - it.num) <= it.tol; }
     else { ok = j === it.ans; document.querySelectorAll(`#q${i} button.opt`).forEach(b => { b.disabled = true; const k = +b.dataset.j; if (k === it.ans) b.classList.add('right'); else if (k === j) b.classList.add('wrong'); }); }
     done[i] = true; if (ok) score++;
-    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Đúng. ' : '✗ Chưa đúng. ') + it.fb; typeset([fb]); upd();
+    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Correct. ' : '✗ Not quite. ') + it.fb; typeset([fb]); upd();
   };
   upd(); typeset([box]);
 }
-/* ---------- MAT-M: 3D vectors with orthographic projection ---------- */
+/* ---------- complex helpers and polynomial roots (Durand–Kerner) ---------- */
+const cx = (re, im=0) => ({re, im}), cadd = (a,b) => cx(a.re+b.re, a.im+b.im), csub = (a,b) => cx(a.re-b.re, a.im-b.im), cmul = (a,b) => cx(a.re*b.re-a.im*b.im, a.re*b.im+a.im*b.re);
+const cdiv = (a,b) => { const d = b.re*b.re + b.im*b.im; return cx((a.re*b.re + a.im*b.im)/d, (a.im*b.re - a.re*b.im)/d); }, cexp = a => { const e = Math.exp(a.re); return cx(e*Math.cos(a.im), e*Math.sin(a.im)); };
+function peval(c, z) { let r = cx(0); for (const k of c) r = cadd(cmul(r, z), cx(k)); return r; }   // c: highest power first
+function pderiv(c) { const n = c.length - 1; return c.slice(0, -1).map((k, i) => k*(n - i)); }
+function roots(c) { const a = c.map(k => k/c[0]), n = a.length - 1, Rb = 1 + Math.max(...a.slice(1).map(Math.abs));
+  let z = [], q = cx(1); for (let i = 0; i < n; i++) { z.push(cmul(cx(Rb*0.5), q)); q = cmul(q, cx(0.4, 0.9)); }
+  for (let it = 0; it < 2000; it++) { let mv = 0; z = z.map((zi, i) => { let den = cx(1); z.forEach((zj, j) => { if (j !== i) den = cmul(den, csub(zi, zj)); }); const d = cdiv(peval(a, zi), den); mv = Math.max(mv, Math.hypot(d.re, d.im)/(1 + Math.hypot(zi.re, zi.im))); return csub(zi, d); }); if (mv < 1e-15) break; }
+  return z.map(r => Math.abs(r.im) < 1e-9*(1 + Math.abs(r.re)) ? cx(r.re, 0) : r).sort((p, q) => q.re - p.re); }
+const pfmt = p => Math.abs(p.im) < 1e-6 ? fmt(p.re, 2) : `${fmt(p.re, 2)}${p.im >= 0 ? '+' : '−'}j${fmt(Math.abs(p.im), 2)}`;
+
+/* ---------- CTL-M ---------- */
 (function () {
-  const cv = $('v3d'), ctx = cv.getContext('2d'); let W = 0, H = 0, yaw = -0.7, pitch = 0.45, drag = null, V = null;
-  function size() { const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1; W = r.width; H = +cv.dataset.h; cv.style.height = H + 'px'; cv.width = W * d; cv.height = H * d; ctx.setTransform(d,0,0,d,0,0); }
-  function P(v) { const [x,y,z] = v; const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
-    const x1 = cy*x - sy*y, y1 = sy*x + cy*y; const yv = cp*z - sp*y1; const s = Math.min(W, H) / 13; return [W/2 + s*x1, H/2 + 20 - s*yv]; }
-  function arrow(a, b, color, w=3, label='') { const [x0,y0] = P(a), [x1,y1] = P(b); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
-    const an = Math.atan2(y1-y0, x1-x0), L = 11; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x1-L*Math.cos(an-0.4), y1-L*Math.sin(an-0.4)); ctx.lineTo(x1-L*Math.cos(an+0.4), y1-L*Math.sin(an+0.4)); ctx.fill();
-    if (label) { ctx.font = 'bold 13px Inter, sans-serif'; ctx.fillText(label, x1 + 6, y1 - 6); } }
+  const pz = new Plot($('pz'), {xlabel:'σ', ylabel:'jω', pad:[14,14,26,36]}), st = new Plot($('st'), {xlabel:'t (s)', ylabel:'y(t)', pad:[14,14,26,40]}); let V = null;
+  function y(z, w, t) { if (z < 1) { const wd = w*Math.sqrt(1 - z*z); return 1 - Math.exp(-z*w*t)*(Math.cos(wd*t) + z/Math.sqrt(1 - z*z)*Math.sin(wd*t)); }
+    if (z === 1) return 1 - (1 + w*t)*Math.exp(-w*t); const r = w*Math.sqrt(z*z - 1), s1 = -z*w + r, s2 = -z*w - r; return 1 + (s2*Math.exp(s1*t) - s1*Math.exp(s2*t))/(s1 - s2); }
   function draw() {
-    if (!V) return; ctx.clearRect(0,0,W,H);
-    const A = [V.ax, V.ay, V.az], B = [V.bx, V.by, V.bz], C = [A[1]*B[2]-A[2]*B[1], A[2]*B[0]-A[0]*B[2], A[0]*B[1]-A[1]*B[0]];
-    ctx.strokeStyle = '#eef2f7'; ctx.lineWidth = 1;
-    for (let i = -5; i <= 5; i++) { let [a,b] = [P([i,-5,0]), P([i,5,0])]; ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke(); [a,b] = [P([-5,i,0]), P([5,i,0])]; ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke(); }
-    [['x',[5.5,0,0]],['y',[0,5.5,0]],['z',[0,0,5.5]]].forEach(([n,e]) => { arrow([0,0,0], e, '#94a3b8', 1.2, n); });
-    const quad = [[0,0,0], A, [A[0]+B[0],A[1]+B[1],A[2]+B[2]], B].map(P);
-    ctx.fillStyle = 'rgba(79,70,229,.13)'; ctx.beginPath(); ctx.moveTo(...quad[0]); quad.slice(1).forEach(p => ctx.lineTo(...p)); ctx.closePath(); ctx.fill();
-    const mb = Math.hypot(...B); if (mb > 0) { const k = (A[0]*B[0]+A[1]*B[1]+A[2]*B[2]) / (mb*mb); const pr = B.map(v => v*k); ctx.setLineDash([4,4]); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(...P(A)); ctx.lineTo(...P(pr)); ctx.stroke(); ctx.setLineDash([]); }
-    const cs = Math.hypot(...C) > 6 ? 6 / Math.hypot(...C) : 1;
-    arrow([0,0,0], C.map(v => v*cs), '#059669', 3, 'A×B'); arrow([0,0,0], A, '#4f46e5', 3.5, 'A'); arrow([0,0,0], B, '#e11d48', 3.5, 'B');
+    if (!V) return; const z = V.z, w = V.w; const L = 9;
+    pz.set({xmin:-L, xmax:2, ymin:-L*0.75, ymax:L*0.75}); pz.clear(); pz.axes();
+    const g = pz.ctx; g.save(); g.strokeStyle = '#cbd5e1'; g.setLineDash([3,4]); g.beginPath(); g.arc(pz.X(0), pz.Y(0), Math.abs(pz.X(w) - pz.X(0)), Math.PI/2, 3*Math.PI/2); g.stroke(); g.restore();
+    const ps = z < 1 ? [cx(-z*w, w*Math.sqrt(1 - z*z)), cx(-z*w, -w*Math.sqrt(1 - z*z))] : [cx(-z*w + w*Math.sqrt(z*z - 1)), cx(-z*w - w*Math.sqrt(z*z - 1))];
+    ps.forEach(p => { pz.text('×', p.re, p.im, COLORS.rose, 'center', 'bold 20px Inter, sans-serif'); });
+    if (z < 1) { const g2 = pz.ctx; g2.save(); g2.strokeStyle = COLORS.indigo; g2.beginPath(); g2.moveTo(pz.X(0), pz.Y(0)); g2.lineTo(pz.X(ps[0].re), pz.Y(ps[0].im)); g2.stroke(); g2.restore(); pz.text('θ = cos⁻¹ζ', ps[0].re*0.5 + 0.3, ps[0].im*0.5 + 0.6, COLORS.indigo); }
+    const T = Math.max(6, Math.min(25, 10/(z*w))), ts = []; for (let i = 0; i <= 1500; i++) ts.push(i*T/1500); const ys = ts.map(t => y(z, w, t));
+    st.set({xmin:0, xmax:T, ymin:0, ymax:Math.max(1.2, Math.max(...ys)*1.1)}); st.clear(); st.axes(); st.hline(1, COLORS.slate); st.hline(1.02, '#a7f3d0', [2,3]); st.hline(0.98, '#a7f3d0', [2,3]); st.line(ts, ys, COLORS.emerald, 2.5);
+    const ym = Math.max(...ys), im = ys.indexOf(ym); let its = ys.length - 1; while (its > 0 && Math.abs(ys[its] - 1) <= 0.02) its--; const tsMeas = ts[Math.min(its + 1, ts.length - 1)];
+    if (z < 1) { st.dot(ts[im], ym, COLORS.rose); } st.vline(tsMeas, COLORS.amber);
+    const osF = z < 1 ? 100*Math.exp(-z*Math.PI/Math.sqrt(1 - z*z)) : 0, tpF = z < 1 ? Math.PI/(w*Math.sqrt(1 - z*z)) : NaN, tsF = 4/(z*w);
+    $('m-os').textContent = `${fmt(osF,2)} % · ${fmt(Math.max(0, (ym - 1)*100),2)} %`; $('m-tp').textContent = z < 1 ? `${fmt(tpF,3)} · ${fmt(ts[im],3)} s` : 'no peak';
+    $('m-ts').textContent = `${fmt(tsF,2)} · ${fmt(tsMeas,2)} s`; $('m-p').textContent = ps.map(pfmt).join(', ');
   }
-  const upd = bind(['ax','ay','az','bx','by','bz'], v => {
-    V = v; const A = [v.ax, v.ay, v.az], B = [v.bx, v.by, v.bz]; const dot = A[0]*B[0]+A[1]*B[1]+A[2]*B[2], ma = Math.hypot(...A), mb = Math.hypot(...B);
-    const C = [A[1]*B[2]-A[2]*B[1], A[2]*B[0]-A[0]*B[2], A[0]*B[1]-A[1]*B[0]], area = Math.hypot(...C);
-    const th = (ma > 0 && mb > 0) ? Math.acos(Math.max(-1, Math.min(1, dot/(ma*mb)))) : NaN;
-    $('r-dot').textContent = fmt(dot, 2); $('r-mag').textContent = fmt(ma, 3) + ', ' + fmt(mb, 3);
-    $('r-ang').textContent = isNaN(th) ? '—' : (th*180/Math.PI).toFixed(2) + '°';
-    $('r-cross').textContent = '(' + C.map(c => fmt(c, 2)).join(', ') + ')'; $('r-area').textContent = fmt(area, 3);
-    $('r-proj').textContent = mb > 0 ? fmt(dot/mb, 3) : '—';
-    const chk = ma*mb*Math.sin(th); $('r-chk').textContent = isNaN(chk) ? '—' : fmt(chk, 3);
-    const ok = isNaN(th) || Math.abs(chk - area) < 1e-9 * Math.max(1, area);
-    verdict($('r-rel'), ok, ok ? 'công thức theo thành phần và |A||B|sinθ trùng khớp' : 'độ lớn tích có hướng không nhất quán');
-    draw();
-  });
-  cv.addEventListener('pointerdown', e => { drag = [e.clientX, e.clientY, yaw, pitch]; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
-  cv.addEventListener('pointermove', e => { if (!drag) return; yaw = drag[2] - (e.clientX - drag[0]) * 0.01; pitch = Math.max(-1.4, Math.min(1.4, drag[3] + (e.clientY - drag[1]) * 0.01)); draw(); });
-  cv.addEventListener('pointerup', () => { drag = null; cv.style.cursor = 'grab'; });
-  new ResizeObserver(() => { size(); draw(); }).observe(cv); size(); upd();
+  const upd = bind(['z','w'], v => { V = v; draw(); }); pz.onresize = draw; st.onresize = draw; upd();
 })();
 
-/* ---------- MAT-C: RK4 versus closed form ---------- */
+/* ---------- CTL-C: PID control of a DC motor ---------- */
 (function () {
-  const pl = new Plot($('ode'), {xlabel:'t (s)', ylabel:'y(t)'}), pe = new Plot($('odeErr'), {xlabel:'t (s)', ylabel:'sai số  y_RK4 − y_exact', pad:[14,14,28,58]});
-  function exact(z, w, y0, v0) {
-    if (z < 1 - 1e-9) { const wd = w*Math.sqrt(1 - z*z), a = z*w, B = (v0 + a*y0)/wd; return t => Math.exp(-a*t)*(y0*Math.cos(wd*t) + B*Math.sin(wd*t)); }
-    if (z > 1 + 1e-9) { const r = w*Math.sqrt(z*z - 1), s1 = -z*w + r, s2 = -z*w - r, c1 = (v0 - s2*y0)/(s1 - s2), c2 = y0 - c1; return t => c1*Math.exp(s1*t) + c2*Math.exp(s2*t); }
-    return t => (y0 + (v0 + w*y0)*t)*Math.exp(-w*t);
-  }
-  function solve(z, w, y0, v0, T, h) { return rk4((t, x) => [x[1], -2*z*w*x[1] - w*w*x[0]], [y0, v0], 0, T, h); }
+  const J = 0.01, b = 0.1, K = 0.01, R = 1, L = 0.5, a2 = J*L, a1 = J*R + b*L, a0 = b*R + K*K;
+  const ps = new Plot($('pid'), {xlabel:'t (s)', ylabel:'speed ω(t) (rad/s), unit step reference'});
+  const pm = new Plot($('bm'), {xlabel:'ω (rad/s)', ylabel:'|L(jω)| (dB)', pad:[12,12,26,44], xfmt: v => String(+Math.pow(10, v).toPrecision(2))}), pp = new Plot($('bp'), {xlabel:'ω (rad/s)', ylabel:'∠L(jω) (deg)', pad:[12,12,26,44], xfmt: v => String(+Math.pow(10, v).toPrecision(2))});
   let V = null;
   function draw() {
-    if (!V) return; const {zeta:z, wn:w, h, y0, v0, T} = V; const ex = exact(z, w, y0, v0);
-    const hh = T / Math.round(T / h); const s = solve(z, w, y0, v0, T, hh); const yn = s.ys.map(x => x[0]), ye = s.ts.map(ex);
-    const fine = []; for (let i = 0; i <= 600; i++) fine.push(i*T/600);
-    const amp = Math.max(Math.abs(y0), ...ye.map(Math.abs), ...yn.map(Math.abs)) * 1.15 || 1;
-    pl.set({xmin:0, xmax:T, ymin:-amp, ymax:amp}); pl.clear(); pl.axes();
-    pl.line(fine, fine.map(ex), COLORS.slate, 4); pl.line(s.ts, yn, COLORS.indigo, 2, [6,3]);
-    s.ts.forEach((t,i) => { if (s.ts.length < 120) pl.dot(t, yn[i], COLORS.indigo, 2.5); });
-    pl.legend([['chính xác', COLORS.slate], ['RK4', COLORS.indigo, [6,3]]]);
-    const err = yn.map((v,i) => v - ye[i]), em = Math.max(...err.map(Math.abs)) * 1.2 || 1e-12;
-    pe.set({xmin:0, xmax:T, ymin:-em, ymax:em, yfmt: v => Math.abs(v) < em*1e-6 ? '0' : v.toExponential(0)}); pe.clear(); pe.axes(); pe.line(s.ts, err, COLORS.rose, 2);
-    const reg = z < 1 - 1e-9 ? 'dưới tắt dần (dao động)' : z > 1 + 1e-9 ? 'quá tắt dần' : 'tắt dần tới hạn';
-    $('o-reg').textContent = reg; $('o-n').textContent = s.ts.length - 1;
-    $('odeCase').innerHTML = z < 1 - 1e-9 ? '$$y=e^{-\\zeta\\omega_n t}\\left[y_0\\cos\\omega_d t+\\frac{v_0+\\zeta\\omega_n y_0}{\\omega_d}\\sin\\omega_d t\\right]$$'
-      : z > 1 + 1e-9 ? '$$y=c_1e^{s_1t}+c_2e^{s_2t},\\quad s_{1,2}=-\\zeta\\omega_n\\pm\\omega_n\\sqrt{\\zeta^2-1}$$' : '$$y=\\left[y_0+(v_0+\\omega_n y_0)t\\right]e^{-\\omega_n t}$$';
-    typeset([$('odeCase')]);
-    const pk = a => Math.min(...a); $('o-peak').textContent = fmt(pk(yn), 4) + ' / ' + fmt(pk(ye), 4);
-    const eRel = relErr(yn[yn.length-1], ye[ye.length-1]), nr = nrmse(yn, ye);
-    $('o-erel').textContent = Math.abs(ye[ye.length-1]) < 1e-3 * amp ? 'không áp dụng (y(T)≈0)' : fmt(eRel, 4) + ' %'; $('o-nrmse').textContent = fmt(nr, 5) + ' %'; $('o-max').textContent = fmt(Math.max(...err.map(Math.abs)), 3);
-    verdict($('o-verdict'), nr <= 1, `NRMSE = ${fmt(nr,4)} % ${nr <= 1 ? '≤' : '>'} ε = 1 %` + (nr > 1 ? ' — hãy giảm bước h' : ''));
-    const rows = [hh, hh/2, hh/4].map(H => { const r = solve(z, w, y0, v0, T, H); const e = Math.max(...r.ts.map((t,i) => Math.abs(r.ys[i][0] - ex(t)))); return [H, e]; });
-    $('o-conv').innerHTML = '<tr><td><b>h</b></td><td><b>sai số lớn nhất · tỉ số</b></td></tr>' + rows.map((r,i) => `<tr><td>${fmt(r[0],4)}</td><td>${r[1].toExponential(2)}${i ? ' · ' + (rows[i-1][1]/r[1]).toFixed(1) : ''}</td></tr>`).join('');
+    if (!V) return; const {kp, ki, kd, np} = V;
+    const num = [K*kd, K*kp, K*ki], den = [a2, a1 + K*kd, a0 + K*kp, K*ki];
+    const P = roots(den), slow = Math.min(...P.map(p => Math.abs(p.re))), stable = P.every(p => p.re < 0);
+    const T = Math.max(0.5, Math.min(stable ? 8/slow : 3, 15));
+    // exact step response: y = T(0) + sum N(p)/(p D'(p)) e^{pt}
+    const dD = pderiv(den), res = P.map(p => cdiv(peval(num, p), cmul(p, peval(dD, p)))), T0 = num[2]/den[3];
+    const exact = t => { let s = cx(T0); P.forEach((p, i) => { s = cadd(s, cmul(res[i], cexp(cx(p.re*t, p.im*t)))); }); return s.re; };
+    // RK4 on controllable canonical form of T(s) (normalized by a2)
+    const d = den.map(k => k/a2), n = num.map(k => k/a2);
+    const f = (t, x) => [x[1], x[2], -d[3]*x[0] - d[2]*x[1] - d[1]*x[2] + 1];
+    const sim = rk4(f, [0,0,0], 0, T, T/np), yn = sim.ys.map(x => n[2]*x[0] + n[1]*x[1] + n[0]*x[2]), ye = sim.ts.map(exact);
+    const fine = []; for (let i = 0; i <= 800; i++) fine.push(i*T/800);
+    const hi = Math.max(1.3, ...ye.filter(isFinite).map(Math.abs)) * 1.05;
+    ps.set({xmin:0, xmax:T, ymin:Math.min(0, ...ye) - 0.05, ymax:Math.min(hi, 3)}); ps.clear(); ps.axes(); ps.hline(1, COLORS.slate);
+    ps.line(fine, fine.map(exact), COLORS.slate, 4); ps.line(sim.ts, yn, COLORS.emerald, 2, [6,3]); ps.legend([['exact (residues)', COLORS.slate], ['RK4', COLORS.emerald, [6,3]]]);
+    // metrics
+    const ymax = Math.max(...ye); let k = ye.length - 1; while (k > 0 && Math.abs(ye[k] - T0) <= 0.02*Math.abs(T0)) k--; const tset = sim.ts[Math.min(k + 1, ye.length - 1)];
+    $('p-poles').textContent = P.map(pfmt).join(', ');
+    $('p-os').textContent = stable ? `${fmt(Math.max(0, (ymax - T0)/T0*100), 2)} % · ${k >= ye.length - 2 ? '> horizon' : fmt(tset, 3) + ' s'}` : 'unstable';
+    $('p-fv').textContent = `${fmt(yn[yn.length - 1], 4)} · ${fmt(T0, 4)}`;
+    // Bode of the loop L(jω) = C(jω) G(jω)
+    const ws = [], mag = [], ph = []; let prev = null, unwrap = 0;
+    for (let i = 0; i <= 600; i++) { const lw = -1 + i*4/600, w = Math.pow(10, lw), s = cx(0, w);
+      const Lj = cdiv(cmul(cx(K), cadd(cadd(cmul(cx(kd), cmul(s, s)), cmul(cx(kp), s)), cx(ki))), cmul(s, cadd(cadd(cmul(cx(a2), cmul(s, s)), cmul(cx(a1), s)), cx(a0))));
+      let a = Math.atan2(Lj.im, Lj.re)*180/Math.PI; if (prev !== null) { while (a + unwrap - prev > 180) unwrap -= 360; while (a + unwrap - prev < -180) unwrap += 360; } a += unwrap; prev = a;
+      ws.push(lw); mag.push(20*Math.log10(Math.hypot(Lj.re, Lj.im))); ph.push(a); }
+    let pmS = '∞', gmS = '∞';
+    for (let i = 1; i < ws.length; i++) { if (mag[i-1] >= 0 && mag[i] < 0) { const fr = mag[i-1]/(mag[i-1] - mag[i]), phc = ph[i-1] + fr*(ph[i] - ph[i-1]); pmS = fmt(180 + phc, 1) + '°'; } if ((ph[i-1] + 180)*(ph[i] + 180) < 0) { const fr = (ph[i-1] + 180)/(ph[i-1] - ph[i]), mc = mag[i-1] + fr*(mag[i] - mag[i-1]); gmS = fmt(-mc, 1) + ' dB'; } }
+    $('p-m').textContent = `${gmS} · ${pmS}`;
+    pm.set({xmin:-1, xmax:3, ymin:Math.max(-80, Math.min(...mag)) - 5, ymax:Math.min(120, Math.max(...mag)) + 5, xstep:1}); pm.clear(); pm.axes(); pm.hline(0, COLORS.rose); pm.line(ws, mag, COLORS.indigo, 2);
+    pp.set({xmin:-1, xmax:3, ymin:Math.min(-200, Math.min(...ph) - 10), ymax:Math.max(0, Math.max(...ph) + 10), xstep:1, ystep:45}); pp.clear(); pp.axes(); pp.hline(-180, COLORS.rose); pp.line(ws, ph, COLORS.amber, 2);
+    const nr = nrmse(yn, ye), fvErr = stable ? relErr(yn[yn.length - 1], T0) : NaN;
+    $('p-nr').textContent = fmt(nr, 5) + ' %';
+    if (!stable) verdict($('p-verdict'), nr <= 1, `closed loop unstable — simulation still matches the exact solution (NRMSE ${fmt(nr,3)} %)`);
+    else verdict($('p-verdict'), nr <= 1, `NRMSE ${fmt(nr,3)} % ≤ 1 %` + (nr > 1 ? ' ✗ — increase N' : '') + `; final value error ${fmt(fvErr,3)} %`);
   }
-  const upd = bind(['zeta','wn','h','y0','v0','T'], v => { V = v; draw(); });
-  pl.onresize = draw; pe.onresize = draw; upd();
+  const upd = bind(['kp','ki','kd','np'], v => { V = v; draw(); }); [ps, pm, pp].forEach(p => p.onresize = draw); upd();
 })();
 
-/* ---------- Quiz ---------- */
 quiz('quizBox', 'score', [
-  {q:'Nếu $\\mathbf{A}\\cdot\\mathbf{B}=0$ và cả hai vectơ đều khác không, thì', opts:['chúng song song','chúng vuông góc','$\\mathbf{A}\\times\\mathbf{B}=\\mathbf{0}$'], ans:1, fb:'$\\cos\\theta=0$ nghĩa là $\\theta=90^\\circ$.'},
-  {q:'$|\\mathbf{A}\\times\\mathbf{B}|$ bằng', opts:['diện tích hình bình hành căng bởi $\\mathbf{A}$ và $\\mathbf{B}$','hình chiếu của $\\mathbf{A}$ lên $\\mathbf{B}$','$|\\mathbf{A}||\\mathbf{B}|\\cos\\theta$'], ans:0, fb:'$|\\mathbf{A}\\times\\mathbf{B}|=|\\mathbf{A}||\\mathbf{B}|\\sin\\theta$ chính là diện tích hình bình hành.'},
-  {q:'Với $\\mathbf{A}=(1,2,2)$ và $\\mathbf{B}=(3,0,4)$, hãy tính $\\mathbf{A}\\cdot\\mathbf{B}$.', num:11, tol:1e-6, fb:'$1\\cdot3+2\\cdot0+2\\cdot4=11$.'},
-  {q:'$\\mathbf{B}\\times\\mathbf{A}$ bằng', opts:['$\\mathbf{A}\\times\\mathbf{B}$','$-\\mathbf{A}\\times\\mathbf{B}$','$\\mathbf{0}$'], ans:1, fb:'Tích có hướng có tính phản giao hoán.'},
-  {q:'RK4 có sai số toàn cục $O(h^4)$. Khi giảm $h$ đi một nửa, sai số giảm khoảng bao nhiêu lần?', num:16, tol:0.5, fb:'$2^4=16$, đúng như bảng hội tụ cho thấy.'},
-  {q:'Với $\\zeta=1$, đáp ứng của dao động tử là', opts:['dao động với biên độ giảm dần','tắt dần tới hạn: trở về nhanh nhất mà không vọt lố','không tắt dần'], ans:1, fb:'$\\zeta=1$ cho nghiệm thực kép $s=-\\omega_n$.'}
+  {q:'A system with poles at $-2$ and $+0.5$ is', opts:['stable','unstable','marginally stable'], ans:1, fb:'One pole lies in the RHP, so its mode $e^{0.5t}$ grows.'},
+  {q:'For $\\zeta=0.5$, the percent overshoot of the prototype second-order system is about (±0.5 %)', num:16.3, tol:0.5, unit:'%', fb:'$100e^{-0.5\\pi/\\sqrt{0.75}}\\approx16.3\\%$.'},
+  {q:'Increasing $\\omega_n$ at fixed $\\zeta$', opts:['speeds up the response with the same overshoot','reduces the overshoot','makes the system unstable'], ans:0, fb:'Overshoot depends only on $\\zeta$, while time scales as $1/\\omega_n$.'},
+  {q:'Integral action in a PID controller', opts:['removes steady-state error to a step','always increases the phase margin','makes the plant faster'], ans:0, fb:'The $1/s$ term makes $T(0)=1$ (final value theorem).'},
+  {q:'A phase margin of about $60^\\circ$ usually indicates', opts:['an unstable loop','a well-damped closed loop','zero gain margin'], ans:1, fb:'A large PM corresponds to low overshoot (roughly $\\zeta\\approx PM/100$).'},
+  {q:'Settling time (2 %) of a prototype system with $\\zeta=0.4$, $\\omega_n=5$ rad/s, using $4/\\zeta\\omega_n$ (s)', num:2, tol:0.02, unit:'s', fb:'$4/(0.4\\cdot5)=2$ s.'}
 ]);
 
 </script>
-<!-- ============ Anonymous research logger — Vietnamese UI (injected; see README) ============ -->
+<!-- ============ Anonymous research logger (injected; see 2_demos_logging/README) ============ -->
 <style>
 #rlog-banner{position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:12px 14px;font-size:13.5px;box-shadow:0 8px 30px rgba(15,23,42,.35);display:none;max-width:860px;margin:0 auto}
 #rlog-banner i{color:#94a3b8}
@@ -459,17 +445,18 @@ quiz('quizBox', 'score', [
 #rlog-box button,#rlog-box a{font:inherit;font-size:12.5px;margin-left:6px}
 </style>
 <div id="rlog-banner" role="dialog" aria-live="polite">
-  <b>Nghiên cứu đánh giá học liệu</b><br>
-  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá và cải tiến học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Việc đồng ý hay từ chối không ảnh hưởng đến việc sử dụng trang hay điểm học phần.<br>
-  <button class="yes" id="rlog-yes">Đồng ý</button><button id="rlog-no">Không đồng ý</button>
+  <b>Nghiên cứu học liệu / Learning-materials research</b><br>
+  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Bạn có thể từ chối mà không ảnh hưởng gì.<br>
+  <i>This page can record an <b>anonymous usage log</b> (time per section, number of parameter changes, quiz results) to evaluate the materials. No names, student IDs, e-mails or IP addresses are collected. You may decline without any consequence.</i><br>
+  <button class="yes" id="rlog-yes">Đồng ý / Agree</button><button id="rlog-no">Không đồng ý / Decline</button>
 </div>
 <div id="rlog-box"></div>
 <script>
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = 'survey.html?role=student';   // mã ẩn danh được tự gắn thêm
-  const STUDY = 'paper2-html-demos', DEMO = '01_MAT', VERSION = 'log-v1-vi', LANG = 'vi';
+  const SURVEY_URL   = '../survey.html?role=student&lang=en';
+  const STUDY = 'paper2-html-demos', LANG = 'en', DEMO = '05_CTL', VERSION = 'log-v1';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';
   const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
@@ -479,11 +466,11 @@ quiz('quizBox', 'score', [
   const box = document.getElementById('rlog-box');
 
   function renderBox(consent) {
-    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Làm phiếu khảo sát</a>` : '';
-    box.innerHTML = `Mã ẩn danh của bạn: <span class="code">${code}</span> — hãy nhập mã này vào phiếu khảo sát (không bắt buộc).${surveyLink}
-      <br>Nhật ký sử dụng: <b>${consent === 'yes' ? 'đang ghi' : 'đang tắt'}</b>
-      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt ghi nhật ký' : 'Bật ghi nhật ký'}</button>
-      <button id="rlog-dl">Tải nhật ký (JSON)</button>`;
+    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Phiếu khảo sát / Survey</a>` : '';
+    box.innerHTML = `Mã ẩn danh của bạn / Your anonymous code: <span class="code">${code}</span> — nhập mã này vào phiếu khảo sát (không bắt buộc) / enter it in the survey (optional).${surveyLink}
+      <br>Nhật ký / Log: <b>${consent === 'yes' ? 'đang ghi / recording' : 'tắt / off'}</b>
+      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt / Turn off' : 'Bật / Turn on'}</button>
+      <button id="rlog-dl">Tải nhật ký / Download log (JSON)</button>`;
     document.getElementById('rlog-toggle').onclick = () => { ls.set(K_CONSENT, consent === 'yes' ? 'no' : 'yes'); location.reload(); };
     document.getElementById('rlog-dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = `logs_${code}.json`; a.click(); };
   }
@@ -534,7 +521,7 @@ quiz('quizBox', 'score', [
   addEventListener('pagehide', persist);
   setInterval(persist, 60000);
   ev('start', DEMO);
-  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [quản trị] tải toàn bộ nhật ký trên máy này'; box.appendChild(a); }
+  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [admin] download all logs on this device'; box.appendChild(a); }
   window.__rlog = { snapshot, persist };   // for testing
 })();
 </script>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xử lý số tín hiệu — DFT, cửa sổ hóa và lọc FIR (Demo tương tác)</title>
+<title>Digital Signal Processing — DFT, Windowing and FIR Filtering (Interactive Demo)</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], tags: 'ams' },
@@ -97,120 +97,120 @@ details.matlab pre{margin:0;padding:0 14px 14px;font-size:12.5px;overflow-x:auto
 svg text{font-family:Inter,"Segoe UI",system-ui,sans-serif}
 footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);font-size:12.5px}
 </style>
-<script src="config.js"></script>
+<script src="../config.js"></script>
 <style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand"><div class="dot"></div><span>Xử lý số tín hiệu</span></div>
+  <div class="brand"><div class="dot"></div><span>Digital Signal Processing</span></div>
   <nav class="links">
-    <a href="#overview">Tổng quan</a>
-    <a class="e" href="#easy">Cơ bản</a>
-    <a class="m" href="#medium">Trung bình</a>
-    <a class="c" href="#complex">Nâng cao</a>
-    <a href="#quiz">Trắc nghiệm</a>
+    <a href="#overview">Overview</a>
+    <a class="e" href="#easy">Easy</a>
+    <a class="m" href="#medium">Medium</a>
+    <a class="c" href="#complex">Complex</a>
+    <a href="#quiz">Quiz</a>
   </nav>
 </div></header>
 <main>
 <section class="panel hero" id="overview">
-  <span class="tag">Học phần 6 · Xử lý số tín hiệu</span>
-  <h1>DFT, rò rỉ phổ và thiết kế bộ lọc FIR</h1>
-  <p class="lead">Ba bài chuẩn DSP-E, DSP-M và DSP-C được trình bày trên cùng một trang. Trước hết định nghĩa DFT và lưới tần số của nó, sau đó cho thấy việc chọn cửa sổ là sự đánh đổi giữa độ rộng búp chính và mức rò rỉ qua búp phụ. Cuối cùng, thiết kế bộ lọc FIR theo phương pháp sinc có cửa sổ và áp dụng cho tín hiệu hai thành phần có nhiễu. Hệ số khuếch đại đo được được kiểm chứng với đáp ứng tần số giải tích.</p>
-  <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (phổ theo dB)</span><span>④ Mô phỏng (FFT, lọc FIR)</span><span>⑤ Đánh giá (tự chấm)</span></div>
+  <span class="tag">Course 6 · Digital Signal Processing</span>
+  <h1>DFT, Spectral Leakage and FIR Filter Design</h1>
+  <p class="lead">Benchmark tasks DSP-E, DSP-M and DSP-C share one page. The DFT and its frequency grid are defined first, then window choice is shown to trade main-lobe width for sidelobe leakage. Finally, a windowed-sinc FIR filter is designed and applied to a noisy two-tone signal. Its measured gains are validated against the analytical frequency response.</p>
+  <div class="layers"><span>① Presentation</span><span>② Mathematics (MathJax)</span><span>③ Visualization (spectra in dB)</span><span>④ Simulation (FFT, FIR filtering)</span><span>⑤ Assessment (auto-scored)</span></div>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="kicker">Mục tiêu 1</div>Liên hệ chỉ số bin DFT $k$ với tần số $f_k=kf_s/N$.</div>
-    <div class="card"><div class="kicker">Mục tiêu 2</div>Giải thích hiện tượng rò rỉ phổ và chọn cửa sổ theo yêu cầu về dải động.</div>
-    <div class="card"><div class="kicker">Mục tiêu 3</div>Thiết kế bộ lọc FIR pha tuyến tính và kiểm chứng hệ số khuếch đại tại các tần số cho trước.</div>
+    <div class="card"><div class="kicker">Objective 1</div>Map DFT bin $k$ to frequency $f_k=kf_s/N$.</div>
+    <div class="card"><div class="kicker">Objective 2</div>Explain leakage and choose a window for a dynamic-range requirement.</div>
+    <div class="card"><div class="kicker">Objective 3</div>Design a linear-phase FIR filter and verify its gain at given frequencies.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · DSP-E</span><h2>DFT và độ phân giải tần số</h2><p class="lead">DFT $N$ điểm lấy mẫu phổ của một đoạn tín hiệu hữu hạn tại $N$ tần số cách đều nhau. Khoảng cách $\Delta f=f_s/N=1/T$ chỉ phụ thuộc vào độ dài đoạn ghi, không phụ thuộc vào tần số lấy mẫu.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Level E · DSP-E</span><h2>The DFT and Frequency Resolution</h2><p class="lead">The $N$-point DFT samples the spectrum of a finite record at $N$ equally spaced frequencies. The spacing $\Delta f=f_s/N=1/T$ is set by the record length alone, not by the sampling rate.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g2">
-      <div class="card"><h3>Định nghĩa</h3><div class="eq">$$X[k]=\sum_{n=0}^{N-1}x[n]\,e^{-j2\pi kn/N}$$</div></div>
-      <div class="card"><h3>Tần số của các bin</h3><div class="eq">$$f_k=k\frac{f_s}{N},\quad \Delta f=\frac{f_s}{N}=\frac1T$$</div></div>
-      <div class="card"><h3>Tính đối xứng ($x$ thực)</h3><div class="eq">$$X[N-k]=X^*[k]$$</div><p class="note">Chỉ các bin $0\dots N/2$ mang thông tin độc lập.</p></div>
-      <div class="card"><h3>Ví dụ</h3><p>Với $f_s=8$ kHz và $N=8$ ta có $\Delta f=1$ kHz. Tín hiệu $x[n]=\cos(2\pi\cdot2n/8)+\tfrac12\cos(2\pi\cdot3n/8)$ chỉ có năng lượng tại bin 2 và 3 (cùng các bin ảnh đối xứng 6 và 5), với $|X[2]|=4$ và $|X[3]|=2$.</p></div>
+      <div class="card"><h3>Definition</h3><div class="eq">$$X[k]=\sum_{n=0}^{N-1}x[n]\,e^{-j2\pi kn/N}$$</div></div>
+      <div class="card"><h3>Bin frequencies</h3><div class="eq">$$f_k=k\frac{f_s}{N},\quad \Delta f=\frac{f_s}{N}=\frac1T$$</div></div>
+      <div class="card"><h3>Symmetry (real $x$)</h3><div class="eq">$$X[N-k]=X^*[k]$$</div><p class="note">Only bins $0\dots N/2$ carry independent information.</p></div>
+      <div class="card"><h3>Example</h3><p>$f_s=8$ kHz and $N=8$ give $\Delta f=1$ kHz. The signal $x[n]=\cos(2\pi\cdot2n/8)+\tfrac12\cos(2\pi\cdot3n/8)$ puts energy only in bins 2 and 3 (and their mirror bins 6 and 5), with $|X[2]|=4$ and $|X[3]|=2$.</p></div>
     </div>
-    <div class="card white"><h3>Tín hiệu ví dụ và DFT 8 điểm của nó</h3>
+    <div class="card white"><h3>Example signal and its 8-point DFT</h3>
       <div class="canvas-wrap"><canvas id="d1" data-h="150"></canvas></div>
       <div class="canvas-wrap" style="margin-top:8px"><canvas id="d2" data-h="150"></canvas></div></div>
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · DSP-M</span><h2>Cửa sổ hóa và rò rỉ phổ</h2><p class="lead">Khi một thành phần sin không chứa số nguyên chu kỳ trong đoạn ghi, năng lượng của nó rò rỉ sang mọi bin. Khi đó, một thành phần thứ hai yếu hơn có thể bị che lấp dưới các búp phụ của thành phần mạnh. Các cửa sổ có biên giảm dần làm hạ thấp búp phụ, nhưng phải trả giá bằng búp chính rộng hơn.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Level M · DSP-M</span><h2>Windowing and Spectral Leakage</h2><p class="lead">When a tone does not complete an integer number of cycles in the record, its energy leaks into all bins. A weak second tone can then disappear under the sidelobes of the strong one. Tapered windows lower the sidelobes at the cost of a wider main lobe.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="lk" data-h="320"></canvas></div>
       <div class="controls c3">
-        <div class="ctl"><label>Cửa sổ</label><select id="win"><option value="rect">Chữ nhật</option><option value="hann" selected>Hann</option><option value="hamming">Hamming</option><option value="blackman">Blackman</option></select></div>
-        <div class="ctl"><label>Thành phần 1 (bin) <b id="k1-v"></b></label><input type="range" id="k1" min="8" max="24" step="0.05" value="16.5"></div>
-        <div class="ctl"><label>Độ lệch thành phần 2 (bin) <b id="dk-v"></b></label><input type="range" id="dk" min="2" max="20" step="0.5" value="6"></div>
-        <div class="ctl"><label>Mức thành phần 2 (dB) <b id="a2-v"></b></label><input type="range" id="a2" min="-80" max="0" step="1" value="-50"></div>
+        <div class="ctl"><label>Window</label><select id="win"><option value="rect">Rectangular</option><option value="hann" selected>Hann</option><option value="hamming">Hamming</option><option value="blackman">Blackman</option></select></div>
+        <div class="ctl"><label>Tone 1 (bins) <b id="k1-v"></b></label><input type="range" id="k1" min="8" max="24" step="0.05" value="16.5"></div>
+        <div class="ctl"><label>Tone 2 offset (bins) <b id="dk-v"></b></label><input type="range" id="dk" min="2" max="20" step="0.5" value="6"></div>
+        <div class="ctl"><label>Tone 2 level (dB) <b id="a2-v"></b></label><input type="range" id="a2" min="-80" max="0" step="1" value="-50"></div>
         <div class="ctl"><label>$N$</label><select id="Nw"><option>64</option><option selected>128</option><option>256</option></select></div>
       </div>
     </div>
     <div class="card white">
-      <h3>Đặc tính cửa sổ</h3>
+      <h3>Window properties</h3>
       <table class="read">
-        <tr><td></td><td><b>lý thuyết · đo được</b></td></tr>
-        <tr><td>Mức búp phụ lớn nhất</td><td id="w-psl"></td></tr>
-        <tr><td>Độ rộng búp chính (giữa hai điểm không)</td><td id="w-ml"></td></tr>
-        <tr><td>Thành phần 2 có nổi trên mức rò rỉ?</td><td id="w-vis"></td></tr>
+        <tr><td></td><td><b>theory · measured</b></td></tr>
+        <tr><td>Peak sidelobe level</td><td id="w-psl"></td></tr>
+        <tr><td>Main-lobe width (null to null)</td><td id="w-ml"></td></tr>
+        <tr><td>Tone 2 visible above leakage?</td><td id="w-vis"></td></tr>
       </table>
       <div id="w-verdict" class="verdict"></div>
-      <p class="note">Giá trị đo được lấy từ FFT có chèn không của chính hàm cửa sổ. Lý thuyết: chữ nhật −13,3 dB / 2 bin, Hann −31,5 dB / 4 bin, Hamming −42,7 dB / 4 bin, Blackman −58,1 dB / 6 bin.</p>
+      <p class="note">The measured values come from the zero-padded FFT of the window itself. Theory: rectangular −13.3 dB / 2 bins, Hann −31.5 dB / 4 bins, Hamming −42.7 dB / 4 bins, Blackman −58.1 dB / 6 bins.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
-  <div class="sechead"><div><span class="tag c">Mức C · DSP-C</span><h2>Thiết kế FIR bằng sinc có cửa sổ và lọc tín hiệu</h2>
-    <p class="lead">Đáp ứng xung thông thấp lý tưởng $h_d[n]=2f_c/f_s\,\mathrm{sinc}\!\left(2f_c(n-\tfrac{M-1}{2})/f_s\right)$ được cắt cụt còn $M$ hệ số và nhân với một cửa sổ. Bộ lọc thông cao nhận được bằng phép đảo phổ. Bộ lọc được áp dụng cho $x[n]=\sin(2\pi50n/f_s)+0.5\sin(2\pi300n/f_s)+$ nhiễu, với $f_s=1$ kHz.</p></div>
-    <span class="tag v">Kiểm chứng: giải tích + MATLAB fir1/freqz</span></div>
+  <div class="sechead"><div><span class="tag c">Level C · DSP-C</span><h2>Windowed-Sinc FIR Design and Filtering</h2>
+    <p class="lead">The ideal low-pass impulse response $h_d[n]=2f_c/f_s\,\mathrm{sinc}\!\left(2f_c(n-\tfrac{M-1}{2})/f_s\right)$ is truncated to $M$ taps and multiplied by a window. A high-pass filter is obtained by spectral inversion. The filter is applied to $x[n]=\sin(2\pi50n/f_s)+0.5\sin(2\pi300n/f_s)+$ noise, with $f_s=1$ kHz.</p></div>
+    <span class="tag v">Validation: analytical + MATLAB fir1/freqz</span></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="hf" data-h="240"></canvas></div>
       <div class="canvas-wrap" style="margin-top:10px"><canvas id="ty" data-h="220"></canvas></div>
       <div class="controls c3">
-        <div class="ctl"><label>Loại</label><select id="ftype"><option value="lp" selected>Thông thấp</option><option value="hp">Thông cao</option></select></div>
-        <div class="ctl"><label>Tần số cắt $f_c$ (Hz) <b id="fc-v"></b></label><input type="range" id="fc" min="20" max="450" step="5" value="150"></div>
-        <div class="ctl"><label>Số hệ số $M$ (lẻ) <b id="M-v"></b></label><input type="range" id="M" min="11" max="201" step="2" value="61"></div>
-        <div class="ctl"><label>Cửa sổ</label><select id="fw"><option value="rect">Chữ nhật</option><option value="hann">Hann</option><option value="hamming" selected>Hamming</option><option value="blackman">Blackman</option></select></div>
-        <div class="ctl"><label>Mức nhiễu <b id="nz-v"></b></label><input type="range" id="nz" min="0" max="1" step="0.05" value="0.3"></div>
+        <div class="ctl"><label>Type</label><select id="ftype"><option value="lp" selected>Low-pass</option><option value="hp">High-pass</option></select></div>
+        <div class="ctl"><label>Cut-off $f_c$ (Hz) <b id="fc-v"></b></label><input type="range" id="fc" min="20" max="450" step="5" value="150"></div>
+        <div class="ctl"><label>Taps $M$ (odd) <b id="M-v"></b></label><input type="range" id="M" min="11" max="201" step="2" value="61"></div>
+        <div class="ctl"><label>Window</label><select id="fw"><option value="rect">Rectangular</option><option value="hann">Hann</option><option value="hamming" selected>Hamming</option><option value="blackman">Blackman</option></select></div>
+        <div class="ctl"><label>Noise level <b id="nz-v"></b></label><input type="range" id="nz" min="0" max="1" step="0.05" value="0.3"></div>
       </div>
     </div>
     <div class="card white">
-      <h3>Hệ số khuếch đại đo được so với giải tích</h3>
+      <h3>Measured vs analytical gain</h3>
       <table class="read">
-        <tr><td>$|H(50\,\text{Hz})|$ giải tích · đo được</td><td id="g1"></td></tr>
-        <tr><td>$|H(300\,\text{Hz})|$ giải tích · đo được</td><td id="g2"></td></tr>
-        <tr><td>Hệ số khuếch đại tại $f_c$ (dB)</td><td id="gfc"></td></tr>
-        <tr><td>Trễ nhóm $(M-1)/2$</td><td id="gd"></td></tr>
-        <tr><td>Hệ số khuếch đại dải chắn lớn nhất ngoài $f_c\pm$dải chuyển tiếp</td><td id="sb"></td></tr>
+        <tr><td>$|H(50\,\text{Hz})|$ analytical · measured</td><td id="g1"></td></tr>
+        <tr><td>$|H(300\,\text{Hz})|$ analytical · measured</td><td id="g2"></td></tr>
+        <tr><td>Gain at $f_c$ (dB)</td><td id="gfc"></td></tr>
+        <tr><td>Group delay $(M-1)/2$</td><td id="gd"></td></tr>
+        <tr><td>Max stopband gain beyond $f_c\pm$transition</td><td id="sb"></td></tr>
       </table>
       <div id="f-verdict" class="verdict"></div>
-      <p class="note">Hệ số khuếch đại đo được lấy từ DFT của đầu ra bộ lọc ở trạng thái xác lập khi chỉ có từng thành phần riêng lẻ. Hệ số khuếch đại giải tích được tính theo $|H(e^{j\omega})|=\left|\sum_n h[n]e^{-j\omega n}\right|$.</p>
-      <details class="matlab"><summary>Script MATLAB tham chiếu</summary><pre>fs = 1000; fc = 150; M = 61;
+      <p class="note">Measured gains are taken from the DFT of the steady-state filter output for each tone alone. Analytical gains are evaluated as $|H(e^{j\omega})|=\left|\sum_n h[n]e^{-j\omega n}\right|$.</p>
+      <details class="matlab"><summary>MATLAB reference script</summary><pre>fs = 1000; fc = 150; M = 61;
 h = fir1(M-1, fc/(fs/2), 'low', hamming(M));
 [H, f] = freqz(h, 1, 4096, fs);
 plot(f, 20*log10(abs(H))); grid on
 n = 0:fs-1;  x = sin(2*pi*50*n/fs) + 0.5*sin(2*pi*300*n/fs);
 y = filter(h, 1, x);
-abs(H(round(50/fs*2*4096)+1))   % so sánh với hệ số khuếch đại trên trang</pre></details>
+abs(H(round(50/fs*2*4096)+1))   % compare with the in-page gain</pre></details>
     </div>
   </div>
 </section>
 
 <section class="panel" id="quiz">
-  <div class="sechead"><div><span class="tag q">Đánh giá</span><h2>Câu hỏi tự đánh giá</h2></div><span class="score" id="score"></span></div>
+  <div class="sechead"><div><span class="tag q">Assessment</span><h2>Self-Assessment Quiz</h2></div><span class="score" id="score"></span></div>
   <div class="quiz" id="quizBox"></div>
 </section>
 
 </main>
-<footer class="p2nav"><a href="index.html">← Trang chủ</a> · <a href="survey.html?role=student">Làm phiếu khảo sát sinh viên</a> · <a href="survey.html?role=lecturer">Phiếu giảng viên</a></footer>
+<footer class="p2nav"><a href="../index.html?lang=en">← Home</a> · <a href="../survey.html?role=student&amp;lang=en">Student questionnaire</a> · <a href="../survey.html?role=lecturer&amp;lang=en">Lecturer questionnaire</a></footer>
 <script>
 /* ===================== shared helpers ===================== */
 const $ = id => document.getElementById(id);
@@ -318,20 +318,20 @@ function quiz(containerId, scoreId, items) {
   const box = $(containerId);
   box.innerHTML = items.map((it, i) => `
     <div class="qcard" id="q${i}">
-      <div class="qn">Câu ${i + 1}${it.num !== undefined ? ' · tính số' : ''}</div>
+      <div class="qn">Question ${i + 1}${it.num !== undefined ? ' · numerical' : ''}</div>
       <div style="margin-top:6px">${it.q}</div>
       ${it.num !== undefined
-        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Kiểm tra</button></div>`
+        ? `<div class="numrow"><input type="number" step="any" id="q${i}-in" placeholder="${it.unit || ''}"><button class="btn" onclick="__qa(${i})">Check</button></div>`
         : it.opts.map((o, j) => `<button class="opt" data-j="${j}" onclick="__qa(${i},${j})">${String.fromCharCode(65 + j)}. ${o}</button>`).join('')}
       <div class="fb" id="q${i}-fb"></div>
     </div>`).join('');
-  const upd = () => { $(scoreId).textContent = `Điểm: ${score} / ${items.length}`; };
+  const upd = () => { $(scoreId).textContent = `Score: ${score} / ${items.length}`; };
   window.__qa = (i, j) => {
     if (done[i]) return; const it = items[i]; let ok;
     if (it.num !== undefined) { const v = parseFloat($(`q${i}-in`).value); if (!isFinite(v)) return; ok = Math.abs(v - it.num) <= it.tol; }
     else { ok = j === it.ans; document.querySelectorAll(`#q${i} button.opt`).forEach(b => { b.disabled = true; const k = +b.dataset.j; if (k === it.ans) b.classList.add('right'); else if (k === j) b.classList.add('wrong'); }); }
     done[i] = true; if (ok) score++;
-    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Đúng. ' : '✗ Chưa đúng. ') + it.fb; typeset([fb]); upd();
+    const fb = $(`q${i}-fb`); fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.innerHTML = (ok ? '✓ Correct. ' : '✗ Not quite. ') + it.fb; typeset([fb]); upd();
   };
   upd(); typeset([box]);
 }
@@ -351,7 +351,7 @@ function specDB(x, Nf) { const re = new Float64Array(Nf), im = new Float64Array(
 
 /* ---------- DSP-M: windowing and leakage ---------- */
 (function () {
-  const p = new Plot($('lk'), {xlabel:'tần số (bin)', ylabel:'|X| (dB, chuẩn hóa)', ymin:-110, ymax:5, ystep:20}); let V = null;
+  const p = new Plot($('lk'), {xlabel:'frequency (bins)', ylabel:'|X| (dB, normalized)', ymin:-110, ymax:5, ystep:20}); let V = null;
   const TH = {rect:[-13.26, 2], hann:[-31.47, 4], hamming:[-42.68, 4], blackman:[-58.11, 6]};
   function props(type, N) { const Nf = 1 << 16, m = specDB(win(type, N), Nf), mx = m[0], db = m.map(v => 20*Math.log10(v/mx + 1e-300)), per = Nf/N;
     let k = 1; while (k < db.length - 1 && !(db[k] < db[k-1] && db[k] <= db[k+1])) k++; const ml = 2*k/per;
@@ -362,23 +362,23 @@ function specDB(x, Nf) { const re = new Float64Array(Nf), im = new Float64Array(
     const m = specDB(x, Nf), mx = Math.max(...m), fb = m.map((_, k) => k*N/Nf), db = m.map(v => 20*Math.log10(v/mx + 1e-12));
     const fr = Math.min(N/2, 48); const sel = fb.map((f,i) => i).filter(i => fb[i] <= fr);
     p.set({xmin:0, xmax:fr}); p.clear(); p.axes(); p.line(sel.map(i => fb[i]), sel.map(i => db[i]), COLORS.rose, 1.8);
-    p.vline(V.k1, COLORS.indigo); p.vline(V.k1 + V.dk, COLORS.emerald); p.text('thành phần 2', V.k1 + V.dk + 0.4, -8, COLORS.emerald); p.hline(V.a2, '#a7f3d0');
+    p.vline(V.k1, COLORS.indigo); p.vline(V.k1 + V.dk, COLORS.emerald); p.text('tone 2', V.k1 + V.dk + 0.4, -8, COLORS.emerald); p.hline(V.a2, '#a7f3d0');
     const pr = props(V.win, N), th = TH[V.win];
-    $('w-psl').textContent = `${fmt(th[0],1)} · ${fmt(pr.psl,2)} dB`; $('w-ml').textContent = `${th[1]} · ${fmt(pr.ml,2)} bin`;
+    $('w-psl').textContent = `${fmt(th[0],1)} · ${fmt(pr.psl,2)} dB`; $('w-ml').textContent = `${th[1]} · ${fmt(pr.ml,2)} bins`;
     // visibility: local peak near tone 2 exceeds the leakage floor of tone 1 alone at that frequency
     const x1 = [...Array(N).keys()].map(n => Math.cos(2*Math.PI*V.k1*n/N)*w[n]), m1 = specDB(x1, Nf), kk = Math.round((V.k1 + V.dk)*Nf/N);
     const span = Math.round(Nf/N); let env = 0; for (let j = Math.max(0, kk - span); j <= Math.min(m1.length - 1, kk + span); j++) env = Math.max(env, m1[j]);
     const lvl2 = 20*Math.log10(m[kk]/mx), floor = 20*Math.log10(env/mx + 1e-12), vis = lvl2 - floor > 6;
-    $('w-vis').textContent = vis ? `có (cao hơn mức rò rỉ ${fmt(lvl2 - floor,1)} dB)` : 'không — bị che lấp bởi rò rỉ';
+    $('w-vis').textContent = vis ? `yes (${fmt(lvl2 - floor,1)} dB above leakage)` : 'no — buried in leakage';
     const ok = Math.abs(pr.psl - th[0]) <= 0.5 + (N <= 64 ? 0.5 : 0) && Math.abs(pr.ml - th[1]) <= 0.1;
-    verdict($('w-verdict'), ok, `các tham số cửa sổ đo được ${ok ? 'khớp với' : 'lệch khỏi'} lý thuyết (PSL trong ±0,5 dB, độ rộng trong ±0,1 bin)`);
+    verdict($('w-verdict'), ok, `measured window parameters ${ok ? 'agree with' : 'deviate from'} theory (PSL within ±0.5 dB, width within ±0.1 bin)`);
   }
   const upd = bind(['win','k1','dk','a2','Nw'], v => { V = v; draw(); }); p.onresize = draw; upd();
 })();
 
 /* ---------- DSP-C: FIR design and filtering ---------- */
 (function () {
-  const fs = 1000, ph = new Plot($('hf'), {xmin:0, xmax:500, ymin:-100, ymax:8, ystep:20, xlabel:'f (Hz)', ylabel:'|H(f)| (dB)'}), pt = new Plot($('ty'), {xlabel:'n (mẫu)', ylabel:'đầu vào (nhạt) và đầu ra (đã bù trễ)', ymin:-2.6, ymax:2.6});
+  const fs = 1000, ph = new Plot($('hf'), {xmin:0, xmax:500, ymin:-100, ymax:8, ystep:20, xlabel:'f (Hz)', ylabel:'|H(f)| (dB)'}), pt = new Plot($('ty'), {xlabel:'n (samples)', ylabel:'input (light) and output (delay-compensated)', ymin:-2.6, ymax:2.6});
   let V = null;
   function design(type, fc, M, wt) { const c = (M - 1)/2, w = win(wt, M, true), r = 2*fc/fs;
     let h = [...Array(M).keys()].map(n => { const t = n - c; return (t === 0 ? r : Math.sin(Math.PI*r*t)/(Math.PI*t))*w[n]; });
@@ -394,33 +394,33 @@ function specDB(x, Nf) { const re = new Float64Array(Nf), im = new Float64Array(
     const Nf = 8192, m = specDB(h, Nf), fx = m.map((_, k) => k*fs/Nf), db = m.map(v => 20*Math.log10(v + 1e-12));
     ph.clear(); ph.axes(); ph.line(fx, db, COLORS.rose, 2); ph.vline(V.fc, COLORS.indigo); ph.vline(50, COLORS.emerald, [2,3]); ph.vline(300, COLORS.amber, [2,3]);
     const fd = [], dd = []; for (let i = 0; i <= 60; i++) { const f = i*500/60; fd.push(f); dd.push(20*Math.log10(Hmag(h, f) + 1e-12)); } fd.forEach((f, i) => ph.dot(f, Math.max(-100, dd[i]), COLORS.slate, 2.2));
-    ph.legend([['FFT của h[n]', COLORS.rose], ['DTFT trực tiếp (chấm)', COLORS.slate]]);
+    ph.legend([['FFT of h[n]', COLORS.rose], ['direct DTFT (dots)', COLORS.slate]]);
     seed = 7; const L = 600, x = [...Array(L).keys()].map(n => Math.sin(2*Math.PI*50*n/fs) + 0.5*Math.sin(2*Math.PI*300*n/fs) + V.nz*(2*rnd() - 1)), y = filt(h, x), c = (M - 1)/2;
     const nn = [...Array(L - c).keys()].map(n => n + c), view = 200;
     pt.set({xmin:c, xmax:c + view}); pt.clear(); pt.axes(); pt.line(nn, nn.map(n => x[n - c]), '#cbd5e1', 1.5); pt.line(nn, nn.map(n => y[n]), COLORS.indigo, 2.2);
     const a1 = Hmag(h, 50), a2 = Hmag(h, 300), m1 = toneGain(h, 50), m2 = toneGain(h, 300);
     $('g1').textContent = `${fmt(a1,4)} · ${fmt(m1,4)}`; $('g2').textContent = `${fmt(a2,4)} · ${fmt(m2,4)}`;
-    $('gfc').textContent = fmt(20*Math.log10(Hmag(h, V.fc)), 2) + ' dB'; $('gd').textContent = c + ' mẫu = ' + fmt(c/fs*1e3, 1) + ' ms';
+    $('gfc').textContent = fmt(20*Math.log10(Hmag(h, V.fc)), 2) + ' dB'; $('gd').textContent = c + ' samples = ' + fmt(c/fs*1e3, 1) + ' ms';
     const tw = {rect:0.9, hann:3.1, hamming:3.3, blackman:5.5}[V.fw]*fs/M; let sbm = -Infinity;
     fx.forEach((f, k) => { if ((V.ftype === 'lp' && f > V.fc + tw) || (V.ftype === 'hp' && f < V.fc - tw)) sbm = Math.max(sbm, db[k]); });
     $('sb').textContent = isFinite(sbm) ? fmt(sbm, 1) + ' dB' : '—';
     const pass = [[a1, m1], [a2, m2]].every(([a, mm]) => a > 0.1 ? relErr(mm, a) <= 1 : Math.abs(20*Math.log10(mm + 1e-12) - 20*Math.log10(a + 1e-12)) <= 1 || Math.abs(mm - a) < 1e-4);
-    verdict($('f-verdict'), pass, 'hệ số khuếch đại đo được của các thành phần ' + (pass ? 'khớp với' : 'không khớp với') + ' |H(e^jω)| (E_rel ≤ 1 % trong dải thông, ≤ 1 dB trong dải chắn)');
+    verdict($('f-verdict'), pass, 'measured tone gains ' + (pass ? 'match' : 'do not match') + ' |H(e^jω)| (E_rel ≤ 1 % in passband, ≤ 1 dB in stopband)');
   }
   const upd = bind(['ftype','fc','M','fw','nz'], v => { V = v; draw(); }); ph.onresize = draw; pt.onresize = draw; upd();
 })();
 
 quiz('quizBox', 'score', [
-  {q:'$f_s=48$ kHz và $N=1024$. Khoảng cách giữa các bin DFT tính theo Hz là (±0,1)', num:46.875, tol:0.1, unit:'Hz', fb:'$48000/1024=46.875$ Hz.'},
-  {q:'Rò rỉ phổ xảy ra chủ yếu khi', opts:['thành phần sin chứa số chu kỳ không nguyên trong đoạn ghi','$N$ là lũy thừa của 2','tín hiệu là tín hiệu thực'], ans:0, fb:'Cắt cụt một đoạn ghi không tuần hoàn tương đương với tích chập phổ tín hiệu với biến đổi Fourier của cửa sổ.'},
-  {q:'Để phát hiện một thành phần yếu hơn 60 dB nằm gần một thành phần mạnh, nên chọn', opts:['cửa sổ chữ nhật','cửa sổ Blackman','không dùng cửa sổ, chỉ chèn không'], ans:1, fb:'Búp phụ của cửa sổ Blackman ở khoảng −58 dB và suy giảm nhanh.'},
-  {q:'Chèn không (zero-padding) vào đoạn ghi trước khi tính FFT sẽ', opts:['cải thiện độ phân giải tần số thực sự','nội suy phổ trên một lưới mịn hơn','giảm rò rỉ phổ'], ans:1, fb:'Độ phân giải do $T$ quyết định; chèn không chỉ lấy mẫu dày hơn cùng một DTFT.'},
-  {q:'Bộ lọc FIR pha tuyến tính có $M=61$ hệ số làm trễ mọi tần số bao nhiêu mẫu?', num:30, tol:0.01, unit:'mẫu', fb:'$(M-1)/2=30$ mẫu.'},
-  {q:'Tăng $M$ khi giữ nguyên loại cửa sổ sẽ', opts:['thu hẹp dải chuyển tiếp','làm tăng độ gợn dải chắn','dịch chuyển tần số cắt'], ans:0, fb:'Độ rộng dải chuyển tiếp tỉ lệ với $1/M$; mức búp phụ do loại cửa sổ quyết định.'}
+  {q:'$f_s=48$ kHz and $N=1024$. The DFT bin spacing in Hz is (±0.1)', num:46.875, tol:0.1, unit:'Hz', fb:'$48000/1024=46.875$ Hz.'},
+  {q:'Spectral leakage occurs mainly when', opts:['the tone completes a non-integer number of cycles in the record','$N$ is a power of two','the signal is real'], ans:0, fb:'Truncating a non-periodic record convolves the spectrum with the window transform.'},
+  {q:'To reveal a tone 60 dB weaker than a nearby strong tone, prefer', opts:['the rectangular window','the Blackman window','no window and zero-padding'], ans:1, fb:'Blackman sidelobes are about −58 dB and fall off quickly.'},
+  {q:'Zero-padding a record before the FFT', opts:['improves true frequency resolution','interpolates the spectrum on a finer grid','reduces leakage'], ans:1, fb:'Resolution is set by $T$; zero-padding only samples the same DTFT more densely.'},
+  {q:'A linear-phase FIR filter with $M=61$ taps delays every frequency by how many samples?', num:30, tol:0.01, unit:'samples', fb:'$(M-1)/2=30$ samples.'},
+  {q:'Increasing $M$ at fixed window type', opts:['narrows the transition band','raises the stopband ripple','shifts the cut-off frequency'], ans:0, fb:'Transition width scales as $1/M$; the sidelobe level is set by the window.'}
 ]);
 
 </script>
-<!-- ============ Anonymous research logger — Vietnamese UI (injected; see README) ============ -->
+<!-- ============ Anonymous research logger (injected; see 2_demos_logging/README) ============ -->
 <style>
 #rlog-banner{position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:12px 14px;font-size:13.5px;box-shadow:0 8px 30px rgba(15,23,42,.35);display:none;max-width:860px;margin:0 auto}
 #rlog-banner i{color:#94a3b8}
@@ -431,17 +431,18 @@ quiz('quizBox', 'score', [
 #rlog-box button,#rlog-box a{font:inherit;font-size:12.5px;margin-left:6px}
 </style>
 <div id="rlog-banner" role="dialog" aria-live="polite">
-  <b>Nghiên cứu đánh giá học liệu</b><br>
-  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá và cải tiến học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Việc đồng ý hay từ chối không ảnh hưởng đến việc sử dụng trang hay điểm học phần.<br>
-  <button class="yes" id="rlog-yes">Đồng ý</button><button id="rlog-no">Không đồng ý</button>
+  <b>Nghiên cứu học liệu / Learning-materials research</b><br>
+  Trang này có thể ghi <b>nhật ký sử dụng ẩn danh</b> (thời gian xem từng mục, số lần thay đổi tham số, kết quả trắc nghiệm) để đánh giá học liệu. Không thu thập họ tên, mã sinh viên, email hay địa chỉ IP. Bạn có thể từ chối mà không ảnh hưởng gì.<br>
+  <i>This page can record an <b>anonymous usage log</b> (time per section, number of parameter changes, quiz results) to evaluate the materials. No names, student IDs, e-mails or IP addresses are collected. You may decline without any consequence.</i><br>
+  <button class="yes" id="rlog-yes">Đồng ý / Agree</button><button id="rlog-no">Không đồng ý / Decline</button>
 </div>
 <div id="rlog-box"></div>
 <script>
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = 'survey.html?role=student';   // mã ẩn danh được tự gắn thêm
-  const STUDY = 'paper2-html-demos', DEMO = '06_DSP', VERSION = 'log-v1-vi', LANG = 'vi';
+  const SURVEY_URL   = '../survey.html?role=student&lang=en';
+  const STUDY = 'paper2-html-demos', LANG = 'en', DEMO = '06_DSP', VERSION = 'log-v1';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';
   const ls = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
@@ -451,11 +452,11 @@ quiz('quizBox', 'score', [
   const box = document.getElementById('rlog-box');
 
   function renderBox(consent) {
-    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Làm phiếu khảo sát</a>` : '';
-    box.innerHTML = `Mã ẩn danh của bạn: <span class="code">${code}</span> — hãy nhập mã này vào phiếu khảo sát (không bắt buộc).${surveyLink}
-      <br>Nhật ký sử dụng: <b>${consent === 'yes' ? 'đang ghi' : 'đang tắt'}</b>
-      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt ghi nhật ký' : 'Bật ghi nhật ký'}</button>
-      <button id="rlog-dl">Tải nhật ký (JSON)</button>`;
+    const surveyLink = SURVEY_URL ? ` <a href="${SURVEY_URL}${SURVEY_URL.includes('?') ? '&' : '?'}code=${code}" target="_blank" rel="noopener">→ Phiếu khảo sát / Survey</a>` : '';
+    box.innerHTML = `Mã ẩn danh của bạn / Your anonymous code: <span class="code">${code}</span> — nhập mã này vào phiếu khảo sát (không bắt buộc) / enter it in the survey (optional).${surveyLink}
+      <br>Nhật ký / Log: <b>${consent === 'yes' ? 'đang ghi / recording' : 'tắt / off'}</b>
+      <button id="rlog-toggle">${consent === 'yes' ? 'Tắt / Turn off' : 'Bật / Turn on'}</button>
+      <button id="rlog-dl">Tải nhật ký / Download log (JSON)</button>`;
     document.getElementById('rlog-toggle').onclick = () => { ls.set(K_CONSENT, consent === 'yes' ? 'no' : 'yes'); location.reload(); };
     document.getElementById('rlog-dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = `logs_${code}.json`; a.click(); };
   }
@@ -506,7 +507,7 @@ quiz('quizBox', 'score', [
   addEventListener('pagehide', persist);
   setInterval(persist, 60000);
   ev('start', DEMO);
-  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [quản trị] tải toàn bộ nhật ký trên máy này'; box.appendChild(a); }
+  if (params.get('admin') === '1') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ls.get(K_LOGS) || '[]'], {type: 'application/json'})); a.download = 'all_logs_this_device.json'; a.textContent = ' [admin] download all logs on this device'; box.appendChild(a); }
   window.__rlog = { snapshot, persist };   // for testing
 })();
 </script>
