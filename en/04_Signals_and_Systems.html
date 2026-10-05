@@ -115,7 +115,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Course 4 · Signals and Systems</span>
   <h1>Time Operations, Convolution and Sampling</h1>
-  <p class="lead">Benchmark tasks SIG-E, SIG-M and SIG-C share one page. Elementary time operations are shown first, then convolution is built up graphically by flip-and-slide, and finally the sampling theorem is explored, with the alias frequency measured from a DFT and checked against theory.</p>
+  <p class="lead">Three benchmark tasks (SIG-E, SIG-M, SIG-C) share this page: time operations, convolution built by flip-and-slide, and sampling, where the alias frequency is measured from a DFT and checked against theory.</p>
   <div class="layers"><span>① Presentation</span><span>② Mathematics (MathJax)</span><span>③ Visualization (animated plots)</span><span>④ Simulation (DFT, sinc interpolation)</span><span>⑤ Assessment (auto-scored)</span></div>
   <div class="grid g3" style="margin-top:18px">
     <div class="card"><div class="kicker">Objective 1</div>Apply shifting, scaling and reversal to a signal and predict the result.</div>
@@ -125,7 +125,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Level E · SIG-E</span><h2>Elementary Signals and Time Operations</h2><p class="lead">For $y(t)=x(at-b)$, the order matters. First shift by $b$, then scale by $a$. In other words, $y(t)=x\!\left(a\left(t-\tfrac{b}{a}\right)\right)$ is $x$ compressed by $a$ and shifted by $b/a$.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Level E · SIG-E</span><h2>Elementary Signals and Time Operations</h2><p class="lead">These operations act on the time axis, not on the signal values: $x(t-2)$ is a delay (it moves <i>right</i>), $x(2t)$ plays the signal twice as fast, like double-speed audio, and $x(-t)$ mirrors it. For $y(t)=x(at-b)$ the order matters: shift by $b$, then scale by $a$. Equivalently, $y(t)=x\!\left(a\left(t-\tfrac{b}{a}\right)\right)$ is $x$ compressed by $a$ and shifted by $b/a$, not by $b$.</p></div></div>
   <div class="grid g4" style="margin-top:16px">
     <div class="card white"><h3>$x(t)$</h3><div class="canvas-wrap"><canvas id="e1" data-h="150"></canvas></div></div>
     <div class="card white"><h3>Shift: $x(t-2)$</h3><div class="canvas-wrap"><canvas id="e2" data-h="150"></canvas></div></div>
@@ -134,13 +134,13 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
   </div>
   <div class="grid g3" style="margin-top:14px">
     <div class="card"><h3>Unit step and ramp</h3><div class="eq">$$u(t)=\begin{cases}1,&t\ge0\\0,&t<0\end{cases},\qquad r(t)=t\,u(t)$$</div></div>
-    <div class="card"><h3>The example signal</h3><div class="eq">$$x(t)=r(t)-r(t-1)-u(t-2)$$</div><p class="note">A ramp that saturates at 1 and switches off at $t=2$.</p></div>
-    <div class="card"><h3>Even/odd parts</h3><div class="eq">$$x_e(t)=\tfrac12[x(t)+x(-t)]$$$$x_o(t)=\tfrac12[x(t)-x(-t)]$$</div></div>
+    <div class="card"><h3>The example signal</h3><div class="eq">$$x(t)=r(t)-r(t-1)-u(t-2)$$</div><p class="note">The second ramp levels the signal off at 1; the step switches it off at $t=2$.</p></div>
+    <div class="card"><h3>Even and odd parts</h3><div class="eq">$$x_e(t)=\tfrac12[x(t)+x(-t)]$$$$x_o(t)=\tfrac12[x(t)-x(-t)]$$</div></div>
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Level M · SIG-M</span><h2>Graphical Convolution: Flip and Slide</h2><p class="lead">The impulse response is reversed, $h(-\tau)$, and slid to position $t$. The output $y(t)$ equals the area under the product $x(\tau)h(t-\tau)$, shaded in the upper plot.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Level M · SIG-M</span><h2>Graphical Convolution: Flip and Slide</h2><p class="lead">An LTI system answers each input value with a scaled copy of its impulse response and sums them. Graphically: reverse the impulse response, $h(-\tau)$, slide it to $t$, and the area under $x(\tau)h(t-\tau)$, shaded in the upper plot, is $y(t)$.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="cv1" data-h="230"></canvas></div>
@@ -161,14 +161,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Analytical $y(t)$</td><td id="cv-ana"></td></tr>
         <tr><td>Absolute difference</td><td id="cv-err"></td></tr>
       </table>
-      <p class="note">Rose: $x(\tau)$ · sky: $h(t-\tau)$ · shaded: product. Lower plot: the output traced so far (solid) and the full analytical output (light).</p>
+      <p class="note">Rose: $x(\tau)$ · sky: $h(t-\tau)$ · shaded: product. Lower plot: the output traced so far (solid) and the full analytical output (light). Drag $t$ or press Animate: $y(t)$ stays zero until the signals overlap. For rect ∗ exponential, a larger $a$ means a shorter RC time constant and a faster response.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Level C · SIG-C</span><h2>Sampling, Aliasing and Reconstruction</h2>
-    <p class="lead">A sinusoid $x(t)=\cos(2\pi f_0t)$ is sampled at $f_s$. If $f_s<2f_0$, the samples are indistinguishable from a lower-frequency sinusoid, the alias. The alias frequency is measured from the DFT of the samples and compared with the prediction $f_a=|f_0-k f_s|$, where $k=\operatorname{round}(f_0/f_s)$.</p></div>
+    <p class="lead">An ADC samples $x(t)=\cos(2\pi f_0t)$ at $f_s$. If $f_s<2f_0$ (under two samples per cycle), the samples also fit a lower-frequency sinusoid, the alias, and nothing downstream can separate them. Theory predicts $f_a=|f_0-k f_s|$, where $k=\operatorname{round}(f_0/f_s)$: $f_0$ folds back from the nearest multiple of $f_s$. The DFT of the samples measures it.</p></div>
     <span class="tag v">Validation: analytical + MATLAB fft</span></div>
   <div class="sim">
     <div>
@@ -191,7 +191,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Error</td><td id="s-err"></td></tr>
       </table>
       <div id="s-verdict" class="verdict"></div>
-      <p class="note">Upper plot: true signal (light), samples (dots) and sinc reconstruction (rose). Reconstruction recovers $x(t)$ only when $f_s>2f_0$; otherwise it returns the alias.</p>
+      <p class="note">Upper plot: true signal (light), samples (dots) and sinc reconstruction (rose). Reconstruction recovers $x(t)$ only when $f_s>2f_0$; otherwise it returns the alias. At the defaults the samples trace a 3 Hz alias; raise $f_s$ above 14 Hz. Since aliasing cannot be undone, ADCs use an anti-aliasing filter.</p>
       <details class="matlab"><summary>MATLAB reference script</summary><pre>f0 = 7; fs = 10; T = 4;
 n = 0:round(T*fs)-1;  x = cos(2*pi*f0*n/fs);
 w = hann(numel(x))';  Nfft = 2^16;

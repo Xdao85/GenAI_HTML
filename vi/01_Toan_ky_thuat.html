@@ -115,24 +115,24 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Học phần 1 · Toán kỹ thuật</span>
   <h1>Vectơ và phương trình vi phân</h1>
-  <p class="lead">Học liệu này gom ba bài toán chuẩn (MAT-E, MAT-M, MAT-C) trên cùng một trang. Bắt đầu từ định nghĩa tích vô hướng và tích có hướng, tiếp theo cho phép bạn thao tác với hai vectơ trong không gian 3D, và kết thúc bằng bộ giải Runge–Kutta cho phương trình vi phân cấp hai, được kiểm chứng với nghiệm giải tích.</p>
+  <p class="lead">Ba bài toán với độ khó tăng dần (MAT-E, MAT-M, MAT-C) trên cùng một trang: ý nghĩa hình học của tích vô hướng và tích có hướng, khảo sát hai vectơ trong không gian 3D, và giải phương trình vi phân cấp hai bằng Runge–Kutta, đối chiếu với nghiệm giải tích. Các công cụ này phổ biến trong cơ học, mạch điện và điều khiển.</p>
   <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (Canvas/SVG)</span><span>④ Mô phỏng (JavaScript RK4)</span><span>⑤ Đánh giá (tự chấm)</span></div>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="kicker">Mục tiêu 1</div>Tính $\mathbf{A}\cdot\mathbf{B}$ và $\mathbf{A}\times\mathbf{B}$, đồng thời giải thích ý nghĩa hình học của chúng.</div>
+    <div class="card"><div class="kicker">Mục tiêu 1</div>Tính $\mathbf{A}\cdot\mathbf{B}$ và $\mathbf{A}\times\mathbf{B}$, và giải thích ý nghĩa hình học của từng kết quả.</div>
     <div class="card"><div class="kicker">Mục tiêu 2</div>Liên hệ góc giữa hai vectơ với hình chiếu và với diện tích hình bình hành.</div>
     <div class="card"><div class="kicker">Mục tiêu 3</div>Giải số phương trình $y''+2\zeta\omega_n y'+\omega_n^2 y=0$ và đánh giá độ chính xác so với nghiệm chính xác.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · MAT-E</span><h2>Tích vô hướng và tích có hướng</h2><p class="lead">Hai phép nhân, hai ý nghĩa hình học: tích vô hướng đo mức độ cùng phương, còn tích có hướng đo diện tích căng bởi hai vectơ và cho một phương pháp tuyến.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Mức E · MAT-E</span><h2>Tích vô hướng và tích có hướng</h2><p class="lead">Tích vô hướng cho biết hai vectơ cùng hướng đến mức nào và cho kết quả là một số. Tích có hướng cho biết diện tích mà hai vectơ căng ra và cho kết quả là một vectơ vuông góc với cả hai.</p></div></div>
   <div class="grid g3" style="margin-top:16px">
     <div class="card"><h3>Tích vô hướng (vô hướng)</h3>
       <div class="eq">$$\begin{aligned}\mathbf{A}\cdot\mathbf{B}&=A_xB_x+A_yB_y+A_zB_z\\&=|\mathbf{A}||\mathbf{B}|\cos\theta_{AB}\end{aligned}$$</div>
-      <p class="note">Bằng không khi hai vectơ vuông góc. Hình chiếu vô hướng của $\mathbf{A}$ lên $\mathbf{B}$ là $\mathbf{A}\cdot\hat{\mathbf{b}}$.</p></div>
+      <p class="note">Dương khi hai vectơ gần cùng hướng, bằng không khi vuông góc, âm khi chúng hướng ra xa nhau. $\mathbf{A}\cdot\hat{\mathbf{b}}$ là "bóng" của $\mathbf{A}$ trên phương $\mathbf{B}$, đây cũng là ý tưởng của công do lực sinh ra.</p></div>
     <div class="card"><h3>Tích có hướng (vectơ)</h3>
       <div class="eq">$$\mathbf{A}\times\mathbf{B}=\begin{vmatrix}\hat{\mathbf{x}}&\hat{\mathbf{y}}&\hat{\mathbf{z}}\\A_x&A_y&A_z\\B_x&B_y&B_z\end{vmatrix}$$</div>
-      <p class="note">$|\mathbf{A}\times\mathbf{B}|=|\mathbf{A}||\mathbf{B}|\sin\theta_{AB}$ là diện tích hình bình hành; chiều tuân theo quy tắc bàn tay phải.</p></div>
+      <p class="note">$|\mathbf{A}\times\mathbf{B}|=|\mathbf{A}||\mathbf{B}|\sin\theta_{AB}$ là diện tích hình bình hành: lớn nhất khi hai vectơ vuông góc, bằng không khi chúng song song. Chiều tuân theo quy tắc bàn tay phải, nên đổi thứ tự hai vectơ sẽ làm kết quả đổi chiều. Mômen lực là một tích có hướng.</p></div>
     <div class="card white"><h3>Hình học</h3>
       <svg viewBox="0 0 300 190" width="100%" aria-label="Hình học của tích vô hướng và tích có hướng">
         <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4f46e5"/></marker>
@@ -152,12 +152,12 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
       </svg></div>
   </div>
   <div class="card" style="margin-top:14px"><h3>Ví dụ minh họa</h3>
-    Với $\mathbf{A}=(1,2,2)$ và $\mathbf{B}=(3,0,4)$: $\mathbf{A}\cdot\mathbf{B}=3+0+8=11$, $|\mathbf{A}|=3$, $|\mathbf{B}|=5$, nên $\cos\theta=11/15$ và $\theta\approx 42.8^\circ$. Tích có hướng là $\mathbf{A}\times\mathbf{B}=(8,\,2,\,-6)$ với độ lớn $\sqrt{104}\approx 10.2=15\sin\theta$.
+    Với $\mathbf{A}=(1,2,2)$ và $\mathbf{B}=(3,0,4)$: $\mathbf{A}\cdot\mathbf{B}=3+0+8=11$, $|\mathbf{A}|=3$, $|\mathbf{B}|=5$, nên $\cos\theta=11/15$ và $\theta\approx 42.8^\circ$. Tích có hướng là $\mathbf{A}\times\mathbf{B}=(8,\,2,\,-6)$ với độ lớn $\sqrt{104}\approx 10.2=15\sin\theta$. Kiểm tra: tích vô hướng của vectơ này với $\mathbf{A}$ và với $\mathbf{B}$ đều bằng không.
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · MAT-M</span><h2>Đại số vectơ 3D tương tác</h2><p class="lead">Đặt các thành phần của $\mathbf{A}$ và $\mathbf{B}$, kéo khung nhìn để xoay, và quan sát tích vô hướng, góc, hình bình hành cùng vectơ pháp tuyến $\mathbf{A}\times\mathbf{B}$ cập nhật đồng thời.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Mức M · MAT-M</span><h2>Đại số vectơ 3D tương tác</h2><p class="lead">Đặt các thành phần của $\mathbf{A}$ và $\mathbf{B}$ rồi kéo khung nhìn để xoay. Khi hai vectơ vuông góc, $\mathbf{A}\cdot\mathbf{B}$ giảm về không; khi chúng song song, hình bình hành suy biến và $\mathbf{A}\times\mathbf{B}$ triệt tiêu.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="v3d" data-h="400" style="cursor:grab"></canvas></div>
@@ -182,14 +182,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Kiểm tra $|\mathbf{A}||\mathbf{B}|\sin\theta$</td><td id="r-chk"></td></tr>
       </table>
       <div id="r-rel" class="verdict pass"></div>
-      <p class="note">Chàm: $\mathbf{A}$ · hồng: $\mathbf{B}$ · xanh lục: $\mathbf{A}\times\mathbf{B}$ · vùng tô: hình bình hành. Kéo khung vẽ để xoay.</p>
+      <p class="note">Chàm: $\mathbf{A}$ · hồng: $\mathbf{B}$ · xanh lục: $\mathbf{A}\times\mathbf{B}$ · vùng tô: hình bình hành. Vectơ xanh lục luôn vuông góc với mặt phẳng được tô.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Mức C · MAT-C</span><h2>Phương trình vi phân tuyến tính cấp hai: RK4 so với nghiệm giải tích</h2>
-    <p class="lead">Dao động tử tắt dần $y''+2\zeta\omega_n y'+\omega_n^2y=0$ với $y(0)=y_0$, $y'(0)=v_0$ được tích phân bằng phương pháp Runge–Kutta bậc bốn cổ điển. Nghiệm chính xác được vẽ bên dưới, và sai số được kiểm tra theo ngưỡng chấp nhận $\varepsilon=1\%$.</p></div>
+    <p class="lead">Dao động tử tắt dần $y''+2\zeta\omega_n y'+\omega_n^2y=0$ mô tả hệ khối lượng–lò xo–giảm chấn hay mạch RLC: $\omega_n$ quyết định hệ dao động nhanh hay chậm, còn $\zeta$ quyết định dao động tắt nhanh đến mức nào. Từ điều kiện đầu $y(0)=y_0$, $y'(0)=v_0$, phương trình được tích phân bằng phương pháp Runge–Kutta bậc bốn cổ điển (RK4) và so sánh với nghiệm chính xác; sai số phải nằm trong ngưỡng $\varepsilon=1\%$. Tăng $\zeta$ vượt quá 1 để dao động biến mất, hoặc tăng $h$ để thấy sai số lớn dần.</p></div>
     <span class="tag v">Kiểm chứng: giải tích + MATLAB ode45</span></div>
   <div class="sim">
     <div>
@@ -218,7 +218,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
       <div id="o-verdict" class="verdict"></div>
       <h3 style="margin-top:14px">Kiểm tra hội tụ</h3>
       <table class="read" id="o-conv"></table>
-      <p class="note">Khi giảm $h$ đi một nửa, sai số phải giảm khoảng $2^4=16$ lần: đây là dấu hiệu bậc bốn của RK4. Tỉ số lệch xa 16 cho thấy lỗi cài đặt; đây chính là cách sàng lọc các bộ giải do GenAI sinh ra.</p>
+      <p class="note">Khi giảm $h$ đi một nửa, sai số phải giảm khoảng $2^4=16$ lần, đó là dấu hiệu bậc bốn của RK4. Tỉ số lệch xa 16 cho thấy lỗi cài đặt; đây chính là cách sàng lọc các bộ giải do GenAI sinh ra: một đường cong trông hợp lý chưa chứng minh được điều gì.</p>
       <details class="matlab"><summary>Script MATLAB tham chiếu (ode45)</summary><pre>zeta = 0.2; wn = 2; y0 = 1; v0 = 0; T = 10;
 f = @(t,x) [x(2); -2*zeta*wn*x(2) - wn^2*x(1)];
 opts = odeset('RelTol',1e-10,'AbsTol',1e-12);
@@ -468,7 +468,7 @@ quiz('quizBox', 'score', [
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';
   const STUDY = 'paper2-html-demos', DEMO = '01_MAT', VERSION = 'log-v1-vi', LANG = 'vi';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';

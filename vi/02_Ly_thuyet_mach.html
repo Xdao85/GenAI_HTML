@@ -115,24 +115,24 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Học phần 2 · Lý thuyết mạch</span>
   <h1>Phasor, cộng hưởng và quá độ mạch RLC</h1>
-  <p class="lead">Ba bài chuẩn CIR-E, CIR-M và CIR-C được trình bày trên cùng một trang. Trở kháng được giới thiệu dưới dạng số phức, sau đó dùng để dựng giản đồ phasor của mạch RLC nối tiếp ở chế độ xác lập AC. Cuối cùng, đáp ứng bước của chính mạch này được mô phỏng trong miền thời gian và kiểm chứng với nghiệm giải tích.</p>
+  <p class="lead">Cuộn cảm và tụ điện trao đổi năng lượng tích trữ qua lại, còn điện trở tiêu tán năng lượng đó. Một mạch RLC nối tiếp được khảo sát trong hai tình huống: ở chế độ xác lập AC, trở kháng và giản đồ phasor giải thích hiện tượng cộng hưởng; sau khi đóng nguồn bước một chiều, mô phỏng RK4 được kiểm chứng với nghiệm chính xác.</p>
   <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (phasor, |Z(f)|)</span><span>④ Mô phỏng (quá độ bằng RK4)</span><span>⑤ Đánh giá (tự chấm)</span></div>
   <div class="grid g3" style="margin-top:18px">
     <div class="card"><div class="kicker">Mục tiêu 1</div>Viết trở kháng của R, L, C và ghép chúng nối tiếp.</div>
-    <div class="card"><div class="kicker">Mục tiêu 2</div>Giải thích hiện tượng cộng hưởng từ giản đồ phasor: $\mathbf{V}_L$ và $\mathbf{V}_C$ triệt tiêu nhau tại $\omega_0=1/\sqrt{LC}$.</div>
-    <div class="card"><div class="kicker">Mục tiêu 3</div>Phân loại đáp ứng bước theo hệ số tắt dần $\zeta=\tfrac{R}{2}\sqrt{C/L}$.</div>
+    <div class="card"><div class="kicker">Mục tiêu 2</div>Giải thích hiện tượng cộng hưởng từ giản đồ phasor: tại $\omega_0=1/\sqrt{LC}$, $\mathbf{V}_L$ và $\mathbf{V}_C$ bằng nhau về độ lớn và ngược pha.</div>
+    <div class="card"><div class="kicker">Mục tiêu 3</div>Dự đoán từ hệ số tắt dần $\zeta=\tfrac{R}{2}\sqrt{C/L}$ đáp ứng bước có quá điều chỉnh hay không.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · CIR-E</span><h2>Phasor và trở kháng của R, L, C</h2><p class="lead">Tín hiệu điều hòa $v(t)=V_m\cos(\omega t+\phi)$ được biểu diễn bằng phasor (biên độ phức) $\mathbf{V}=V_m e^{j\phi}$. Phép đạo hàm trở thành phép nhân với $j\omega$, nên mỗi phần tử tuân theo định luật Ohm dạng phức $\mathbf{V}=Z\mathbf{I}$.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Mức E · CIR-E</span><h2>Phasor và trở kháng của R, L, C</h2><p class="lead">Ở chế độ xác lập AC, mọi tín hiệu đều dao động với tần số của nguồn, nên chỉ cần quan tâm biên độ và pha: $v(t)=V_m\cos(\omega t+\phi)$ được biểu diễn bằng phasor (biên độ phức) $\mathbf{V}=V_m e^{j\phi}$. Phép đạo hàm trở thành phép nhân với $j\omega$, nên mỗi phần tử tuân theo định luật Ohm dạng phức $\mathbf{V}=Z\mathbf{I}$; $Z$ quyết định cả tỉ số biên độ lẫn độ lệch pha.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g3">
       <div class="card"><h3>Điện trở</h3><div class="eq">$$Z_R=R$$</div><p class="note">Điện áp và dòng điện cùng pha.</p></div>
-      <div class="card"><h3>Cuộn cảm</h3><div class="eq">$$Z_L=j\omega L$$</div><p class="note">Điện áp sớm pha hơn dòng điện $90^\circ$.</p></div>
-      <div class="card"><h3>Tụ điện</h3><div class="eq">$$Z_C=\frac{1}{j\omega C}$$</div><p class="note">Điện áp chậm pha hơn dòng điện $90^\circ$.</p></div>
+      <div class="card"><h3>Cuộn cảm</h3><div class="eq">$$Z_L=j\omega L$$</div><p class="note">Điện áp sớm pha hơn dòng điện $90^\circ$; $|Z_L|$ tăng theo $\omega$.</p></div>
+      <div class="card"><h3>Tụ điện</h3><div class="eq">$$Z_C=\frac{1}{j\omega C}$$</div><p class="note">Điện áp chậm pha hơn dòng điện $90^\circ$; $|Z_C|$ giảm theo $\omega$.</p></div>
       <div class="card" style="grid-column:1/-1"><h3>Ghép nối tiếp</h3><div class="eq">$$Z=R+j\left(\omega L-\frac{1}{\omega C}\right),\qquad |Z|=\sqrt{R^2+X^2},\quad \varphi=\arctan\frac{X}{R}$$</div>
-      <p class="note">Ví dụ mẫu: $R=30\,\Omega$, $\omega L=80\,\Omega$, $1/(\omega C)=40\,\Omega$ cho $Z=30+j40\,\Omega$, $|Z|=50\,\Omega$, $\varphi=53.1^\circ$.</p></div>
+      <p class="note">Ví dụ mẫu: $R=30\,\Omega$, $\omega L=80\,\Omega$, $1/(\omega C)=40\,\Omega$ cho $Z=30+j40\,\Omega$, $|Z|=50\,\Omega$, $\varphi=53.1^\circ$. Điện kháng tổng $X$ mang tính cảm nên dòng điện chậm pha so với điện áp.</p></div>
     </div>
     <div class="card white"><h3>Mặt phẳng trở kháng</h3>
       <svg viewBox="0 0 320 260" width="100%" aria-label="Mặt phẳng trở kháng">
@@ -150,7 +150,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · CIR-M</span><h2>Mạch RLC nối tiếp ở chế độ xác lập AC</h2><p class="lead">Phasor dòng điện $\mathbf{I}$ được chọn làm gốc. Các phasor điện áp trên từng phần tử được cộng nối đuôi nhau để tạo thành phasor nguồn $\mathbf{V}_s$. Hãy quét tần số qua điểm cộng hưởng và quan sát $\mathbf{V}_L$ và $\mathbf{V}_C$ triệt tiêu nhau.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Mức M · CIR-M</span><h2>Mạch RLC nối tiếp ở chế độ xác lập AC</h2><p class="lead">Cùng một dòng điện chạy qua mọi phần tử, nên phasor dòng điện $\mathbf{I}$ được chọn làm gốc; các phasor điện áp trên từng phần tử cộng nối đuôi nhau tạo thành $\mathbf{V}_s$. Hãy quét $f$ qua $f_0$: $\mathbf{V}_L$ và $\mathbf{V}_C$ triệt tiêu nhau, $|Z|$ giảm xuống bằng $R$ và dòng điện đạt cực đại. Sau đó giảm $R$: đáy của $|Z(f)|$ nhọn hơn, $Q$ tăng và $|\mathbf{V}_C|$ có thể lớn hơn $V_s$ nhiều lần; đây là cơ sở của các mạch cộng hưởng chọn lọc tần số.</p></div></div>
   <div class="sim">
     <div>
       <div class="grid g2">
@@ -176,7 +176,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>$Q=\frac{1}{R}\sqrt{L/C}$</td><td id="c-q"></td></tr>
       </table>
       <div id="c-type" class="verdict pass"></div>
-      <p class="note">Kiểm tra định luật Kirchhoff về áp (KVL): tổng nối đuôi $\mathbf{V}_R+\mathbf{V}_L+\mathbf{V}_C$ phải bằng $\mathbf{V}_s$. Phần dư được hiển thị bên dưới.</p>
+      <p class="note">Kiểm tra định luật Kirchhoff về áp (KVL): tổng phasor $\mathbf{V}_R+\mathbf{V}_L+\mathbf{V}_C$ phải bằng $\mathbf{V}_s$ (riêng tổng các độ lớn thì không). Phần dư được hiển thị bên dưới.</p>
       <div class="mono note" id="c-kvl"></div>
     </div>
   </div>
@@ -184,7 +184,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Mức C · CIR-C</span><h2>Quá độ mạch RLC với tín hiệu bước</h2>
-    <p class="lead">Tại $t=0$, nguồn một chiều $V_s$ được đóng vào mạch RLC nối tiếp. Hệ phương trình trạng thái $\dot v_C=i/C$, $\dot i=(V_s-Ri-v_C)/L$ được tích phân bằng RK4 và so sánh với đáp ứng giải tích trong ba trường hợp: quá tắt dần, tắt dần tới hạn và dưới tắt dần.</p></div>
+    <p class="lead">Tại $t=0$, nguồn một chiều $V_s$ được đóng vào mạch RLC nối tiếp. Vì $v_C$ và $i$ không thể thay đổi đột ngột, mạch cần thời gian để xác lập. Hệ phương trình trạng thái $\dot v_C=i/C$, $\dot i=(V_s-Ri-v_C)/L$ được tích phân bằng RK4 và so sánh với đáp ứng giải tích. Giảm $R$ để chuyển từ quá tắt dần (tăng chậm, không quá điều chỉnh) qua tắt dần tới hạn đến dưới tắt dần (quá điều chỉnh và dao động, như trong quá độ đóng cắt); giảm $N$ để thấy RK4 mất dần độ chính xác.</p></div>
     <span class="tag v">Kiểm chứng: giải tích + MATLAB</span></div>
   <div class="sim">
     <div>
@@ -449,7 +449,7 @@ quiz('quizBox', 'score', [
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';
   const STUDY = 'paper2-html-demos', DEMO = '02_CIR', VERSION = 'log-v1-vi', LANG = 'vi';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';

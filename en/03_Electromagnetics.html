@@ -115,23 +115,23 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Course 3 · Electromagnetics</span>
   <h1>Point Charges, Superposition and Waves at an Interface</h1>
-  <p class="lead">This page covers the benchmark tasks EMF-E, EMF-M and EMF-C. It starts with the field of a single point charge, then builds the field of several charges by superposition, with field lines and equipotentials. It ends with a one-dimensional finite-difference time-domain (FDTD) simulation of a pulse hitting a dielectric. The reflection and transmission coefficients measured in that simulation are validated against the Fresnel formulas.</p>
+  <p class="lead">A single point charge creates an electric field (EMF-E); several charges combine by superposition into patterns of field lines and equipotentials (EMF-M); and a one-dimensional finite-difference time-domain (FDTD) simulation sends a pulse onto a dielectric, where the measured reflection and transmission are checked against the Fresnel formulas (EMF-C).</p>
   <div class="layers"><span>① Presentation</span><span>② Mathematics (MathJax)</span><span>③ Visualization (field maps, animation)</span><span>④ Simulation (Yee/FDTD)</span><span>⑤ Assessment (auto-scored)</span></div>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="kicker">Objective 1</div>Apply Coulomb's law in vector form and compute $\mathbf{E}$ of a point charge.</div>
+    <div class="card"><div class="kicker">Objective 1</div>Use Coulomb's law in vector form to find the magnitude and direction of $\mathbf{E}$ for a point charge.</div>
     <div class="card"><div class="kicker">Objective 2</div>Add the fields of several charges and relate field lines to equipotentials through $\mathbf{E}=-\nabla V$.</div>
-    <div class="card"><div class="kicker">Objective 3</div>Predict $\Gamma$ and $\tau$ at a dielectric boundary and check them with an FDTD simulation.</div>
+    <div class="card"><div class="kicker">Objective 3</div>Predict $\Gamma$ and $\tau$ at a dielectric boundary and confirm them with an FDTD simulation.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Level E · EMF-E</span><h2>Coulomb's Law and the Field of a Point Charge</h2><p class="lead">A charge $q$ sets up an electric field that points radially away from it (or towards it, if $q<0$). The field falls off as $1/R^2$. A test charge $q'$ placed in this field experiences the force $\mathbf{F}=q'\mathbf{E}$.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Level E · EMF-E</span><h2>Coulomb's Law and the Field of a Point Charge</h2><p class="lead">A charge $q$ changes the space around it: any other charge brought nearby is pushed or pulled. The electric field $\mathbf{E}$ describes this influence at each point. It points radially away from $q$ (towards it if $q<0$) and weakens as $1/R^2$.<br>Field and force are different: the field exists at a point whether or not a charge is there, while the force $\mathbf{F}=q'\mathbf{E}$ appears only when a test charge $q'$ is placed there, and reverses if $q'<0$.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g2">
-      <div class="card"><h3>Coulomb's law</h3><div class="eq">$$\mathbf{F}_{21}=\hat{\mathbf{R}}_{12}\,\frac{q_1q_2}{4\pi\varepsilon R_{12}^2}$$</div><p class="note">The force on $q_2$ due to $q_1$. $\hat{\mathbf{R}}_{12}$ points from $q_1$ to $q_2$.</p></div>
-      <div class="card"><h3>Electric field</h3><div class="eq">$$\mathbf{E}=\hat{\mathbf{R}}\,\frac{q}{4\pi\varepsilon R^2}\quad(\mathrm{V/m})$$</div><p class="note">The field is defined as the force per unit test charge, $\mathbf{E}=\mathbf{F}/q'$.</p></div>
-      <div class="card"><h3>Vector form</h3><div class="eq">$$\mathbf{E}(\mathbf{R})=\frac{q\,(\mathbf{R}-\mathbf{R}_1)}{4\pi\varepsilon|\mathbf{R}-\mathbf{R}_1|^3}$$</div><p class="note">Use this form when the charge is not at the origin.</p></div>
-      <div class="card"><h3>Worked example</h3><p>Take $q=2$ nC in air. At $R=0.3$ m the field is $|\mathbf{E}|=\dfrac{9\times10^{9}\cdot2\times10^{-9}}{0.09}=200$ V/m. A test charge $q'=-1$ nC there feels a force of $0.2\ \mu$N, directed towards $q$.</p></div>
+      <div class="card"><h3>Coulomb's law</h3><div class="eq">$$\mathbf{F}_{21}=\hat{\mathbf{R}}_{12}\,\frac{q_1q_2}{4\pi\varepsilon R_{12}^2}$$</div><p class="note">The force on $q_2$ due to $q_1$; $\hat{\mathbf{R}}_{12}$ points from $q_1$ to $q_2$. Like charges ($q_1q_2&gt;0$) repel, unlike charges attract.</p></div>
+      <div class="card"><h3>Electric field</h3><div class="eq">$$\mathbf{E}=\hat{\mathbf{R}}\,\frac{q}{4\pi\varepsilon R^2}\quad(\mathrm{V/m})$$</div><p class="note">The force per unit test charge, $\mathbf{E}=\mathbf{F}/q'$. Doubling $R$ cuts it to a quarter.</p></div>
+      <div class="card"><h3>Vector form</h3><div class="eq">$$\mathbf{E}(\mathbf{R})=\frac{q\,(\mathbf{R}-\mathbf{R}_1)}{4\pi\varepsilon|\mathbf{R}-\mathbf{R}_1|^3}$$</div><p class="note">Use this form when the charge sits at $\mathbf{R}_1$, not at the origin. The numerator sets the direction; the cube leaves a $1/R^2$ magnitude.</p></div>
+      <div class="card"><h3>Worked example</h3><p>Take $q=2$ nC in air. At $R=0.3$ m the field is $|\mathbf{E}|=\dfrac{9\times10^{9}\cdot2\times10^{-9}}{0.09}=200$ V/m. A test charge $q'=-1$ nC there feels $0.2\ \mu$N. Since $q'&lt;0$, the force points towards $q$, opposite to $\mathbf{E}$.</p></div>
     </div>
     <div class="card white"><h3>Field of positive and negative point charges</h3>
       <svg viewBox="0 0 360 230" width="100%" aria-label="Radial field lines of point charges">
@@ -143,12 +143,12 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <text x="95" y="220" text-anchor="middle" font-size="12" fill="#334155">q &gt; 0: E points outward</text>
         <text x="265" y="220" text-anchor="middle" font-size="12" fill="#334155">q &lt; 0: E points inward</text>
       </svg>
-      <p class="note">Line density is proportional to $|\mathbf{E}|$. The number of lines crossing a sphere is the same at every radius while its area grows as $R^2$, which is where the inverse-square law comes from.</p></div>
+      <p class="note">Line density shows $|\mathbf{E}|$. Every line leaving the charge crosses any sphere around it, so the count is the same at every radius while the area grows as $R^2$. That spreading is the inverse-square law.</p></div>
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Level M · EMF-M</span><h2>Field Lines and Equipotentials of Point Charges</h2><p class="lead">Drag the charges or the probe $P$. The background shows the potential $V$ (rose positive, sky negative), and the white curves are field lines traced from the positive charges. The total field at $P$ is the vector sum of the fields of the individual charges.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Level M · EMF-M</span><h2>Field Lines and Equipotentials of Point Charges</h2><p class="lead">Each charge contributes its own Coulomb field, and the total field at any point is their vector sum. Drag the charges or the probe $P$. The background shows the electric potential $V$ (rose positive, sky negative); white curves are field lines from the positive charges. Compare the dipole with two like charges: between like charges the fields cancel at a null point. Changing $q$ scales the field, not the pattern.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="fm" data-h="430" style="cursor:pointer"></canvas></div>
@@ -169,14 +169,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>$V(P)$</td><td id="sp-V"></td></tr>
       </table>
       <div id="sp-verdict" class="verdict"></div>
-      <p class="note">Two independent calculations, the analytical sum of $\mathbf{E}$ and the numerical gradient of $V$, must agree. This is the consistency check $\mathbf{E}=-\nabla V$. Field lines always cross equipotentials at right angles.</p>
+      <p class="note">The analytical sum of $\mathbf{E}$ and the numerical gradient of $V$ are independent calculations, yet they agree, because $\mathbf{E}=-\nabla V$: the field points where the potential falls fastest. Along an equipotential $V$ does not change, so $\mathbf{E}$ has no component there, and field lines cross equipotentials at right angles.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Level C · EMF-C</span><h2>1D FDTD: A Pulse at a Dielectric Interface</h2>
-    <p class="lead">A Gaussian pulse travels in air ($z&lt;z_i$) and meets a lossless dielectric with relative permittivity $\varepsilon_r$ ($z&gt;z_i$). Maxwell's curl equations are discretised on a staggered Yee grid with Courant number 1, and the incident, reflected and transmitted pulses are recorded at two probes. The coefficients measured from these records are compared with the Fresnel formulas.</p></div>
+    <p class="lead">When a wave meets a new material, part reflects and part passes on. A Gaussian pulse travels in air ($z&lt;z_i$) into a lossless dielectric with relative permittivity $\varepsilon_r$ ($z&gt;z_i$). FDTD steps Maxwell's curl equations in time on a staggered Yee grid (Courant number 1); two probes record the incident, reflected and transmitted pulses, giving measured $\Gamma$ and $\tau$.<br>Raise $\varepsilon_r$: the reflected pulse grows and returns inverted, while the transmitted pulse slows and shortens. The same physics governs reflections at microwave substrates, radomes and optical coatings.</p></div>
     <span class="tag v">Validation: analytical ($\varepsilon=2\%$) + MATLAB</span></div>
   <div class="sim">
     <div>
@@ -201,7 +201,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Energy check $\Gamma^2+n_2\tau^2$</td><td id="f-en"></td></tr>
       </table>
       <div id="f-verdict" class="verdict"></div>
-      <p class="note">A narrow pulse in a dense dielectric is resolved by only a few cells, so numerical dispersion distorts it and the measured $\tau$ drifts. Reduce $w$ at $\varepsilon_r=12$ to watch the validation fail. This is why the protocol allows $\varepsilon=2\%$ for FDTD.</p>
+      <p class="note">For $n_2&gt;1$, $\Gamma&lt;0$ (inverted reflection) and $\tau&lt;1$, yet energy is conserved: $\Gamma^2+n_2\tau^2=1$. In medium 2 the pulse is $n_2$ times shorter, so a narrow pulse spans only a few cells; numerical dispersion distorts it and the measured $\tau$ drifts. Reduce $w$ at $\varepsilon_r=12$ to see the validation fail, which is why FDTD is allowed $\varepsilon=2\%$.</p>
       <details class="matlab"><summary>MATLAB reference script (same Yee scheme)</summary><pre>N = 1400; zi = 700; src = 150; pA = 420; pB = 950;
 er2 = 4; w = 25; t0 = 4*w; T = 2400; imp0 = 377;
 ez = zeros(1,N); hy = zeros(1,N); eps = ones(1,N);

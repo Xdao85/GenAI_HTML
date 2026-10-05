@@ -115,23 +115,23 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Course 5 · Control Systems</span>
   <h1>Poles, Step Response and PID Control</h1>
-  <p class="lead">Benchmark tasks CTL-E, CTL-M and CTL-C share one page. Stability is read from pole locations, transient specifications are linked to $\zeta$ and $\omega_n$, and a PID speed controller for a DC motor is tuned. The time response and the Bode margins are computed in the browser, and the simulation is validated against an exact partial-fraction solution.</p>
+  <p class="lead">Tasks CTL-E, CTL-M and CTL-C share one idea: the poles decide how a system behaves. You judge stability from pole locations, link the transient to $\zeta$ and $\omega_n$, then tune a PID speed controller for a DC motor and read its Bode margins.</p>
   <div class="layers"><span>① Presentation</span><span>② Mathematics (MathJax)</span><span>③ Visualization (s-plane, Bode)</span><span>④ Simulation (closed-loop RK4)</span><span>⑤ Assessment (auto-scored)</span></div>
   <div class="grid g3" style="margin-top:18px">
     <div class="card"><div class="kicker">Objective 1</div>Decide BIBO stability from the poles of $G(s)$.</div>
-    <div class="card"><div class="kicker">Objective 2</div>Relate overshoot, peak time and settling time to $\zeta$ and $\omega_n$.</div>
+    <div class="card"><div class="kicker">Objective 2</div>Predict overshoot, peak time and settling time from $\zeta$ and $\omega_n$.</div>
     <div class="card"><div class="kicker">Objective 3</div>Tune $K_p,K_i,K_d$ and interpret gain and phase margins.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Level E · CTL-E</span><h2>Transfer Functions, Poles and Stability</h2><p class="lead">A linear time-invariant system is BIBO stable if and only if every pole of its transfer function lies strictly in the left half of the $s$-plane.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Level E · CTL-E</span><h2>Transfer Functions, Poles and Stability</h2><p class="lead">Each pole contributes an exponential mode to the response. If every mode dies out, bounded inputs give bounded outputs, so an LTI system is BIBO stable if and only if every pole lies strictly in the left half of the $s$-plane.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g2">
       <div class="card"><h3>Transfer function</h3><div class="eq">$$G(s)=\frac{N(s)}{D(s)}=\frac{b_ms^m+\dots+b_0}{s^n+a_{n-1}s^{n-1}+\dots+a_0}$$</div></div>
-      <div class="card"><h3>Poles and modes</h3><div class="eq">$$D(p_i)=0\ \Rightarrow\ y(t)\ni c_i e^{p_i t}$$</div><p class="note">$\mathrm{Re}\,p_i<0$: the mode decays. $\mathrm{Re}\,p_i>0$: it grows.</p></div>
+      <div class="card"><h3>Poles and modes</h3><div class="eq">$$D(p_i)=0\ \Rightarrow\ y(t)\ni c_i e^{p_i t}$$</div><p class="note">$\mathrm{Re}\,p_i<0$: the mode decays. $\mathrm{Re}\,p_i>0$: it grows. The imaginary part sets the oscillation frequency. Poles on the imaginary axis are marginal, which is <i>not</i> BIBO stable.</p></div>
       <div class="card"><h3>Second-order prototype</h3><div class="eq">$$G(s)=\frac{\omega_n^2}{s^2+2\zeta\omega_n s+\omega_n^2}$$</div></div>
-      <div class="card"><h3>Example</h3><p>$G(s)=\dfrac{10}{(s+1)(s^2+2s+5)}$ has poles $-1$ and $-1\pm j2$, all in the LHP, so the system is stable.</p></div>
+      <div class="card"><h3>Example</h3><p>$G(s)=\dfrac{10}{(s+1)(s^2+2s+5)}$ has poles $-1$ and $-1\pm j2$, all in the LHP, so the system is stable; the complex pair adds a decaying 2 rad/s oscillation.</p></div>
     </div>
     <div class="card white"><h3>The $s$-plane</h3>
       <svg viewBox="0 0 340 260" width="100%" aria-label="s-plane">
@@ -146,7 +146,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Level M · CTL-M</span><h2>Second-Order Step Response</h2><p class="lead">Move $\zeta$ and $\omega_n$ and watch the poles $-\zeta\omega_n\pm j\omega_n\sqrt{1-\zeta^2}$ move along circles and rays. The step response changes with them. Closed-form specifications are compared with values measured from the curve.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Level M · CTL-M</span><h2>Second-Order Step Response</h2><p class="lead">The poles $-\zeta\omega_n\pm j\omega_n\sqrt{1-\zeta^2}$ lie at distance $\omega_n$ from the origin, at an angle set by $\zeta$. Raising $\omega_n$ slides them out along a ray: the response gets faster, but the overshoot is unchanged. Raising $\zeta$ swings them along a circle toward the real axis and the overshoot shrinks; from 1 upward it disappears. The table compares formulas with measured values.</p></div></div>
   <div class="sim">
     <div>
       <div class="grid g2">
@@ -167,14 +167,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>$T_s\approx 4/(\zeta\omega_n)$ (2 %)</td><td id="m-ts"></td></tr>
         <tr><td>Poles</td><td id="m-p"></td></tr>
       </table>
-      <p class="note">$T_s\approx4/\zeta\omega_n$ is an envelope approximation, so the measured settling time can differ by tens of percent, especially for $\zeta>0.7$. This is an example where the formula, not the simulation, is the approximate reference.</p>
+      <p class="note">$T_s\approx4/\zeta\omega_n$ follows the decaying envelope, not the response, so the measured settling time can differ by tens of percent, especially for $\zeta>0.7$. Here the formula, not the simulation, is the approximation: use it to design, then verify on the curve.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Level C · CTL-C</span><h2>PID Speed Control of a DC Motor</h2>
-    <p class="lead">Motor model: $J=0.01$ kg·m², $b=0.1$ N·m·s, $K=0.01$, $R=1\,\Omega$, $L=0.5$ H. The plant is $G(s)=\dfrac{K}{(Js+b)(Ls+R)+K^2}$ and the controller is $C(s)=K_p+\dfrac{K_i}{s}+K_ds$. The unit-step reference response is computed with RK4 and validated against the exact partial-fraction solution.</p></div>
+    <p class="lead">Motor model: $J=0.01$ kg·m², $b=0.1$ N·m·s, $K=0.01$, $R=1\,\Omega$, $L=0.5$ H. The plant is $G(s)=\dfrac{K}{(Js+b)(Ls+R)+K^2}$ and the controller is $C(s)=K_p+\dfrac{K_i}{s}+K_ds$. $K_p$ speeds up the response, $K_i$ removes the steady-state speed error, and $K_d$ adds damping. Change one gain at a time: as the phase margin shrinks, the step response rings longer. The RK4 result is validated against the exact partial-fraction solution; lower $N$ to see the error grow. The same loop drives conveyors, EVs and robot joints.</p></div>
     <span class="tag v">Validation: analytical + MATLAB step/margin</span></div>
   <div class="sim">
     <div>

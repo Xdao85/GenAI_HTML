@@ -115,7 +115,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Học phần 4 · Tín hiệu và hệ thống</span>
   <h1>Các phép toán theo thời gian, tích chập và lấy mẫu</h1>
-  <p class="lead">Ba bài toán chuẩn SIG-E, SIG-M và SIG-C được trình bày trên cùng một trang. Trước hết là các phép toán cơ bản theo thời gian, tiếp theo là xây dựng tích chập bằng đồ thị theo cách lật và trượt, cuối cùng là khảo sát định lý lấy mẫu, trong đó tần số chồng phổ được đo từ DFT và kiểm chứng với lý thuyết.</p>
+  <p class="lead">Trang này gồm ba bài toán chuẩn (SIG-E, SIG-M, SIG-C): các phép toán theo thời gian, tích chập xây dựng bằng cách lật và trượt, và lấy mẫu, trong đó tần số chồng phổ được đo từ DFT và kiểm chứng với lý thuyết.</p>
   <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (đồ thị động)</span><span>④ Mô phỏng (DFT, nội suy sinc)</span><span>⑤ Đánh giá (tự chấm)</span></div>
   <div class="grid g3" style="margin-top:18px">
     <div class="card"><div class="kicker">Mục tiêu 1</div>Áp dụng phép dịch, co giãn và đảo thời gian cho một tín hiệu và dự đoán kết quả.</div>
@@ -125,7 +125,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · SIG-E</span><h2>Tín hiệu cơ bản và các phép toán theo thời gian</h2><p class="lead">Với $y(t)=x(at-b)$, thứ tự thực hiện là quan trọng: dịch theo $b$ trước, sau đó co giãn theo $a$. Nói cách khác, $y(t)=x\!\left(a\left(t-\tfrac{b}{a}\right)\right)$ là $x$ bị nén $a$ lần và dịch đi $b/a$.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Mức E · SIG-E</span><h2>Tín hiệu cơ bản và các phép toán theo thời gian</h2><p class="lead">Các phép toán này tác động lên trục thời gian chứ không lên giá trị tín hiệu: $x(t-2)$ là phép trễ (đồ thị dịch sang <i>phải</i>), $x(2t)$ phát tín hiệu nhanh gấp đôi, giống tua nhanh một đoạn âm thanh, còn $x(-t)$ lấy đối xứng tín hiệu. Với $y(t)=x(at-b)$, thứ tự là quan trọng: dịch theo $b$, rồi co giãn theo $a$. Tương đương, $y(t)=x\!\left(a\left(t-\tfrac{b}{a}\right)\right)$ là $x$ bị nén $a$ lần và dịch đi $b/a$, chứ không phải $b$.</p></div></div>
   <div class="grid g4" style="margin-top:16px">
     <div class="card white"><h3>$x(t)$</h3><div class="canvas-wrap"><canvas id="e1" data-h="150"></canvas></div></div>
     <div class="card white"><h3>Dịch: $x(t-2)$</h3><div class="canvas-wrap"><canvas id="e2" data-h="150"></canvas></div></div>
@@ -134,13 +134,13 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
   </div>
   <div class="grid g3" style="margin-top:14px">
     <div class="card"><h3>Hàm bước đơn vị và hàm dốc</h3><div class="eq">$$u(t)=\begin{cases}1,&t\ge0\\0,&t<0\end{cases},\qquad r(t)=t\,u(t)$$</div></div>
-    <div class="card"><h3>Tín hiệu ví dụ</h3><div class="eq">$$x(t)=r(t)-r(t-1)-u(t-2)$$</div><p class="note">Hàm dốc bão hòa tại giá trị 1 và tắt tại $t=2$.</p></div>
+    <div class="card"><h3>Tín hiệu ví dụ</h3><div class="eq">$$x(t)=r(t)-r(t-1)-u(t-2)$$</div><p class="note">Hàm dốc thứ hai giữ tín hiệu ở mức 1; hàm bước tắt tín hiệu tại $t=2$.</p></div>
     <div class="card"><h3>Thành phần chẵn/lẻ</h3><div class="eq">$$x_e(t)=\tfrac12[x(t)+x(-t)]$$$$x_o(t)=\tfrac12[x(t)-x(-t)]$$</div></div>
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · SIG-M</span><h2>Tích chập bằng đồ thị: lật và trượt</h2><p class="lead">Đáp ứng xung được lật, $h(-\tau)$, rồi trượt đến vị trí $t$. Đầu ra $y(t)$ bằng diện tích dưới tích $x(\tau)h(t-\tau)$, được tô đậm trên đồ thị phía trên.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Mức M · SIG-M</span><h2>Tích chập bằng đồ thị: lật và trượt</h2><p class="lead">Hệ LTI đáp lại mỗi giá trị đầu vào bằng một bản sao có trọng số của đáp ứng xung rồi cộng chúng lại. Về đồ thị: lật đáp ứng xung, $h(-\tau)$, trượt đến vị trí $t$; diện tích dưới tích $x(\tau)h(t-\tau)$, được tô đậm trên đồ thị phía trên, chính là $y(t)$.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="cv1" data-h="230"></canvas></div>
@@ -161,14 +161,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>$y(t)$ giải tích</td><td id="cv-ana"></td></tr>
         <tr><td>Sai lệch tuyệt đối</td><td id="cv-err"></td></tr>
       </table>
-      <p class="note">Màu hồng: $x(\tau)$ · xanh da trời: $h(t-\tau)$ · vùng tô: tích. Đồ thị dưới: đầu ra đã vạch đến thời điểm hiện tại (nét liền) và toàn bộ đầu ra giải tích (nét nhạt).</p>
+      <p class="note">Màu hồng: $x(\tau)$ · xanh da trời: $h(t-\tau)$ · vùng tô: tích. Đồ thị dưới: đầu ra đã vạch đến thời điểm hiện tại (nét liền) và toàn bộ đầu ra giải tích (nét nhạt). Kéo $t$ hoặc nhấn Chạy hoạt ảnh: $y(t)$ bằng 0 cho đến khi hai tín hiệu bắt đầu chồng lên nhau. Với cặp chữ nhật ∗ hàm mũ, $a$ lớn hơn nghĩa là hằng số thời gian RC nhỏ hơn và đáp ứng nhanh hơn.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Mức C · SIG-C</span><h2>Lấy mẫu, chồng phổ và khôi phục tín hiệu</h2>
-    <p class="lead">Tín hiệu sin $x(t)=\cos(2\pi f_0t)$ được lấy mẫu với tần số $f_s$. Nếu $f_s<2f_0$, các mẫu không thể phân biệt với một tín hiệu sin có tần số thấp hơn, gọi là tín hiệu chồng phổ (alias). Tần số chồng phổ được đo từ DFT của các mẫu và so sánh với giá trị dự đoán $f_a=|f_0-k f_s|$, trong đó $k=\operatorname{round}(f_0/f_s)$.</p></div>
+    <p class="lead">Bộ ADC lấy mẫu $x(t)=\cos(2\pi f_0t)$ với tần số $f_s$. Nếu $f_s<2f_0$ (ít hơn hai mẫu mỗi chu kỳ), các mẫu cũng khớp với một tín hiệu sin tần số thấp hơn, gọi là tín hiệu chồng phổ (alias), và không khâu xử lý nào phía sau tách được hai tín hiệu. Lý thuyết dự đoán $f_a=|f_0-k f_s|$, trong đó $k=\operatorname{round}(f_0/f_s)$: $f_0$ bị gập lại quanh bội số gần nhất của $f_s$. DFT của các mẫu cho giá trị đo.</p></div>
     <span class="tag v">Kiểm chứng: giải tích + MATLAB fft</span></div>
   <div class="sim">
     <div>
@@ -191,7 +191,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Sai số</td><td id="s-err"></td></tr>
       </table>
       <div id="s-verdict" class="verdict"></div>
-      <p class="note">Đồ thị trên: tín hiệu thực (nét nhạt), các mẫu (chấm) và tín hiệu khôi phục bằng nội suy sinc (màu hồng). Phép khôi phục chỉ cho lại $x(t)$ khi $f_s>2f_0$; nếu không, kết quả là tín hiệu chồng phổ.</p>
+      <p class="note">Đồ thị trên: tín hiệu thực (nét nhạt), các mẫu (chấm) và tín hiệu khôi phục bằng nội suy sinc (màu hồng). Phép khôi phục chỉ cho lại $x(t)$ khi $f_s>2f_0$; nếu không, kết quả là tín hiệu chồng phổ. Với giá trị mặc định, các mẫu vạch ra tín hiệu chồng phổ 3 Hz; hãy tăng $f_s$ lên trên 14 Hz. Vì chồng phổ không thể khắc phục sau khi lấy mẫu, bộ ADC luôn có bộ lọc chống chồng phổ phía trước.</p>
       <details class="matlab"><summary>Mã MATLAB tham chiếu</summary><pre>f0 = 7; fs = 10; T = 4;
 n = 0:round(T*fs)-1;  x = cos(2*pi*f0*n/fs);
 w = hann(numel(x))';  Nfft = 2^16;
@@ -436,7 +436,7 @@ quiz('quizBox', 'score', [
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';
   const STUDY = 'paper2-html-demos', DEMO = '04_SIG', VERSION = 'log-v1-vi', LANG = 'vi';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';

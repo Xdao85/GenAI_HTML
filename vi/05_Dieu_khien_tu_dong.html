@@ -115,23 +115,23 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Học phần 5 · Điều khiển tự động</span>
   <h1>Cực, đáp ứng bước và điều khiển PID</h1>
-  <p class="lead">Ba bài chuẩn CTL-E, CTL-M và CTL-C được trình bày trên cùng một trang. Tính ổn định được xác định từ vị trí các cực, các chỉ tiêu quá độ được liên hệ với $\zeta$ và $\omega_n$, và một bộ điều khiển PID tốc độ cho động cơ DC được hiệu chỉnh. Đáp ứng thời gian và các độ dự trữ Bode được tính ngay trong trình duyệt, và kết quả mô phỏng được kiểm chứng bằng nghiệm chính xác theo phương pháp phân tích thành phân thức tối giản.</p>
+  <p class="lead">Ba bài CTL-E, CTL-M và CTL-C cùng xoay quanh một ý: vị trí các cực quyết định cách hệ thống đáp ứng. Bạn sẽ đánh giá tính ổn định từ vị trí các cực, liên hệ quá trình quá độ với $\zeta$ và $\omega_n$, rồi hiệu chỉnh bộ điều khiển PID tốc độ cho động cơ DC và đọc các độ dự trữ trên biểu đồ Bode.</p>
   <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (mặt phẳng s, Bode)</span><span>④ Mô phỏng (RK4 vòng kín)</span><span>⑤ Đánh giá (tự chấm)</span></div>
   <div class="grid g3" style="margin-top:18px">
     <div class="card"><div class="kicker">Mục tiêu 1</div>Xác định tính ổn định BIBO từ các cực của $G(s)$.</div>
-    <div class="card"><div class="kicker">Mục tiêu 2</div>Liên hệ độ quá điều chỉnh, thời gian đỉnh và thời gian xác lập với $\zeta$ và $\omega_n$.</div>
+    <div class="card"><div class="kicker">Mục tiêu 2</div>Dự đoán độ quá điều chỉnh, thời gian đỉnh và thời gian xác lập từ $\zeta$ và $\omega_n$.</div>
     <div class="card"><div class="kicker">Mục tiêu 3</div>Hiệu chỉnh $K_p,K_i,K_d$ và diễn giải độ dự trữ biên độ, độ dự trữ pha.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · CTL-E</span><h2>Hàm truyền, cực và tính ổn định</h2><p class="lead">Hệ tuyến tính bất biến theo thời gian ổn định BIBO khi và chỉ khi mọi cực của hàm truyền nằm hoàn toàn bên trái mặt phẳng $s$.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Mức E · CTL-E</span><h2>Hàm truyền, cực và tính ổn định</h2><p class="lead">Mỗi cực đóng góp một mode dạng hàm mũ vào đáp ứng. Nếu mọi mode đều tắt dần thì tín hiệu vào bị chặn sẽ cho tín hiệu ra bị chặn, vì vậy hệ LTI ổn định BIBO khi và chỉ khi mọi cực nằm hoàn toàn bên trái mặt phẳng $s$.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g2">
       <div class="card"><h3>Hàm truyền</h3><div class="eq">$$G(s)=\frac{N(s)}{D(s)}=\frac{b_ms^m+\dots+b_0}{s^n+a_{n-1}s^{n-1}+\dots+a_0}$$</div></div>
-      <div class="card"><h3>Cực và các mode (thành phần dao động riêng)</h3><div class="eq">$$D(p_i)=0\ \Rightarrow\ y(t)\ni c_i e^{p_i t}$$</div><p class="note">$\mathrm{Re}\,p_i<0$: mode tắt dần. $\mathrm{Re}\,p_i>0$: mode tăng dần.</p></div>
+      <div class="card"><h3>Cực và các mode (thành phần dao động riêng)</h3><div class="eq">$$D(p_i)=0\ \Rightarrow\ y(t)\ni c_i e^{p_i t}$$</div><p class="note">$\mathrm{Re}\,p_i<0$: mode tắt dần. $\mathrm{Re}\,p_i>0$: mode tăng dần. Phần ảo quyết định tần số dao động. Cực nằm trên trục ảo ứng với biên giới ổn định, và trường hợp này <i>không</i> ổn định BIBO.</p></div>
       <div class="card"><h3>Khâu bậc hai chuẩn</h3><div class="eq">$$G(s)=\frac{\omega_n^2}{s^2+2\zeta\omega_n s+\omega_n^2}$$</div></div>
-      <div class="card"><h3>Ví dụ</h3><p>$G(s)=\dfrac{10}{(s+1)(s^2+2s+5)}$ có các cực $-1$ và $-1\pm j2$, đều nằm ở nửa trái mặt phẳng, nên hệ ổn định.</p></div>
+      <div class="card"><h3>Ví dụ</h3><p>$G(s)=\dfrac{10}{(s+1)(s^2+2s+5)}$ có các cực $-1$ và $-1\pm j2$, đều nằm ở nửa trái mặt phẳng, nên hệ ổn định; cặp cực phức tạo ra dao động 2 rad/s tắt dần.</p></div>
     </div>
     <div class="card white"><h3>Mặt phẳng $s$</h3>
       <svg viewBox="0 0 340 260" width="100%" aria-label="Mặt phẳng s">
@@ -146,7 +146,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · CTL-M</span><h2>Đáp ứng bước của hệ bậc hai</h2><p class="lead">Thay đổi $\zeta$ và $\omega_n$ để thấy các cực $-\zeta\omega_n\pm j\omega_n\sqrt{1-\zeta^2}$ di chuyển trên các đường tròn và tia, kéo theo sự thay đổi của đáp ứng bước. Các chỉ tiêu tính theo công thức được so sánh với giá trị đo trực tiếp trên đường cong.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Mức M · CTL-M</span><h2>Đáp ứng bước của hệ bậc hai</h2><p class="lead">Các cực $-\zeta\omega_n\pm j\omega_n\sqrt{1-\zeta^2}$ cách gốc tọa độ một khoảng $\omega_n$, với góc do $\zeta$ quyết định. Tăng $\omega_n$, các cực trượt ra xa theo một tia: đáp ứng nhanh hơn nhưng độ quá điều chỉnh không đổi. Tăng $\zeta$, các cực quay trên đường tròn về phía trục thực và độ quá điều chỉnh giảm; từ 1 trở lên thì không còn quá điều chỉnh. Bảng bên so sánh giá trị tính theo công thức với giá trị đo được.</p></div></div>
   <div class="sim">
     <div>
       <div class="grid g2">
@@ -167,14 +167,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>$T_s\approx 4/(\zeta\omega_n)$ (2 %)</td><td id="m-ts"></td></tr>
         <tr><td>Các cực</td><td id="m-p"></td></tr>
       </table>
-      <p class="note">$T_s\approx4/\zeta\omega_n$ là xấp xỉ theo đường bao, nên thời gian xác lập đo được có thể lệch hàng chục phần trăm, nhất là khi $\zeta>0.7$. Đây là trường hợp công thức, chứ không phải mô phỏng, mới là giá trị tham chiếu gần đúng.</p>
+      <p class="note">$T_s\approx4/\zeta\omega_n$ dựa trên đường bao tắt dần chứ không phải chính đáp ứng, nên thời gian xác lập đo được có thể lệch hàng chục phần trăm, nhất là khi $\zeta>0.7$. Ở đây công thức, chứ không phải mô phỏng, mới là giá trị gần đúng: dùng nó để thiết kế, rồi kiểm tra lại trên đường cong.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Mức C · CTL-C</span><h2>Điều khiển PID tốc độ động cơ DC</h2>
-    <p class="lead">Mô hình động cơ: $J=0.01$ kg·m², $b=0.1$ N·m·s, $K=0.01$, $R=1\,\Omega$, $L=0.5$ H. Đối tượng là $G(s)=\dfrac{K}{(Js+b)(Ls+R)+K^2}$ và bộ điều khiển là $C(s)=K_p+\dfrac{K_i}{s}+K_ds$. Đáp ứng với tín hiệu đặt bước đơn vị được tính bằng RK4 và kiểm chứng với nghiệm chính xác theo phân thức tối giản.</p></div>
+    <p class="lead">Mô hình động cơ: $J=0.01$ kg·m², $b=0.1$ N·m·s, $K=0.01$, $R=1\,\Omega$, $L=0.5$ H. Đối tượng là $G(s)=\dfrac{K}{(Js+b)(Ls+R)+K^2}$ và bộ điều khiển là $C(s)=K_p+\dfrac{K_i}{s}+K_ds$. $K_p$ làm đáp ứng nhanh hơn, $K_i$ triệt tiêu sai số xác lập của tốc độ, còn $K_d$ tăng độ tắt dần. Hãy thay đổi từng hệ số một: khi độ dự trữ pha giảm, đáp ứng bước dao động lâu hơn. Kết quả RK4 được kiểm chứng với nghiệm chính xác theo phân thức tối giản; giảm $N$ để thấy sai số tăng. Vòng điều khiển này dùng cho băng tải, xe điện và khớp robot.</p></div>
     <span class="tag v">Kiểm chứng: giải tích + MATLAB step/margin</span></div>
   <div class="sim">
     <div>
@@ -454,7 +454,7 @@ quiz('quizBox', 'score', [
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';
   const STUDY = 'paper2-html-demos', DEMO = '05_CTL', VERSION = 'log-v1-vi', LANG = 'vi';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';

@@ -115,7 +115,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Course 6 · Digital Signal Processing</span>
   <h1>DFT, Spectral Leakage and FIR Filter Design</h1>
-  <p class="lead">Benchmark tasks DSP-E, DSP-M and DSP-C share one page. The DFT and its frequency grid are defined first, then window choice is shown to trade main-lobe width for sidelobe leakage. Finally, a windowed-sinc FIR filter is designed and applied to a noisy two-tone signal. Its measured gains are validated against the analytical frequency response.</p>
+  <p class="lead">Tasks DSP-E, DSP-M and DSP-C cover the core of every spectrum analyser: the DFT turns a finite record into frequency bins, the window decides whether a weak tone stays visible beside a strong one, and windowing an ideal impulse response yields an FIR filter whose measured gains you check against theory.</p>
   <div class="layers"><span>① Presentation</span><span>② Mathematics (MathJax)</span><span>③ Visualization (spectra in dB)</span><span>④ Simulation (FFT, FIR filtering)</span><span>⑤ Assessment (auto-scored)</span></div>
   <div class="grid g3" style="margin-top:18px">
     <div class="card"><div class="kicker">Objective 1</div>Map DFT bin $k$ to frequency $f_k=kf_s/N$.</div>
@@ -125,13 +125,13 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Level E · DSP-E</span><h2>The DFT and Frequency Resolution</h2><p class="lead">The $N$-point DFT samples the spectrum of a finite record at $N$ equally spaced frequencies. The spacing $\Delta f=f_s/N=1/T$ is set by the record length alone, not by the sampling rate.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Level E · DSP-E</span><h2>The DFT and Frequency Resolution</h2><p class="lead">Bin $k$ compares the record with a sinusoid completing exactly $k$ cycles, so the $N$-point DFT samples the spectrum at $N$ equally spaced frequencies. The spacing $\Delta f=f_s/N=1/T$ depends only on the record duration $T$: only a longer record gives finer bins. Zero-padding merely interpolates the same spectrum; it does not improve resolution.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g2">
       <div class="card"><h3>Definition</h3><div class="eq">$$X[k]=\sum_{n=0}^{N-1}x[n]\,e^{-j2\pi kn/N}$$</div></div>
       <div class="card"><h3>Bin frequencies</h3><div class="eq">$$f_k=k\frac{f_s}{N},\quad \Delta f=\frac{f_s}{N}=\frac1T$$</div></div>
-      <div class="card"><h3>Symmetry (real $x$)</h3><div class="eq">$$X[N-k]=X^*[k]$$</div><p class="note">Only bins $0\dots N/2$ carry independent information.</p></div>
-      <div class="card"><h3>Example</h3><p>$f_s=8$ kHz and $N=8$ give $\Delta f=1$ kHz. The signal $x[n]=\cos(2\pi\cdot2n/8)+\tfrac12\cos(2\pi\cdot3n/8)$ puts energy only in bins 2 and 3 (and their mirror bins 6 and 5), with $|X[2]|=4$ and $|X[3]|=2$.</p></div>
+      <div class="card"><h3>Symmetry (real $x$)</h3><div class="eq">$$X[N-k]=X^*[k]$$</div><p class="note">Upper bins mirror lower ones, so only bins $0\dots N/2$ (DC to $f_s/2$) carry independent information.</p></div>
+      <div class="card"><h3>Example</h3><p>$f_s=8$ kHz and $N=8$ give $\Delta f=1$ kHz. The signal $x[n]=\cos(2\pi\cdot2n/8)+\tfrac12\cos(2\pi\cdot3n/8)$ completes exactly 2 and 3 cycles, so energy appears only in bins 2 and 3 (and mirrors 6 and 5). Amplitude $A$ gives $|X[k]|=AN/2$: $|X[2]|=4$, $|X[3]|=2$.</p></div>
     </div>
     <div class="card white"><h3>Example signal and its 8-point DFT</h3>
       <div class="canvas-wrap"><canvas id="d1" data-h="150"></canvas></div>
@@ -140,7 +140,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Level M · DSP-M</span><h2>Windowing and Spectral Leakage</h2><p class="lead">When a tone does not complete an integer number of cycles in the record, its energy leaks into all bins. A weak second tone can then disappear under the sidelobes of the strong one. Tapered windows lower the sidelobes at the cost of a wider main lobe.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Level M · DSP-M</span><h2>Windowing and Spectral Leakage</h2><p class="lead">The DFT treats the record as periodic. If a tone does not complete an integer number of cycles, the ends do not join and its energy leaks into all bins; a weak second tone can disappear under the sidelobes of the strong one. Tapered windows lower the sidelobes at the cost of a wider main lobe, which blurs close tones.<br><br>With tone 1 at 16.5 bins, switch from Rectangular to Blackman and watch tone 2 emerge; move tone 1 to an integer bin and leakage vanishes. This is how a small fault line is found beside a machine's running-speed peak.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="lk" data-h="320"></canvas></div>
@@ -161,14 +161,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Tone 2 visible above leakage?</td><td id="w-vis"></td></tr>
       </table>
       <div id="w-verdict" class="verdict"></div>
-      <p class="note">The measured values come from the zero-padded FFT of the window itself. Theory: rectangular −13.3 dB / 2 bins, Hann −31.5 dB / 4 bins, Hamming −42.7 dB / 4 bins, Blackman −58.1 dB / 6 bins.</p>
+      <p class="note">Measured values: zero-padded FFT of the window. Theory: rectangular −13.3 dB / 2 bins, Hann −31.5 dB / 4 bins, Hamming −42.7 dB / 4 bins, Blackman −58.1 dB / 6 bins. Pick a window whose sidelobes lie below the level gap you must see.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Level C · DSP-C</span><h2>Windowed-Sinc FIR Design and Filtering</h2>
-    <p class="lead">The ideal low-pass impulse response $h_d[n]=2f_c/f_s\,\mathrm{sinc}\!\left(2f_c(n-\tfrac{M-1}{2})/f_s\right)$ is truncated to $M$ taps and multiplied by a window. A high-pass filter is obtained by spectral inversion. The filter is applied to $x[n]=\sin(2\pi50n/f_s)+0.5\sin(2\pi300n/f_s)+$ noise, with $f_s=1$ kHz.</p></div>
+    <p class="lead">The ideal low-pass impulse response $h_d[n]=2f_c/f_s\,\mathrm{sinc}\!\left(2f_c(n-\tfrac{M-1}{2})/f_s\right)$ is infinitely long, so it is truncated to $M$ taps and multiplied by a window: lower sidelobes give a deeper stopband, a wider main lobe a wider transition band. A high-pass filter is obtained by spectral inversion. The filter is applied to $x[n]=\sin(2\pi50n/f_s)+0.5\sin(2\pi300n/f_s)+$ noise, with $f_s=1$ kHz. Increase $M$ to sharpen the transition (and lengthen the delay), or move $f_c$ to see which tone survives.</p></div>
     <span class="tag v">Validation: analytical + MATLAB fir1/freqz</span></div>
   <div class="sim">
     <div>
@@ -192,7 +192,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Max stopband gain beyond $f_c\pm$transition</td><td id="sb"></td></tr>
       </table>
       <div id="f-verdict" class="verdict"></div>
-      <p class="note">Measured gains are taken from the DFT of the steady-state filter output for each tone alone. Analytical gains are evaluated as $|H(e^{j\omega})|=\left|\sum_n h[n]e^{-j\omega n}\right|$.</p>
+      <p class="note">Measured: DFT of the steady-state output per tone; analytical: $|H(e^{j\omega})|=\left|\sum_n h[n]e^{-j\omega n}\right|$. Expect about −6 dB, not −3 dB, at $f_c$. Symmetric taps delay every frequency by $(M-1)/2$ samples, preserving waveform shape.</p>
       <details class="matlab"><summary>MATLAB reference script</summary><pre>fs = 1000; fc = 150; M = 61;
 h = fir1(M-1, fc/(fs/2), 'low', hamming(M));
 [H, f] = freqz(h, 1, 4096, fs);

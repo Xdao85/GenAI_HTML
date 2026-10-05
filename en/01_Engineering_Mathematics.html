@@ -115,24 +115,24 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Course 1 · Engineering Mathematics</span>
   <h1>Vectors and Differential Equations</h1>
-  <p class="lead">This learning object puts three benchmark tasks (MAT-E, MAT-M, MAT-C) on one page. It starts with definitions of the dot and cross product, then lets you manipulate two vectors in 3D, and ends with a Runge–Kutta solver for a second-order ODE that is checked against the closed-form solution.</p>
+  <p class="lead">Three tasks of increasing difficulty (MAT-E, MAT-M, MAT-C) on one page: the geometric meaning of the dot and cross products, two vectors explored in 3D, and a Runge–Kutta solution of a second-order ODE checked against the exact solution. Both tools recur in mechanics, circuits and control.</p>
   <div class="layers"><span>① Presentation</span><span>② Mathematics (MathJax)</span><span>③ Visualization (Canvas/SVG)</span><span>④ Simulation (JavaScript RK4)</span><span>⑤ Assessment (auto-scored)</span></div>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="kicker">Objective 1</div>Compute $\mathbf{A}\cdot\mathbf{B}$ and $\mathbf{A}\times\mathbf{B}$ and interpret them geometrically.</div>
+    <div class="card"><div class="kicker">Objective 1</div>Compute $\mathbf{A}\cdot\mathbf{B}$ and $\mathbf{A}\times\mathbf{B}$ and explain what each means geometrically.</div>
     <div class="card"><div class="kicker">Objective 2</div>Relate the angle between vectors to projection and to the area of the parallelogram.</div>
-    <div class="card"><div class="kicker">Objective 3</div>Solve $y''+2\zeta\omega_n y'+\omega_n^2 y=0$ numerically and judge accuracy against the exact solution.</div>
+    <div class="card"><div class="kicker">Objective 3</div>Solve $y''+2\zeta\omega_n y'+\omega_n^2 y=0$ numerically and judge its accuracy against the exact solution.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Level E · MAT-E</span><h2>Dot and Cross Products</h2><p class="lead">Two products, two geometric meanings: the dot product measures alignment, the cross product measures the area spanned and gives a normal direction.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Level E · MAT-E</span><h2>Dot and Cross Products</h2><p class="lead">The dot product asks how closely two vectors point the same way and returns a number. The cross product asks how much area they span and returns a vector perpendicular to both.</p></div></div>
   <div class="grid g3" style="margin-top:16px">
     <div class="card"><h3>Dot product (scalar)</h3>
       <div class="eq">$$\begin{aligned}\mathbf{A}\cdot\mathbf{B}&=A_xB_x+A_yB_y+A_zB_z\\&=|\mathbf{A}||\mathbf{B}|\cos\theta_{AB}\end{aligned}$$</div>
-      <p class="note">Zero when the vectors are perpendicular. The scalar projection of $\mathbf{A}$ on $\mathbf{B}$ is $\mathbf{A}\cdot\hat{\mathbf{b}}$.</p></div>
+      <p class="note">Positive when the vectors roughly agree, zero when perpendicular, negative when they point apart. $\mathbf{A}\cdot\hat{\mathbf{b}}$ is the "shadow" of $\mathbf{A}$ along $\mathbf{B}$, the idea behind the work done by a force.</p></div>
     <div class="card"><h3>Cross product (vector)</h3>
       <div class="eq">$$\mathbf{A}\times\mathbf{B}=\begin{vmatrix}\hat{\mathbf{x}}&\hat{\mathbf{y}}&\hat{\mathbf{z}}\\A_x&A_y&A_z\\B_x&B_y&B_z\end{vmatrix}$$</div>
-      <p class="note">$|\mathbf{A}\times\mathbf{B}|=|\mathbf{A}||\mathbf{B}|\sin\theta_{AB}$ is the area of the parallelogram; the direction follows the right-hand rule.</p></div>
+      <p class="note">$|\mathbf{A}\times\mathbf{B}|=|\mathbf{A}||\mathbf{B}|\sin\theta_{AB}$ is the area of the parallelogram: largest when the vectors are perpendicular, zero when parallel. The direction follows the right-hand rule, so swapping the order reverses it. Torque is a cross product.</p></div>
     <div class="card white"><h3>Geometry</h3>
       <svg viewBox="0 0 300 190" width="100%" aria-label="Dot and cross product geometry">
         <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4f46e5"/></marker>
@@ -152,12 +152,12 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
       </svg></div>
   </div>
   <div class="card" style="margin-top:14px"><h3>Worked example</h3>
-    For $\mathbf{A}=(1,2,2)$ and $\mathbf{B}=(3,0,4)$: $\mathbf{A}\cdot\mathbf{B}=3+0+8=11$, $|\mathbf{A}|=3$, $|\mathbf{B}|=5$, so $\cos\theta=11/15$ and $\theta\approx 42.8^\circ$. The cross product is $\mathbf{A}\times\mathbf{B}=(8,\,2,\,-6)$ with magnitude $\sqrt{104}\approx 10.2=15\sin\theta$.
+    For $\mathbf{A}=(1,2,2)$ and $\mathbf{B}=(3,0,4)$: $\mathbf{A}\cdot\mathbf{B}=3+0+8=11$, $|\mathbf{A}|=3$, $|\mathbf{B}|=5$, so $\cos\theta=11/15$ and $\theta\approx 42.8^\circ$. The cross product is $\mathbf{A}\times\mathbf{B}=(8,\,2,\,-6)$ with magnitude $\sqrt{104}\approx 10.2=15\sin\theta$. Check: its dot product with $\mathbf{A}$ and with $\mathbf{B}$ is zero.
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Level M · MAT-M</span><h2>Interactive 3D Vector Algebra</h2><p class="lead">Set the components of $\mathbf{A}$ and $\mathbf{B}$, drag the view to rotate it, and watch the dot product, the angle, the parallelogram and the normal vector $\mathbf{A}\times\mathbf{B}$ update together.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Level M · MAT-M</span><h2>Interactive 3D Vector Algebra</h2><p class="lead">Set the components of $\mathbf{A}$ and $\mathbf{B}$ and drag the view to rotate it. Make the vectors perpendicular and $\mathbf{A}\cdot\mathbf{B}$ drops to zero; make them parallel and the parallelogram collapses as $\mathbf{A}\times\mathbf{B}$ vanishes.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="v3d" data-h="400" style="cursor:grab"></canvas></div>
@@ -182,14 +182,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Check $|\mathbf{A}||\mathbf{B}|\sin\theta$</td><td id="r-chk"></td></tr>
       </table>
       <div id="r-rel" class="verdict pass"></div>
-      <p class="note">Indigo: $\mathbf{A}$ · rose: $\mathbf{B}$ · green: $\mathbf{A}\times\mathbf{B}$ · shaded: parallelogram. Drag the canvas to rotate.</p>
+      <p class="note">Indigo: $\mathbf{A}$ · rose: $\mathbf{B}$ · green: $\mathbf{A}\times\mathbf{B}$ · shaded: parallelogram. The green vector always stays normal to the shaded plane.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Level C · MAT-C</span><h2>Second-Order Linear ODE: RK4 vs. Closed Form</h2>
-    <p class="lead">The damped oscillator $y''+2\zeta\omega_n y'+\omega_n^2y=0$ with $y(0)=y_0$, $y'(0)=v_0$ is integrated with the classical fourth-order Runge–Kutta method. The exact solution is plotted underneath, and the error is checked against the acceptance tolerance $\varepsilon=1\%$.</p></div>
+    <p class="lead">The damped oscillator $y''+2\zeta\omega_n y'+\omega_n^2y=0$ models a mass–spring–damper or an RLC circuit: $\omega_n$ sets how fast it oscillates, $\zeta$ how quickly the motion dies out. Starting from $y(0)=y_0$, $y'(0)=v_0$, it is integrated with classical fourth-order Runge–Kutta (RK4) and compared with the exact solution; the error must stay within $\varepsilon=1\%$. Raise $\zeta$ past 1 to remove the oscillation, or increase $h$ to watch the error grow.</p></div>
     <span class="tag v">Validation: analytical + MATLAB ode45</span></div>
   <div class="sim">
     <div>
@@ -218,7 +218,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
       <div id="o-verdict" class="verdict"></div>
       <h3 style="margin-top:14px">Convergence check</h3>
       <table class="read" id="o-conv"></table>
-      <p class="note">Halving $h$ should divide the error by about $2^4=16$: this is the fourth-order signature of RK4. A ratio far from 16 indicates an implementation error, which is how GenAI-generated solvers are screened.</p>
+      <p class="note">Halving $h$ should divide the error by about $2^4=16$, the fourth-order signature of RK4. A ratio far from 16 points to an implementation error, which is how GenAI-generated solvers are screened: a plausible-looking curve alone proves nothing.</p>
       <details class="matlab"><summary>MATLAB reference script (ode45)</summary><pre>zeta = 0.2; wn = 2; y0 = 1; v0 = 0; T = 10;
 f = @(t,x) [x(2); -2*zeta*wn*x(2) - wn^2*x(1)];
 opts = odeset('RelTol',1e-10,'AbsTol',1e-12);

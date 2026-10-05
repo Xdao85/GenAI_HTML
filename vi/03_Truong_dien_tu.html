@@ -115,23 +115,23 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Học phần 3 · Trường điện từ</span>
   <h1>Điện tích điểm, nguyên lý chồng chất và sóng tại mặt phân cách</h1>
-  <p class="lead">Trang này bao gồm các bài toán chuẩn EMF-E, EMF-M và EMF-C. Bắt đầu từ trường của một điện tích điểm, sau đó xây dựng trường của nhiều điện tích bằng nguyên lý chồng chất, kèm đường sức và mặt đẳng thế. Cuối cùng là mô phỏng sai phân hữu hạn miền thời gian (FDTD) một chiều cho một xung tới đập vào lớp điện môi. Hệ số phản xạ và hệ số truyền đo được từ mô phỏng được kiểm chứng với công thức Fresnel.</p>
+  <p class="lead">Một điện tích điểm tạo ra điện trường quanh nó (EMF-E); nhiều điện tích kết hợp theo nguyên lý chồng chất, cho ta bức tranh đường sức và mặt đẳng thế (EMF-M); cuối cùng, mô phỏng sai phân hữu hạn miền thời gian (FDTD) một chiều cho một xung đi tới lớp điện môi, và hệ số phản xạ, hệ số truyền đo được được kiểm chứng với công thức Fresnel (EMF-C).</p>
   <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (bản đồ trường, hoạt ảnh)</span><span>④ Mô phỏng (Yee/FDTD)</span><span>⑤ Đánh giá (tự chấm)</span></div>
   <div class="grid g3" style="margin-top:18px">
-    <div class="card"><div class="kicker">Mục tiêu 1</div>Áp dụng định luật Coulomb dạng vectơ và tính $\mathbf{E}$ của một điện tích điểm.</div>
+    <div class="card"><div class="kicker">Mục tiêu 1</div>Dùng định luật Coulomb dạng vectơ để xác định độ lớn và hướng của $\mathbf{E}$ do một điện tích điểm gây ra.</div>
     <div class="card"><div class="kicker">Mục tiêu 2</div>Cộng trường của nhiều điện tích và liên hệ đường sức với mặt đẳng thế qua $\mathbf{E}=-\nabla V$.</div>
-    <div class="card"><div class="kicker">Mục tiêu 3</div>Dự đoán $\Gamma$ và $\tau$ tại biên điện môi và kiểm chứng bằng mô phỏng FDTD.</div>
+    <div class="card"><div class="kicker">Mục tiêu 3</div>Dự đoán $\Gamma$ và $\tau$ tại biên điện môi và xác nhận lại bằng mô phỏng FDTD.</div>
   </div>
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · EMF-E</span><h2>Định luật Coulomb và trường của điện tích điểm</h2><p class="lead">Điện tích $q$ tạo ra trường điện hướng xuyên tâm ra xa nó (hoặc hướng vào nó nếu $q<0$). Cường độ trường giảm theo $1/R^2$. Một điện tích thử $q'$ đặt trong trường này chịu lực $\mathbf{F}=q'\mathbf{E}$.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Mức E · EMF-E</span><h2>Định luật Coulomb và trường của điện tích điểm</h2><p class="lead">Điện tích $q$ làm mọi điện tích khác đưa lại gần bị đẩy hoặc hút. Cường độ điện trường $\mathbf{E}$ mô tả ảnh hưởng đó tại từng điểm. Nó hướng xuyên tâm ra xa $q$ (hướng vào nếu $q<0$) và giảm theo $1/R^2$.<br>Điện trường và lực là hai khái niệm khác nhau: điện trường tồn tại tại một điểm dù có điện tích ở đó hay không, còn lực $\mathbf{F}=q'\mathbf{E}$ chỉ xuất hiện khi đặt điện tích thử $q'$ vào, và đổi chiều nếu $q'<0$.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g2">
-      <div class="card"><h3>Định luật Coulomb</h3><div class="eq">$$\mathbf{F}_{21}=\hat{\mathbf{R}}_{12}\,\frac{q_1q_2}{4\pi\varepsilon R_{12}^2}$$</div><p class="note">Lực do $q_1$ tác dụng lên $q_2$. $\hat{\mathbf{R}}_{12}$ hướng từ $q_1$ đến $q_2$.</p></div>
-      <div class="card"><h3>Cường độ trường điện</h3><div class="eq">$$\mathbf{E}=\hat{\mathbf{R}}\,\frac{q}{4\pi\varepsilon R^2}\quad(\mathrm{V/m})$$</div><p class="note">Trường được định nghĩa là lực tác dụng lên một đơn vị điện tích thử, $\mathbf{E}=\mathbf{F}/q'$.</p></div>
-      <div class="card"><h3>Dạng vectơ</h3><div class="eq">$$\mathbf{E}(\mathbf{R})=\frac{q\,(\mathbf{R}-\mathbf{R}_1)}{4\pi\varepsilon|\mathbf{R}-\mathbf{R}_1|^3}$$</div><p class="note">Dùng dạng này khi điện tích không nằm ở gốc tọa độ.</p></div>
-      <div class="card"><h3>Ví dụ minh họa</h3><p>Xét $q=2$ nC trong không khí. Tại $R=0.3$ m, cường độ trường là $|\mathbf{E}|=\dfrac{9\times10^{9}\cdot2\times10^{-9}}{0.09}=200$ V/m. Điện tích thử $q'=-1$ nC đặt tại đó chịu lực $0.2\ \mu$N, hướng về phía $q$.</p></div>
+      <div class="card"><h3>Định luật Coulomb</h3><div class="eq">$$\mathbf{F}_{21}=\hat{\mathbf{R}}_{12}\,\frac{q_1q_2}{4\pi\varepsilon R_{12}^2}$$</div><p class="note">Lực do $q_1$ tác dụng lên $q_2$; $\hat{\mathbf{R}}_{12}$ hướng từ $q_1$ đến $q_2$. Hai điện tích cùng dấu ($q_1q_2&gt;0$) đẩy nhau, trái dấu hút nhau.</p></div>
+      <div class="card"><h3>Cường độ trường điện</h3><div class="eq">$$\mathbf{E}=\hat{\mathbf{R}}\,\frac{q}{4\pi\varepsilon R^2}\quad(\mathrm{V/m})$$</div><p class="note">Lực tác dụng lên một đơn vị điện tích thử, $\mathbf{E}=\mathbf{F}/q'$. Tăng $R$ gấp đôi thì cường độ chỉ còn một phần tư.</p></div>
+      <div class="card"><h3>Dạng vectơ</h3><div class="eq">$$\mathbf{E}(\mathbf{R})=\frac{q\,(\mathbf{R}-\mathbf{R}_1)}{4\pi\varepsilon|\mathbf{R}-\mathbf{R}_1|^3}$$</div><p class="note">Dùng dạng này khi điện tích nằm tại $\mathbf{R}_1$ thay vì gốc tọa độ. Tử số cho hướng; lũy thừa bậc ba ở mẫu để lại độ lớn tỉ lệ $1/R^2$.</p></div>
+      <div class="card"><h3>Ví dụ minh họa</h3><p>Xét $q=2$ nC trong không khí. Tại $R=0.3$ m, cường độ trường là $|\mathbf{E}|=\dfrac{9\times10^{9}\cdot2\times10^{-9}}{0.09}=200$ V/m. Điện tích thử $q'=-1$ nC đặt tại đó chịu lực $0.2\ \mu$N. Vì $q'&lt;0$, lực hướng về phía $q$, ngược chiều $\mathbf{E}$.</p></div>
     </div>
     <div class="card white"><h3>Trường của điện tích điểm dương và âm</h3>
       <svg viewBox="0 0 360 230" width="100%" aria-label="Đường sức xuyên tâm của các điện tích điểm">
@@ -143,12 +143,12 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <text x="95" y="220" text-anchor="middle" font-size="12" fill="#334155">q &gt; 0: E hướng ra ngoài</text>
         <text x="265" y="220" text-anchor="middle" font-size="12" fill="#334155">q &lt; 0: E hướng vào trong</text>
       </svg>
-      <p class="note">Mật độ đường sức tỉ lệ với $|\mathbf{E}|$. Số đường sức đi qua một mặt cầu là như nhau ở mọi bán kính, trong khi diện tích mặt cầu tăng theo $R^2$; đó là nguồn gốc của định luật nghịch đảo bình phương.</p></div>
+      <p class="note">Mật độ đường sức thể hiện $|\mathbf{E}|$. Số đường sức xuyên qua mặt cầu bao quanh điện tích như nhau ở mọi bán kính, trong khi diện tích mặt cầu tăng theo $R^2$. Sự loãng dần đó chính là định luật nghịch đảo bình phương.</p></div>
   </div>
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · EMF-M</span><h2>Đường sức và mặt đẳng thế của các điện tích điểm</h2><p class="lead">Kéo các điện tích hoặc điểm đo $P$. Nền hiển thị điện thế $V$ (hồng: dương, xanh: âm), các đường cong trắng là đường sức xuất phát từ các điện tích dương. Trường tổng tại $P$ là tổng vectơ của trường do từng điện tích gây ra.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Mức M · EMF-M</span><h2>Đường sức và mặt đẳng thế của các điện tích điểm</h2><p class="lead">Điện trường tổng tại mọi điểm là tổng vectơ các trường Coulomb của từng điện tích. Hãy kéo các điện tích hoặc điểm đo $P$. Nền hiển thị điện thế $V$ (hồng: dương, xanh: âm); các đường cong trắng là đường sức xuất phát từ các điện tích dương. So sánh lưỡng cực với hai điện tích cùng dấu: giữa hai điện tích cùng dấu, các trường triệt tiêu nhau tại một điểm không. Thay đổi $q$ chỉ đổi độ lớn, không đổi hình dạng trường.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="fm" data-h="430" style="cursor:pointer"></canvas></div>
@@ -169,14 +169,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>$V(P)$</td><td id="sp-V"></td></tr>
       </table>
       <div id="sp-verdict" class="verdict"></div>
-      <p class="note">Hai cách tính độc lập — tổng giải tích của $\mathbf{E}$ và gradient số của $V$ — phải cho cùng kết quả. Đây là phép kiểm tra nhất quán $\mathbf{E}=-\nabla V$. Đường sức luôn cắt mặt đẳng thế theo góc vuông.</p>
+      <p class="note">Tổng giải tích của $\mathbf{E}$ và gradient số của $V$ cho cùng kết quả, vì $\mathbf{E}=-\nabla V$: điện trường hướng theo chiều điện thế giảm nhanh nhất. Dọc theo mặt đẳng thế, $V$ không đổi nên $\mathbf{E}$ không có thành phần theo phương đó; vì vậy đường sức luôn cắt mặt đẳng thế theo góc vuông.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Mức C · EMF-C</span><h2>FDTD 1D: xung tới mặt phân cách điện môi</h2>
-    <p class="lead">Một xung Gauss truyền trong không khí ($z&lt;z_i$) và gặp lớp điện môi không tổn hao có hằng số điện môi tương đối $\varepsilon_r$ ($z&gt;z_i$). Các phương trình rota Maxwell được rời rạc hóa trên lưới Yee so le với số Courant bằng 1; các xung tới, phản xạ và truyền qua được ghi lại tại hai điểm đo. Các hệ số đo được từ các bản ghi này được so sánh với công thức Fresnel.</p></div>
+    <p class="lead">Khi sóng gặp một môi trường mới, một phần bị phản xạ, phần còn lại truyền tiếp. Xung Gauss truyền trong không khí ($z&lt;z_i$) tới lớp điện môi không tổn hao có hằng số điện môi tương đối $\varepsilon_r$ ($z&gt;z_i$). FDTD giải các phương trình rota Maxwell theo bước thời gian trên lưới Yee so le (số Courant bằng 1); hai điểm đo ghi xung tới, phản xạ và truyền qua để đo $\Gamma$ và $\tau$.<br>Tăng $\varepsilon_r$: xung phản xạ lớn dần và bị đảo dấu, còn xung truyền qua chậm lại và ngắn lại. Hiện tượng này chi phối phản xạ tại đế mạch siêu cao tần, vỏ chụp anten (radome) và lớp phủ quang học.</p></div>
     <span class="tag v">Kiểm chứng: giải tích ($\varepsilon=2\%$) + MATLAB</span></div>
   <div class="sim">
     <div>
@@ -201,7 +201,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Kiểm tra năng lượng $\Gamma^2+n_2\tau^2$</td><td id="f-en"></td></tr>
       </table>
       <div id="f-verdict" class="verdict"></div>
-      <p class="note">Xung hẹp trong điện môi đậm đặc chỉ được biểu diễn bởi vài ô lưới, nên tán sắc số làm méo xung và giá trị $\tau$ đo được bị lệch. Hãy giảm $w$ khi $\varepsilon_r=12$ để thấy phép kiểm chứng thất bại. Đây là lý do quy trình cho phép $\varepsilon=2\%$ đối với FDTD.</p>
+      <p class="note">Với $n_2&gt;1$, $\Gamma&lt;0$ (phản xạ đảo dấu) và $\tau&lt;1$, nhưng năng lượng vẫn bảo toàn: $\Gamma^2+n_2\tau^2=1$. Trong môi trường 2 xung ngắn đi $n_2$ lần, nên xung hẹp chỉ trải trên vài ô lưới; tán sắc số làm méo xung và $\tau$ đo được bị lệch. Hãy giảm $w$ khi $\varepsilon_r=12$ để thấy phép kiểm chứng thất bại; đó là lý do FDTD được phép sai số $\varepsilon=2\%$.</p>
       <details class="matlab"><summary>Script MATLAB tham chiếu (cùng sơ đồ Yee)</summary><pre>N = 1400; zi = 700; src = 150; pA = 420; pB = 950;
 er2 = 4; w = 25; t0 = 4*w; T = 2400; imp0 = 377;
 ez = zeros(1,N); hy = zeros(1,N); eps = ones(1,N);
@@ -488,7 +488,7 @@ quiz('quizBox', 'score', [
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';
   const STUDY = 'paper2-html-demos', DEMO = '03_EMF', VERSION = 'log-v1-vi', LANG = 'vi';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';

@@ -115,7 +115,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel hero" id="overview">
   <span class="tag">Học phần 6 · Xử lý số tín hiệu</span>
   <h1>DFT, rò rỉ phổ và thiết kế bộ lọc FIR</h1>
-  <p class="lead">Ba bài chuẩn DSP-E, DSP-M và DSP-C được trình bày trên cùng một trang. Trước hết định nghĩa DFT và lưới tần số của nó, sau đó cho thấy việc chọn cửa sổ là sự đánh đổi giữa độ rộng búp chính và mức rò rỉ qua búp phụ. Cuối cùng, thiết kế bộ lọc FIR theo phương pháp sinc có cửa sổ và áp dụng cho tín hiệu hai thành phần có nhiễu. Hệ số khuếch đại đo được được kiểm chứng với đáp ứng tần số giải tích.</p>
+  <p class="lead">Ba bài DSP-E, DSP-M và DSP-C bao quát phần cốt lõi của mọi máy phân tích phổ: DFT biến một đoạn ghi hữu hạn thành các bin tần số, cửa sổ quyết định một thành phần yếu có còn nhìn thấy được bên cạnh thành phần mạnh hay không, và việc nhân cửa sổ với đáp ứng xung lý tưởng cho ta một bộ lọc FIR, với hệ số khuếch đại đo được được kiểm chứng theo lý thuyết.</p>
   <div class="layers"><span>① Trình bày</span><span>② Toán học (MathJax)</span><span>③ Trực quan hóa (phổ theo dB)</span><span>④ Mô phỏng (FFT, lọc FIR)</span><span>⑤ Đánh giá (tự chấm)</span></div>
   <div class="grid g3" style="margin-top:18px">
     <div class="card"><div class="kicker">Mục tiêu 1</div>Liên hệ chỉ số bin DFT $k$ với tần số $f_k=kf_s/N$.</div>
@@ -125,13 +125,13 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="easy">
-  <div class="sechead"><div><span class="tag e">Mức E · DSP-E</span><h2>DFT và độ phân giải tần số</h2><p class="lead">DFT $N$ điểm lấy mẫu phổ của một đoạn tín hiệu hữu hạn tại $N$ tần số cách đều nhau. Khoảng cách $\Delta f=f_s/N=1/T$ chỉ phụ thuộc vào độ dài đoạn ghi, không phụ thuộc vào tần số lấy mẫu.</p></div></div>
+  <div class="sechead"><div><span class="tag e">Mức E · DSP-E</span><h2>DFT và độ phân giải tần số</h2><p class="lead">Bin $k$ so sánh đoạn ghi với một sóng sin thực hiện đúng $k$ chu kỳ, vì vậy DFT $N$ điểm lấy mẫu phổ tại $N$ tần số cách đều nhau. Khoảng cách $\Delta f=f_s/N=1/T$ chỉ phụ thuộc vào thời lượng đoạn ghi $T$: chỉ đoạn ghi dài hơn mới cho bin mịn hơn. Chèn không chỉ nội suy chính phổ đó trên lưới dày hơn, chứ không cải thiện độ phân giải.</p></div></div>
   <div class="grid g2" style="margin-top:16px">
     <div class="grid g2">
       <div class="card"><h3>Định nghĩa</h3><div class="eq">$$X[k]=\sum_{n=0}^{N-1}x[n]\,e^{-j2\pi kn/N}$$</div></div>
       <div class="card"><h3>Tần số của các bin</h3><div class="eq">$$f_k=k\frac{f_s}{N},\quad \Delta f=\frac{f_s}{N}=\frac1T$$</div></div>
-      <div class="card"><h3>Tính đối xứng ($x$ thực)</h3><div class="eq">$$X[N-k]=X^*[k]$$</div><p class="note">Chỉ các bin $0\dots N/2$ mang thông tin độc lập.</p></div>
-      <div class="card"><h3>Ví dụ</h3><p>Với $f_s=8$ kHz và $N=8$ ta có $\Delta f=1$ kHz. Tín hiệu $x[n]=\cos(2\pi\cdot2n/8)+\tfrac12\cos(2\pi\cdot3n/8)$ chỉ có năng lượng tại bin 2 và 3 (cùng các bin ảnh đối xứng 6 và 5), với $|X[2]|=4$ và $|X[3]|=2$.</p></div>
+      <div class="card"><h3>Tính đối xứng ($x$ thực)</h3><div class="eq">$$X[N-k]=X^*[k]$$</div><p class="note">Các bin phía trên là ảnh đối xứng của các bin phía dưới, nên chỉ các bin $0\dots N/2$ (từ DC đến $f_s/2$) mang thông tin độc lập.</p></div>
+      <div class="card"><h3>Ví dụ</h3><p>Với $f_s=8$ kHz và $N=8$ ta có $\Delta f=1$ kHz. Tín hiệu $x[n]=\cos(2\pi\cdot2n/8)+\tfrac12\cos(2\pi\cdot3n/8)$ thực hiện đúng 2 và 3 chu kỳ, nên năng lượng chỉ xuất hiện tại bin 2 và 3 (cùng các bin ảnh 6 và 5). Biên độ $A$ cho $|X[k]|=AN/2$: $|X[2]|=4$, $|X[3]|=2$.</p></div>
     </div>
     <div class="card white"><h3>Tín hiệu ví dụ và DFT 8 điểm của nó</h3>
       <div class="canvas-wrap"><canvas id="d1" data-h="150"></canvas></div>
@@ -140,7 +140,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </section>
 
 <section class="panel" id="medium">
-  <div class="sechead"><div><span class="tag m">Mức M · DSP-M</span><h2>Cửa sổ hóa và rò rỉ phổ</h2><p class="lead">Khi một thành phần sin không chứa số nguyên chu kỳ trong đoạn ghi, năng lượng của nó rò rỉ sang mọi bin. Khi đó, một thành phần thứ hai yếu hơn có thể bị che lấp dưới các búp phụ của thành phần mạnh. Các cửa sổ có biên giảm dần làm hạ thấp búp phụ, nhưng phải trả giá bằng búp chính rộng hơn.</p></div></div>
+  <div class="sechead"><div><span class="tag m">Mức M · DSP-M</span><h2>Cửa sổ hóa và rò rỉ phổ</h2><p class="lead">DFT coi đoạn ghi là tuần hoàn. Nếu một thành phần sin không chứa số nguyên chu kỳ, hai đầu đoạn ghi không khớp nhau và năng lượng của nó rò rỉ sang mọi bin; một thành phần thứ hai yếu hơn có thể bị che lấp dưới các búp phụ của thành phần mạnh. Các cửa sổ có biên giảm dần làm hạ thấp búp phụ, nhưng búp chính rộng hơn làm nhòe các thành phần nằm gần nhau.<br><br>Với thành phần 1 ở 16,5 bin, hãy chuyển từ cửa sổ chữ nhật sang Blackman và quan sát thành phần 2 nổi lên; đưa thành phần 1 về bin nguyên thì rò rỉ biến mất. Đây chính là cách phát hiện một vạch lỗi nhỏ bên cạnh đỉnh tốc độ quay của máy.</p></div></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="lk" data-h="320"></canvas></div>
@@ -161,14 +161,14 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Thành phần 2 có nổi trên mức rò rỉ?</td><td id="w-vis"></td></tr>
       </table>
       <div id="w-verdict" class="verdict"></div>
-      <p class="note">Giá trị đo được lấy từ FFT có chèn không của chính hàm cửa sổ. Lý thuyết: chữ nhật −13,3 dB / 2 bin, Hann −31,5 dB / 4 bin, Hamming −42,7 dB / 4 bin, Blackman −58,1 dB / 6 bin.</p>
+      <p class="note">Giá trị đo: FFT có chèn không của hàm cửa sổ. Lý thuyết: chữ nhật −13,3 dB / 2 bin, Hann −31,5 dB / 4 bin, Hamming −42,7 dB / 4 bin, Blackman −58,1 dB / 6 bin. Hãy chọn cửa sổ có búp phụ thấp hơn chênh lệch mức cần quan sát.</p>
     </div>
   </div>
 </section>
 
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Mức C · DSP-C</span><h2>Thiết kế FIR bằng sinc có cửa sổ và lọc tín hiệu</h2>
-    <p class="lead">Đáp ứng xung thông thấp lý tưởng $h_d[n]=2f_c/f_s\,\mathrm{sinc}\!\left(2f_c(n-\tfrac{M-1}{2})/f_s\right)$ được cắt cụt còn $M$ hệ số và nhân với một cửa sổ. Bộ lọc thông cao nhận được bằng phép đảo phổ. Bộ lọc được áp dụng cho $x[n]=\sin(2\pi50n/f_s)+0.5\sin(2\pi300n/f_s)+$ nhiễu, với $f_s=1$ kHz.</p></div>
+    <p class="lead">Đáp ứng xung thông thấp lý tưởng $h_d[n]=2f_c/f_s\,\mathrm{sinc}\!\left(2f_c(n-\tfrac{M-1}{2})/f_s\right)$ dài vô hạn, nên được cắt cụt còn $M$ hệ số và nhân với một cửa sổ: búp phụ thấp hơn cho dải chắn sâu hơn, búp chính rộng hơn cho dải chuyển tiếp rộng hơn. Bộ lọc thông cao nhận được bằng phép đảo phổ. Bộ lọc được áp dụng cho $x[n]=\sin(2\pi50n/f_s)+0.5\sin(2\pi300n/f_s)+$ nhiễu, với $f_s=1$ kHz. Tăng $M$ để dải chuyển tiếp dốc hơn (đồng thời trễ dài hơn), hoặc dịch $f_c$ để xem thành phần nào được giữ lại.</p></div>
     <span class="tag v">Kiểm chứng: giải tích + MATLAB fir1/freqz</span></div>
   <div class="sim">
     <div>
@@ -192,7 +192,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
         <tr><td>Hệ số khuếch đại dải chắn lớn nhất ngoài $f_c\pm$dải chuyển tiếp</td><td id="sb"></td></tr>
       </table>
       <div id="f-verdict" class="verdict"></div>
-      <p class="note">Hệ số khuếch đại đo được lấy từ DFT của đầu ra bộ lọc ở trạng thái xác lập khi chỉ có từng thành phần riêng lẻ. Hệ số khuếch đại giải tích được tính theo $|H(e^{j\omega})|=\left|\sum_n h[n]e^{-j\omega n}\right|$.</p>
+      <p class="note">Đo được: DFT của đầu ra xác lập với từng thành phần riêng lẻ; giải tích: $|H(e^{j\omega})|=\left|\sum_n h[n]e^{-j\omega n}\right|$. Tại $f_c$ hệ số khuếch đại vào khoảng −6 dB, không phải −3 dB. Các hệ số đối xứng làm mọi tần số bị trễ như nhau $(M-1)/2$ mẫu, nên dạng sóng được giữ nguyên.</p>
       <details class="matlab"><summary>Script MATLAB tham chiếu</summary><pre>fs = 1000; fc = 150; M = 61;
 h = fir1(M-1, fc/(fs/2), 'low', hamming(M));
 [H, f] = freqz(h, 1, 4096, fs);
@@ -440,7 +440,7 @@ quiz('quizBox', 'score', [
 (function () {
   /* ===================== CONFIGURATION ===================== */
   const LOG_ENDPOINT = (window.P2_CONFIG || {}).LOG_ENDPOINT || '';           // Web-App URL of collector.gs; empty = store on device only
-  const SURVEY_URL   = '../survey.html?role=student&lang=vi';   // mã ẩn danh được tự gắn thêm
+  const SURVEY_URL   = '../survey.html?role=student&lang=vi';
   const STUDY = 'paper2-html-demos', DEMO = '06_DSP', VERSION = 'log-v1-vi', LANG = 'vi';
   /* ========================================================= */
   const K_CONSENT = 'p2_log_consent', K_CODE = 'p2_anon_code', K_LOGS = 'p2_logs';
