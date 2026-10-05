@@ -30,6 +30,7 @@ a.big.l{background:linear-gradient(135deg,#0369a1,#0f766e);box-shadow:0 10px 30p
 a.big span{display:block;font-size:26px;font-weight:800}
 a.big small{display:block;font-size:17px;opacity:.92;margin-top:6px}
 .note{background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:14px 18px;font-size:17px;color:#713f12;margin-top:22px}
+.note{background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:14px 18px;font-size:17px;color:#713f12;margin-top:22px}.featured{margin:34px 0 10px;border:1px solid #c7d2fe;border-radius:24px;padding:28px;background:linear-gradient(135deg,#eef2ff,#f8fafc)}.featured .tag{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#4338ca;background:#e0e7ff;padding:5px 10px;border-radius:999px}.featured h2{margin:10px 0 8px;font-size:30px}.featured p{margin:0 0 16px;color:var(--ink2)}.featured-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:stretch}.featured-main{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}.featured-main h3{margin:0 0 8px;font-size:23px}.featured-main p{font-size:17px;margin:0 0 14px}.featured-main a{display:inline-block;text-decoration:none;font-weight:700;color:#fff;background:var(--accent);padding:10px 16px;border-radius:10px}.featured-points{display:grid;gap:10px}.featured-point{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}.featured-point b{display:block;font-size:15px;color:var(--accent2);margin-bottom:2px}@media(max-width:760px){.featured-grid{grid-template-columns:1fr}.featured h2{font-size:26px}}
 .code{font-family:Consolas,monospace;font-weight:700;letter-spacing:.08em;color:var(--accent);background:#eef2ff;padding:2px 8px;border-radius:6px}
 footer{max-width:1180px;margin:0 auto;padding:0 24px 40px;color:var(--mute);font-size:15px}
 .top{display:flex;justify-content:flex-end;max-width:1180px;margin:0 auto;padding:18px 24px 0}
@@ -47,6 +48,8 @@ html.L-en .vi, html.L-vi .en{display:none}
   <p class="lead">
     Học liệu HTML tương tác được xây dựng nhằm hỗ trợ hoạt động dạy và học thông qua môi trường học tập trực tuyến. Mỗi học phần được thiết kế dưới dạng một trang web độc lập, tích hợp các nội dung gồm lý thuyết, công thức, hình ảnh minh họa, mô phỏng tương tác và câu hỏi trắc nghiệm tự chấm.
 Người học có thể chủ động thay đổi các tham số đầu vào, quan sát sự thay đổi của kết quả mô phỏng và đối chiếu với lời giải giải tích để hiểu rõ hơn các nguyên lý kỹ thuật. Học liệu không yêu cầu cài đặt phần mềm, có thể truy cập trực tiếp bằng trình duyệt trên máy tính hoặc điện thoại.
+    Học liệu HTML tương tác được phát triển để minh họa cách xây dựng nội dung giảng dạy kỹ thuật bằng HTML5 và GenAI. Sáu học phần được lựa chọn như các <strong>trang demo độc lập</strong>, mỗi trang tập trung thể hiện một nhóm nội dung, mô phỏng và hoạt động học tập tiêu biểu.
+Trong mỗi demo, người học có thể thay đổi tham số, quan sát kết quả mô phỏng và đối chiếu với nghiệm giải tích hoặc kết quả tham chiếu. Nội dung có thể truy cập trực tiếp bằng trình duyệt mà không cần cài đặt phần mềm chuyên dụng.
   </p>
 
   <div class="steps">
@@ -59,6 +62,7 @@ Người học có thể chủ động thay đổi các tham số đầu vào, q
     Mục đích khảo sát: Thu thập ý kiến của sinh viên và giảng viên về tính dễ sử dụng, chất lượng nội dung, hiệu quả của mô phỏng tương tác và khả năng hỗ trợ hoạt động dạy và học của học liệu. Các ý kiến đóng góp sẽ là cơ sở để đánh giá và cải tiến học liệu trong thời gian tới.
   </p>
   <h2>Sáu trang học tập</h2>
+  <h2>Sáu học phần demo</h2>
   <div class="grid">
     <a class="card" href="vi/01_Toan_ky_thuat.html"><div class="k">Học phần 1 · MAT</div><h3>Toán kỹ thuật</h3><p>Tích vô hướng, tích có hướng · đại số vectơ 3D · giải PTVP bằng RK4 so với nghiệm giải tích</p></a>
     <a class="card" href="vi/02_Ly_thuyet_mach.html"><div class="k">Học phần 2 · CIR</div><h3>Lý thuyết mạch</h3><p>Trở kháng · giản đồ phasor và cộng hưởng RLC · quá độ RLC với đầu vào bậc thang</p></a>
@@ -67,6 +71,8 @@ Người học có thể chủ động thay đổi các tham số đầu vào, q
     <a class="card" href="vi/05_Dieu_khien_tu_dong.html"><div class="k">Học phần 5 · CTL</div><h3>Điều khiển tự động</h3><p>Điểm cực và tính ổn định · chỉ tiêu hệ bậc hai · điều khiển PID động cơ DC</p></a>
     <a class="card" href="vi/06_Xu_ly_so_tin_hieu.html"><div class="k">Học phần 6 · DSP</div><h3>Xử lý số tín hiệu</h3><p>Độ phân giải DFT · cửa sổ và rò rỉ phổ · thiết kế bộ lọc FIR bằng sinc có cửa sổ</p></a>
   </div>
+
+  <section class="featured"><span class="tag">Học phần hoàn chỉnh · Complete course</span><h2>Trường điện từ — ví dụ triển khai đầy đủ</h2><p>Trong khi sáu trang trên đóng vai trò là các demo đại diện, học phần <strong>Trường điện từ</strong> được phát triển ở mức một học phần hoàn chỉnh, với cấu trúc nội dung xuyên suốt từ lý thuyết đến mô phỏng và hoạt động học tập.</p><div class="featured-grid"><div class="featured-main"><h3>Electromagnetics</h3><p>Phiên bản tiếng Anh của học phần hoàn chỉnh được triển khai như một môi trường học tập web tích hợp, minh họa khả năng kết hợp nội dung lý thuyết, trực quan hóa, mô phỏng và hoạt động học tập trong cùng một môi trường.</p><a href="https://xdao85.github.io/EM" target="_blank" rel="noopener">Mở học phần Electromagnetics →</a></div><div class="featured-points"><div class="featured-point"><b>Theory</b> Nội dung lý thuyết và công thức toán học được trình bày trực tiếp trên web.</div><div class="featured-point"><b>Visualization</b> Hình ảnh, đồ thị và biểu diễn trực quan được tích hợp trong từng chủ đề.</div><div class="featured-point"><b>Simulation</b> Mô phỏng tương tác cho phép thay đổi tham số và quan sát kết quả ngay trên trình duyệt.</div><div class="featured-point"><b>Learning activities</b> Câu hỏi, bài tập và các thành phần tương tác được tổ chức trong cùng một môi trường.</div></div></div></section>
 
   <h2>Phiếu khảo sát</h2>
   <div class="survey">
@@ -83,6 +89,8 @@ Người học có thể chủ động thay đổi các tham số đầu vào, q
   <p class="lead">
     These interactive HTML learning materials support teaching and learning in an online environment. Each course is designed as a self-contained web page that integrates theory, equations, illustrations, interactive simulations and self-scored multiple-choice questions.
 Learners can change input parameters, observe how the simulation results respond and compare them with the analytical solution to gain a deeper understanding of engineering principles. No software installation is required; the materials open directly in a browser on a computer or a phone.
+    These interactive HTML learning materials demonstrate a GenAI-assisted approach to developing engineering education with HTML5. Six courses are presented as <strong>independent demonstration pages</strong>, each illustrating a representative set of content, simulations and learning activities.
+Within each demo, learners can change parameters, observe simulation results and compare them with analytical or reference solutions. The materials are accessed directly through a web browser without requiring specialized software installation.
   </p>
 
   <div class="steps">
@@ -95,6 +103,7 @@ Learners can change input parameters, observe how the simulation results respond
     Purpose of the survey: to collect the views of students and lecturers on the usability, content quality, effectiveness of the interactive simulations and support for teaching and learning provided by the materials. Your feedback will be used to evaluate and improve the materials.
   </p>
   <h2>Six learning pages</h2>
+  <h2>Six demonstration courses</h2>
   <div class="grid">
     <a class="card" href="en/01_Engineering_Mathematics.html"><div class="k">Course 1 · MAT</div><h3>Engineering Mathematics</h3><p>Dot and cross products · 3D vector algebra · RK4 ODE solver vs closed-form solution</p></a>
     <a class="card" href="en/02_Circuit_Analysis.html"><div class="k">Course 2 · CIR</div><h3>Circuit Analysis</h3><p>Impedance · RLC phasor diagram and resonance · RLC step transient</p></a>
@@ -103,6 +112,8 @@ Learners can change input parameters, observe how the simulation results respond
     <a class="card" href="en/05_Control_Systems.html"><div class="k">Course 5 · CTL</div><h3>Control Systems</h3><p>Poles and stability · second-order specifications · PID control of a DC motor</p></a>
     <a class="card" href="en/06_Digital_Signal_Processing.html"><div class="k">Course 6 · DSP</div><h3>Digital Signal Processing</h3><p>DFT resolution · windowing and leakage · windowed-sinc FIR design</p></a>
   </div>
+
+  <section class="featured"><span class="tag">Complete course · Full implementation</span><h2>Electromagnetics — a complete-course example</h2><p>The six pages above serve as representative demonstrations. <strong>Electromagnetics</strong> is developed further as a complete course, providing an end-to-end example that integrates theory, visualization, simulation and learning activities within one web environment.</p><div class="featured-grid"><div class="featured-main"><h3>Electromagnetics</h3><p>The complete course demonstrates how web-based learning materials can integrate theory, visualization, simulation and learning activities within a single environment.</p><a href="https://xdao85.github.io/EM" target="_blank" rel="noopener">Open the Electromagnetics course →</a></div><div class="featured-points"><div class="featured-point"><b>Theory</b> Mathematical concepts and equations are presented directly within the web environment.</div><div class="featured-point"><b>Visualization</b> Figures, graphs and visual representations are integrated with the corresponding topics.</div><div class="featured-point"><b>Simulation</b> Interactive simulations allow learners to modify parameters and observe results in the browser.</div><div class="featured-point"><b>Learning activities</b> Questions, exercises and interactive elements are organized within the same course environment.</div></div></div></section>
 
   <h2>Questionnaires</h2>
   <div class="survey">
