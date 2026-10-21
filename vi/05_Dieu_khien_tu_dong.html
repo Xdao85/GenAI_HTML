@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Demo tương tác Điều khiển tự động: điểm cực và tính ổn định, chỉ tiêu hệ bậc hai, điều khiển PID động cơ DC.">
+<meta name="theme-color" content="#4338ca">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Điều khiển tự động — Cực, đáp ứng bước và điều khiển PID (Demo tương tác)">
+<meta property="og:description" content="Demo tương tác Điều khiển tự động: điểm cực và tính ổn định, chỉ tiêu hệ bậc hai, điều khiển PID động cơ DC.">
+<link rel="icon" href="data:,">
 <title>Điều khiển tự động — Cực, đáp ứng bước và điều khiển PID (Demo tương tác)</title>
 <script>
 window.MathJax = {
@@ -11,7 +17,7 @@ window.MathJax = {
   startup: { typeset: true }
 };
 </script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script id="MathJax-script" async onerror="var w=document.getElementById('mj-warn');if(w)w.hidden=false" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
 :root{
   --bg:#ffffff; --panel:#ffffff; --card:#f8fafc; --line:#e2e8f0; --ink:#0f172a; --ink2:#334155; --mute:#64748b;
@@ -99,11 +105,31 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </style>
 <script src="../config.js"></script>
 <style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
+<style id="ux-polish">
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:#4338ca;color:#fff!important;padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none;transition:top .15s}
+.skip:focus{top:10px}
+:where(a,button,select,input,textarea,summary,[tabindex]):focus-visible{outline:3px solid #4f46e5;outline-offset:2px;border-radius:4px}
+main:focus{outline:none}
+section[id]{scroll-margin-top:84px}
+#mj-warn{margin:12px auto 0;max-width:1220px;padding:10px 16px;border:1px solid #fde68a;background:#fffbeb;color:#713f12;border-radius:12px;font-size:15px}
+#mj-warn[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media print{header.top,.skip,#mj-warn,footer.p2nav{display:none!important}body{background:#fff}.panel,.card{break-inside:avoid;box-shadow:none!important}canvas{max-width:100%}a{color:inherit}}
+/* ux-mobile: keep content inside narrow screens */
+.grid>*,.controls>*,.quiz>*,.sim>*,.qcard,.card,.panel{min-width:0}
+canvas,img,svg{max-width:100%}
+.numrow{flex-wrap:wrap}
+.numrow input{min-width:0}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%}
+table.read{display:block;max-width:100%;overflow-x:auto}
+</style>
 </head>
 <body>
+<a class="skip" href="#main">Chuyển đến nội dung</a>
+<noscript><div id="mj-noscript" style="padding:10px 16px;background:#fffbeb;color:#713f12">Trang tương tác này cần JavaScript. Vui lòng bật JavaScript để chạy các mô phỏng.</div></noscript>
 <header class="top"><div class="in">
   <div class="brand"><div class="dot"></div><span>Điều khiển tự động</span></div>
-  <nav class="links">
+  <nav class="links" aria-label="Các phần của học phần">
     <a href="#overview">Tổng quan</a>
     <a class="e" href="#easy">Cơ bản</a>
     <a class="m" href="#medium">Trung bình</a>
@@ -111,7 +137,8 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
     <a href="#quiz">Trắc nghiệm</a>
   </nav>
 </div></header>
-<main>
+<div id="mj-warn" role="status" hidden>Không tải được công thức (có thể do mất kết nối mạng). Hãy tải lại trang khi có mạng để xem công thức.</div>
+<main id="main" tabindex="-1">
 <section class="panel hero" id="overview">
   <span class="tag">Học phần 5 · Điều khiển tự động</span>
   <h1>Cực, đáp ứng bước và điều khiển PID</h1>
@@ -526,5 +553,16 @@ quiz('quizBox', 'score', [
 </script>
 <!-- ============ end of logger ============ -->
 
+<script>
+(function(){try{var vi=document.documentElement.lang==='vi',p=vi?'Hình minh họa tương tác':'Interactive figure';
+var cs=[].slice.call(document.querySelectorAll('canvas'));
+cs.forEach(function(c){if(c.getAttribute('aria-label'))return;
+var sec=c.closest('section')||document.body,host=c.closest('.card')||sec;
+var h=host.querySelector('h3,h4,.kicker')||sec.querySelector('h2');
+var t=h?h.textContent.replace(/\$/g,'').replace(/\s+/g,' ').trim():'';
+var all=[].slice.call(sec.querySelectorAll('canvas')),n=all.length>1?' ('+(all.indexOf(c)+1)+'/'+all.length+')':'';
+c.setAttribute('role','img');c.setAttribute('aria-label',p+(t?' \u2014 '+t.slice(0,90):'')+n);});
+var s=document.getElementById('score');if(s&&!s.hasAttribute('aria-live'))s.setAttribute('aria-live','polite');}catch(e){}})();
+</script>
 </body>
 </html>
