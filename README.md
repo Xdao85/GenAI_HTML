@@ -105,7 +105,11 @@ images/           workflow figure used in the lecturer questionnaire
 404.html          bilingual "page not found" page for GitHub Pages
 ```
 
+<<<<<<< HEAD
 - **Run locally:** open `index.html` in a browser, or run `python -m http.server` in this folder and visit `http://localhost:8000`. An internet connection is needed to load MathJax (pinned to 3.2.2) on first use; if MathJax cannot load, a notice is shown on the course pages.
+=======
+- **Run locally:** open `index.html` in a browser, or run `python -m http.server` in this folder and visit `http://localhost:8000`. An internet connection is needed to load MathJax and the web font; if MathJax cannot load, a notice is shown on the course pages.
+>>>>>>> a9c3c276dfaba63e365ea78f3b096a3df4992de5
 - **Publish:** GitHub Pages (branch `main`, root folder). `.nojekyll` is already present.
 - **Collect data:** deploy `collector.gs` as a Web App (Execute as *Me*, access *Anyone*) and paste its URL into `ENDPOINT` in `config.js`. Leave it empty to keep answers only in the participant's browser.
 - **Keep the questionnaire stable** while data are being collected so that responses stay comparable.
