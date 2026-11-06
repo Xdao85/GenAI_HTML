@@ -1,5 +1,5 @@
 # Survey on interactive HTML learning materials for six engineering courses
-# Khảo sát học liệu HTML tương tác cho 6 học phần kỹ thuật
+Khảo sát học liệu HTML tương tác cho 6 học phần kỹ thuật
 
 ---
 
@@ -7,7 +7,7 @@
 
 ### About
 
-This repository contains six interactive HTML learning pages for the following courses:
+This repository contains interactive HTML learning pages for six courses, with one page per course in each of English and Vietnamese:
 - Engineering Mathematics
 - Circuit Analysis
 - Electromagnetics
@@ -36,7 +36,7 @@ The results will be used to evaluate and improve the materials. They also inform
 
 ### How to take part
 
-1. Open the home page (`index.html`) and choose the course you study or teach.
+1. Open the home page ([index.html](index.html)) and choose the course you study or teach.
 2. Spend about 20–30 minutes exploring: read the theory, change the simulation parameters, observe the results and try the quiz.
 3. Complete the questionnaire: about 10 minutes for students, 20–30 minutes for lecturers. It is available in Vietnamese, English and both languages.
 
@@ -50,7 +50,7 @@ The results will be used to evaluate and improve the materials. They also inform
 
 ### Giới thiệu
 
-Kho này chứa sáu trang học liệu HTML tương tác dành cho các học phần:
+Kho này chứa học liệu HTML tương tác cho sáu học phần, mỗi học phần có một trang tiếng Anh và một trang tiếng Việt:
 - Toán kỹ thuật
 - Lý thuyết mạch
 - Trường điện từ
@@ -79,7 +79,7 @@ Kết quả khảo sát là cơ sở để đánh giá và cải tiến học li
 
 ### Cách tham gia
 
-1. Mở trang chủ (`index.html`) và chọn học phần bạn đang học hoặc giảng dạy.
+1. Mở trang chủ ([index.html](index.html)) và chọn học phần bạn đang học hoặc giảng dạy.
 2. Dành khoảng 20–30 phút trải nghiệm: đọc lý thuyết, thay đổi tham số mô phỏng, quan sát kết quả và làm câu hỏi trắc nghiệm.
 3. Hoàn thành phiếu khảo sát: khoảng 10 phút với sinh viên, 20–30 phút với giảng viên. Phiếu có tiếng Việt, tiếng Anh và song ngữ.
 
@@ -88,8 +88,6 @@ Kết quả khảo sát là cơ sở để đánh giá và cải tiến học li
 - Khảo sát hoàn toàn **ẩn danh**: không thu thập họ tên, mã sinh viên, email hay địa chỉ IP.
 - Tham gia là **tự nguyện** và **không ảnh hưởng đến điểm học phần**; bạn có thể dừng bất cứ lúc nào.
 - Các trang học liệu chỉ ghi nhật ký sử dụng ẩn danh (thời gian xem, số lần thay đổi tham số, kết quả trắc nghiệm) **khi bạn đồng ý**.
-
----
 
 ---
 
@@ -105,14 +103,10 @@ images/           workflow figure used in the lecturer questionnaire
 404.html          bilingual "page not found" page for GitHub Pages
 ```
 
-<<<<<<< HEAD
-- **Run locally:** open `index.html` in a browser, or run `python -m http.server` in this folder and visit `http://localhost:8000`. An internet connection is needed to load MathJax (pinned to 3.2.2) on first use; if MathJax cannot load, a notice is shown on the course pages.
-=======
 - **Run locally:** open `index.html` in a browser, or run `python -m http.server` in this folder and visit `http://localhost:8000`. An internet connection is needed to load MathJax and the web font; if MathJax cannot load, a notice is shown on the course pages.
->>>>>>> a9c3c276dfaba63e365ea78f3b096a3df4992de5
 - **Publish:** GitHub Pages (branch `main`, root folder). `.nojekyll` is already present.
-- **Collect data:** deploy `collector.gs` as a Web App (Execute as *Me*, access *Anyone*) and paste its URL into `ENDPOINT` in `config.js`. Leave it empty to keep answers only in the participant's browser.
+- **Collect data:** deploy `collector.gs` as a Web App (Execute as *Me*, access *Anyone*) and paste its URL into `ENDPOINT` in `config.js`. The current configuration already contains an ENDPOINT. To store answers and logs only in the participant's browser, set both ENDPOINT and LOG_ENDPOINT to empty strings. An empty LOG_ENDPOINT otherwise falls back to ENDPOINT. Local data are specific to the browser and site origin; survey.html?admin=1 exports only responses stored in that browser, not the Google Sheet.
 - **Keep the questionnaire stable** while data are being collected so that responses stay comparable.
 - **Accessibility:** every course page has a skip link, visible keyboard focus, labelled figures, reduced-motion and print styles.
 
-Tiếng Việt: mở `index.html` bằng trình duyệt hoặc chạy `python -m http.server` trong thư mục này; xuất bản bằng GitHub Pages (nhánh `main`); dán URL Web App của `collector.gs` vào `ENDPOINT` trong `config.js` để thu phiếu; không thay đổi nội dung phiếu khảo sát trong lúc đang thu dữ liệu.
+Tiếng Việt: mở `index.html` bằng trình duyệt hoặc chạy `python -m http.server` trong thư mục này; xuất bản bằng GitHub Pages (nhánh `main`); dán URL Web App của `collector.gs` vào `ENDPOINT` trong `config.js` để thu phiếu (hiện đã có URL được cấu hình); đặt cả `ENDPOINT` và `LOG_ENDPOINT` thành chuỗi rỗng nếu chỉ muốn lưu trên trình duyệt; `survey.html?admin=1` chỉ xuất các câu trả lời lưu trong trình duyệt hiện tại; không thay đổi nội dung phiếu khảo sát trong lúc đang thu dữ liệu.
