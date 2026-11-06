@@ -11,18 +11,31 @@
  */
 const ALLOWED = ['survey_student', 'survey_lecturer', 'log_summary'];
 const MAX_BYTES = 200000;
+const CLOSED = false;   // set true (and redeploy) once data collection has ended
 
 function doPost(e) {
   try {
+    if (CLOSED) return out_('rejected: collection closed');
     const raw = e && e.postData ? e.postData.contents : '';
     if (!raw || raw.length > MAX_BYTES) return out_('rejected: size');
     const msg = JSON.parse(raw);
     if (ALLOWED.indexOf(msg.type) < 0 || typeof msg.data !== 'object') return out_('rejected: type');
-    append_(msg.type, flatten_(msg.data));
+    const row = flatten_(msg.data);
+    if (msg.type !== 'log_summary' && row.response_id && isDuplicate_(msg.type, row.response_id)) return out_('rejected: duplicate');
+    append_(msg.type, row);
     return out_('ok');
   } catch (err) {
     return out_('error: ' + err);
   }
+}
+
+/** true if a row with this response_id already exists in the sheet */
+function isDuplicate_(sheetName, id) {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  if (!sh || sh.getLastRow() < 2) return false;
+  const header = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0], col = header.indexOf('response_id');
+  if (col < 0) return false;
+  return sh.getRange(2, col + 1, sh.getLastRow() - 1, 1).getValues().some(r => String(r[0]) === String(id));
 }
 
 function doGet() { return out_('collector is running'); }

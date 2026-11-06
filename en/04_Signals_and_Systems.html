@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Interactive Signals and Systems demo: time operations, graphical convolution, and sampling with aliasing.">
+<meta name="theme-color" content="#4338ca">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Signals and Systems — Time Operations, Convolution and Sampling (Interactive Demo)">
+<meta property="og:description" content="Interactive Signals and Systems demo: time operations, graphical convolution, and sampling with aliasing.">
+<link rel="icon" href="data:,">
 <title>Signals and Systems — Time Operations, Convolution and Sampling (Interactive Demo)</title>
 <script>
 window.MathJax = {
@@ -11,7 +17,7 @@ window.MathJax = {
   startup: { typeset: true }
 };
 </script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script id="MathJax-script" async onerror="var w=document.getElementById('mj-warn');if(w)w.hidden=false" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
 <style>
 :root{
   --bg:#ffffff; --panel:#ffffff; --card:#f8fafc; --line:#e2e8f0; --ink:#0f172a; --ink2:#334155; --mute:#64748b;
@@ -99,11 +105,31 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 </style>
 <script src="../config.js"></script>
 <style>footer.p2nav{font-size:15px}footer.p2nav a{color:#4338ca;font-weight:600;text-decoration:none}</style>
+<style id="ux-polish">
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:#4338ca;color:#fff!important;padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none;transition:top .15s}
+.skip:focus{top:10px}
+:where(a,button,select,input,textarea,summary,[tabindex]):focus-visible{outline:3px solid #4f46e5;outline-offset:2px;border-radius:4px}
+main:focus{outline:none}
+section[id]{scroll-margin-top:84px}
+#mj-warn{margin:12px auto 0;max-width:1220px;padding:10px 16px;border:1px solid #fde68a;background:#fffbeb;color:#713f12;border-radius:12px;font-size:15px}
+#mj-warn[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media print{header.top,.skip,#mj-warn,footer.p2nav{display:none!important}body{background:#fff}.panel,.card{break-inside:avoid;box-shadow:none!important}canvas{max-width:100%}a{color:inherit}}
+/* ux-mobile: keep content inside narrow screens */
+.grid>*,.controls>*,.quiz>*,.sim>*,.qcard,.card,.panel{min-width:0}
+canvas,img,svg{max-width:100%}
+.numrow{flex-wrap:wrap}
+.numrow input{min-width:0}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%}
+table.read{display:block;max-width:100%;overflow-x:auto}
+</style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
+<noscript><div id="mj-noscript" style="padding:10px 16px;background:#fffbeb;color:#713f12">This interactive page needs JavaScript. Please enable it to run the simulations.</div></noscript>
 <header class="top"><div class="in">
   <div class="brand"><div class="dot"></div><span>Signals and Systems</span></div>
-  <nav class="links">
+  <nav class="links" aria-label="Course sections">
     <a href="#overview">Overview</a>
     <a class="e" href="#easy">Easy</a>
     <a class="m" href="#medium">Medium</a>
@@ -111,7 +137,8 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
     <a href="#quiz">Quiz</a>
   </nav>
 </div></header>
-<main>
+<div id="mj-warn" role="status" hidden>Equations could not be loaded (are you offline?). Reload this page when you are online to see the formulas.</div>
+<main id="main" tabindex="-1">
 <section class="panel hero" id="overview">
   <span class="tag">Course 4 · Signals and Systems</span>
   <h1>Time Operations, Convolution and Sampling</h1>
@@ -169,7 +196,7 @@ footer{max-width:1220px;margin:0 auto;padding:10px 20px 40px;color:var(--mute);f
 <section class="panel" id="complex">
   <div class="sechead"><div><span class="tag c">Level C · SIG-C</span><h2>Sampling, Aliasing and Reconstruction</h2>
     <p class="lead">An ADC samples $x(t)=\cos(2\pi f_0t)$ at $f_s$. If $f_s<2f_0$ (under two samples per cycle), the samples also fit a lower-frequency sinusoid, the alias, and nothing downstream can separate them. Theory predicts $f_a=|f_0-k f_s|$, where $k=\operatorname{round}(f_0/f_s)$: $f_0$ folds back from the nearest multiple of $f_s$. The DFT of the samples measures it.</p></div>
-    <span class="tag v">Validation: analytical + MATLAB fft</span></div>
+    <span class="tag v">Verification: analytical + MATLAB fft</span></div>
   <div class="sim">
     <div>
       <div class="canvas-wrap"><canvas id="sm1" data-h="260"></canvas></div>
@@ -284,7 +311,7 @@ function bind(ids, cb, fmts = {}) {
   return () => cb(read());
 }
 
-/* Validation metrics */
+/* Verification metrics */
 function relErr(x, ref) { return Math.abs(x - ref) / Math.max(Math.abs(ref), 1e-12) * 100; }
 function nrmse(a, b) { let s = 0, mn = Infinity, mx = -Infinity; for (let i = 0; i < a.length; i++) { s += (a[i] - b[i]) ** 2; mn = Math.min(mn, b[i]); mx = Math.max(mx, b[i]); } return Math.sqrt(s / a.length) / Math.max(mx - mn, 1e-12) * 100; }
 function verdict(el, ok, msg) { el.className = 'verdict ' + (ok ? 'pass' : 'fail'); el.textContent = (ok ? '✓ PASS — ' : '✗ FAIL — ') + msg; }
@@ -509,5 +536,16 @@ quiz('quizBox', 'score', [
 </script>
 <!-- ============ end of logger ============ -->
 
+<script>
+(function(){try{var vi=document.documentElement.lang==='vi',p=vi?'Hình minh họa tương tác':'Interactive figure';
+var cs=[].slice.call(document.querySelectorAll('canvas'));
+cs.forEach(function(c){if(c.getAttribute('aria-label'))return;
+var sec=c.closest('section')||document.body,host=c.closest('.card')||sec;
+var h=host.querySelector('h3,h4,.kicker')||sec.querySelector('h2');
+var t=h?h.textContent.replace(/\$/g,'').replace(/\s+/g,' ').trim():'';
+var all=[].slice.call(sec.querySelectorAll('canvas')),n=all.length>1?' ('+(all.indexOf(c)+1)+'/'+all.length+')':'';
+c.setAttribute('role','img');c.setAttribute('aria-label',p+(t?' \u2014 '+t.slice(0,90):'')+n);});
+var s=document.getElementById('score');if(s&&!s.hasAttribute('aria-live'))s.setAttribute('aria-live','polite');}catch(e){}})();
+</script>
 </body>
 </html>

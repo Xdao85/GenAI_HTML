@@ -90,3 +90,25 @@ Kết quả khảo sát là cơ sở để đánh giá và cải tiến học li
 - Các trang học liệu chỉ ghi nhật ký sử dụng ẩn danh (thời gian xem, số lần thay đổi tham số, kết quả trắc nghiệm) **khi bạn đồng ý**.
 
 ---
+
+---
+
+## For maintainers · Dành cho người quản trị
+
+```text
+index.html        home page (VI/EN switch, links to the six courses and the questionnaires)
+survey.html       questionnaire for students and lecturers (VI / EN / bilingual); ?admin=1 downloads local answers
+config.js         shared settings: ENDPOINT (Google Apps Script web app URL), LOG_ENDPOINT, STUDY_ID
+collector.gs      Google Apps Script that appends answers and anonymous usage logs to a Google Sheet
+en/  vi/          the six self-contained course pages in English and Vietnamese
+images/           workflow figure used in the lecturer questionnaire
+404.html          bilingual "page not found" page for GitHub Pages
+```
+
+- **Run locally:** open `index.html` in a browser, or run `python -m http.server` in this folder and visit `http://localhost:8000`. An internet connection is needed to load MathJax (pinned to 3.2.2) on first use; if MathJax cannot load, a notice is shown on the course pages.
+- **Publish:** GitHub Pages (branch `main`, root folder). `.nojekyll` is already present.
+- **Collect data:** deploy `collector.gs` as a Web App (Execute as *Me*, access *Anyone*) and paste its URL into `ENDPOINT` in `config.js`. Leave it empty to keep answers only in the participant's browser.
+- **Keep the questionnaire stable** while data are being collected so that responses stay comparable.
+- **Accessibility:** every course page has a skip link, visible keyboard focus, labelled figures, reduced-motion and print styles.
+
+Tiếng Việt: mở `index.html` bằng trình duyệt hoặc chạy `python -m http.server` trong thư mục này; xuất bản bằng GitHub Pages (nhánh `main`); dán URL Web App của `collector.gs` vào `ENDPOINT` trong `config.js` để thu phiếu; không thay đổi nội dung phiếu khảo sát trong lúc đang thu dữ liệu.
